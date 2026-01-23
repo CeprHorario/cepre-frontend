@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { HORAS_INI, HORAS_FIN } from "@/constants/horas";
+import React, { useState, useEffect } from "react";
 import { DIAS } from "@/constants/dias";
 import { Horarios } from "./Horarios.jsx";
+import { useCurrentAdmission } from "@/hooks/useCurrentAdmission";
+import { useHourSessions } from "@/hooks/useHourSessions";
 
 export const TurnosSelector = ({
   disponibilidad,
@@ -10,13 +11,19 @@ export const TurnosSelector = ({
   modoEdicion = false,
   horarioAsignado = [],
 }) => {
-  const [turnoSeleccionado, setTurnoSeleccionado] = useState("Turno 1");
+  const { shifts, loading: loadingAdmission } = useCurrentAdmission();
+  const { horasIni, horasFin, hoursByShift, loading: loadingHours } = useHourSessions();
+  const [turnoSeleccionado, setTurnoSeleccionado] = useState("");
 
-  const turnos = {
-    "Turno 1": "07:00 - 12:10",
-    "Turno 2": "11:30 - 16:40",
-    "Turno 3": "16:00 - 21:10",
-  };
+  // Inicializar turno seleccionado cuando carguen los shifts
+  useEffect(() => {
+    if (shifts.length > 0 && !turnoSeleccionado) {
+      setTurnoSeleccionado(shifts[0].name);
+    }
+  }, [shifts, turnoSeleccionado]);
+
+  if (loadingAdmission || loadingHours) return <div>Cargando turnos...</div>;
+  if (shifts.length === 0) return <div>No hay turnos configurados</div>;
 
   const handleTurnoChange = (turno) => {
     setTurnoSeleccionado(turno);
@@ -46,10 +53,15 @@ export const TurnosSelector = ({
   };
 
   const handleClickDia = (dia) => {
-    const celdasDelDia = HORAS_INI.map((hora_ini, i) => ({
+    // Usar las horas del turno seleccionado
+    const turnoSessions = hoursByShift[turnoSeleccionado] || [];
+    const turnoHorasIni = turnoSessions.map(s => s.startTime);
+    const turnoHorasFin = turnoSessions.map(s => s.endTime);
+
+    const celdasDelDia = turnoHorasIni.map((hora_ini, i) => ({
       dia,
       hora_ini,
-      hora_fin: HORAS_FIN[i],
+      hora_fin: turnoHorasFin[i],
       idDocente: docente?.id,
     }));
   
@@ -153,20 +165,27 @@ export const TurnosSelector = ({
 
   return (
     <div className="">
-      <div className="flex w-full mb-4 gap-2 flex-row justify-center">
-        {Object.entries(turnos).map(([turno, horario]) => (
-          <button
-            key={turno}
-            onClick={() => handleTurnoChange(turno)}
-            className={`px-4 py-2 rounded-md cursor-pointer select-none transition-all duration-200 shadow 
-              ${turnoSeleccionado === turno
-                ? "bg-gray-300 text-black font-bold shadow-md"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-          >
-            {turno}: {horario}
-          </button>
-        ))}
+      <div className="flex w-full mb-4 gap-2 flex-row justify-center flex-wrap">
+        {shifts.map((shift) => {
+          const turnoSessions = hoursByShift[shift.name] || [];
+          const horario = turnoSessions.length > 0
+            ? `${turnoSessions[0].startTime} - ${turnoSessions[turnoSessions.length - 1].endTime}`
+            : '';
+          
+          return (
+            <button
+              key={shift.name}
+              onClick={() => setTurnoSeleccionado(shift.name)}
+              className={`px-4 py-2 rounded-md cursor-pointer select-none transition-all duration-200 shadow 
+                ${turnoSeleccionado === shift.name
+                  ? "bg-gray-300 text-black font-bold shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+            >
+              {shift.name}: {horario}
+            </button>
+          );
+        })}
       </div>
 
       <Horarios

@@ -58,7 +58,9 @@ export const AsignarSalonDoc = ({ docente, regresar }) => {
     const cargarSalones = async () => {
       if (!docente || !isReady || disponibilidad.length === 0) return;
 
+      console.log('🔍 Cargando salones - Disponibilidad:', disponibilidad);
       const bloques = mapearABloques(disponibilidad);
+      console.log('🔍 Bloques mapeados:', bloques);
 
       if (!bloques || bloques.length === 0) {
         console.warn("No se pudo mapear disponibilidad a bloques.");
@@ -66,6 +68,7 @@ export const AsignarSalonDoc = ({ docente, regresar }) => {
       }
 
       const curso = cursos.find((curso) => { return curso?.name?.toLowerCase() === docente?.courseName?.toLowerCase() })
+      console.log('🔍 Curso encontrado:', curso);
 
       const objApi = {
         idDocente: docente?.id,
@@ -75,11 +78,15 @@ export const AsignarSalonDoc = ({ docente, regresar }) => {
         pageSize: 10,
       };
 
+      console.log('🔍 ObjApi generado:', objApi);
       setObjApi(objApi);
     };
 
-    cargarSalones();
-  }, [cursos, disponibilidad, docente, isReady, mapearABloques]);
+    if (isReady) {
+      cargarSalones();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cursos, disponibilidad, docente?.id, docente?.courseName, isReady]);
 
   // Sincroniza la disponibilidad eliminando bloques ya asignados
   useEffect(() => {
@@ -94,12 +101,13 @@ export const AsignarSalonDoc = ({ docente, regresar }) => {
       )
     );
 
-    // Solo actualiza si hubo cambios reales
-    if (nuevaDisponibilidad.length !== disponibilidad.length) {
+    // Solo actualiza si hubo cambios reales (comparación profunda)
+    const hayCambios = JSON.stringify(disponibilidad.sort()) !== JSON.stringify(nuevaDisponibilidad.sort());
+    if (hayCambios) {
       setDisponibilidad(nuevaDisponibilidad);
       localStorage.setItem(`disponibilidad-${docente?.id}`, JSON.stringify(nuevaDisponibilidad));
     }
-  }, [horarioAsignado, disponibilidad, docente?.id]);
+  }, [horarioAsignado, docente?.id]); // Removido 'disponibilidad' de dependencias
 
   const handleDisponibilidadChange = useCallback((nuevaDisponibilidad) => {
     setDisponibilidad(nuevaDisponibilidad);
@@ -139,9 +147,18 @@ export const AsignarSalonDoc = ({ docente, regresar }) => {
             </Button>
           </div>
 
-          {horarioAsignado?.length < docente?.maxHours ?
+          {(() => {
+            // Mostrar tabla si hay objApi válido y el docente no ha alcanzado maxHours (si está definido)
+            const hasValidObjApi = objApi?.idDocente && objApi?.idCurso && objApi?.horario;
+            const hasReachedMax = docente?.maxHours != null && horarioAsignado?.length >= docente.maxHours;
+            const shouldShow = hasValidObjApi && !hasReachedMax;
+            console.log('🔍 ¿Mostrar TablaAsignar?', shouldShow, 'hasValidObjApi:', hasValidObjApi, 'hasReachedMax:', hasReachedMax, 'horarioAsignado.length:', horarioAsignado?.length, 'maxHours:', docente?.maxHours);
+            return shouldShow;
+          })() ?
             <TablaAsignar teacher={docente} objApi={objApi} onSalonAsignado={async () => { await refetch(); }} />
-            : null
+            : objApi?.idDocente && docente?.maxHours != null && horarioAsignado?.length >= docente.maxHours ? 
+              <div className="text-red-600 font-bold">El docente ya tiene todas sus horas asignadas ({horarioAsignado?.length}/{docente?.maxHours})</div>
+              : null
           }
 
           <ButtonNegative onClick={regresar}>Atrás</ButtonNegative>

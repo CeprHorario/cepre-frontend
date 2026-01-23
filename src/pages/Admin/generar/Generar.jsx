@@ -1,29 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { AdmissionsServices } from '@/services/AdmissionsServices';
+import SedesService from '@/services/sedesServices';
 import { toast } from 'react-toastify';
+import { InformacionBasica } from './components/InformacionBasica';
+import { ConfiguracionTurnos } from './components/ConfiguracionTurnos';
+import { ConfiguracionSalones } from './components/ConfiguracionSalones';
+import { calcularHoraFin, validarHorario, sumarMinutos } from './utils/horarioUtils';
 
 export const Generar = () => {
   const [procesoSeleccionado, setProcesoSeleccionado] = useState('');
-  const [nuevoProceso, setNuevoProceso] = useState('');
   const [anio, setAnio] = useState(2025);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [sedeSeleccionada, setSedeSeleccionada] = useState('');
+  const [sedes, setSedes] = useState([]);
   const [dominioSeleccionado, setDominioSeleccionado] = useState('');
-  const [nuevoDominio, setNuevoDominio] = useState('');
-  const [generarHorarios, setGenerarHorarios] = useState(false);
-  const [turnosSeleccionados, setTurnosSeleccionados] = useState([]);
+  const [generarHorarios, setGenerarHorarios] = useState(true);
+  const [numeroTurnos, setNumeroTurnos] = useState(0);
+  const [turnosConfig, setTurnosConfig] = useState([]);
   const [salonesPorTurno, setSalonesPorTurno] = useState({});
 
   const navigate = useNavigate();
-  const procesos = ['Ciclo Quintos', 'Ordinario Primera Fase', 'Ordinario Segunda Fase', 'Nuevo proceso'];
-  const dominios = ['@unsa.edu.pe', '@cepr.unsa.pe', 'nuevo dominio'];
-  const turnos = [
-    { nombre: 'Turno 01', horaInicio: '07:00', horaFin: '12:10' },
-    { nombre: 'Turno 02', horaInicio: '11:30', horaFin: '16:40' },
-    { nombre: 'Turno 03', horaInicio: '16:00', horaFin: '21:10' },
-  ];
+
+  // Detectar tipo de proceso y horas pedagógicas
+  const esExtraordinario = procesoSeleccionado === 'Extraordinario';
+  const horasPedagogicas = esExtraordinario ? 6 : 7;
+
+  // Cargar sedes desde el backend
+  useEffect(() => {
+    const cargarSedes = async () => {
+      try {
+        const data = await SedesService.getSedes();
+        console.log('Sedes cargadas:', data);
+        if (Array.isArray(data) && data.length > 0) {
+          setSedes(data);
+          if (!sedeSeleccionada) {
+            setSedeSeleccionada(data[0].name);
+          }
+        }
+      } catch (error) {
+        console.error('Error cargando sedes:', error);
+      }
+    };
+    cargarSedes();
+  }, []);
 
   const handleSalonesChange = (turno, area, cantidad) => {
     setSalonesPorTurno((prev) => ({
@@ -36,40 +58,59 @@ export const Generar = () => {
   };
 
   const handleSubmit = async () => {
-    if (procesoSeleccionado === 'Nuevo proceso' && nuevoProceso.trim() === '') {
-      alert('Por favor ingresa un nombre para el nuevo proceso.');
+    if (!procesoSeleccionado) {
+      toast.error('Por favor selecciona un proceso.');
       return;
     }
 
-    if (anio < 2025) {
-      alert('Por favor ingresa un año válido (2025 o posterior).');
+    if (!sedeSeleccionada) {
+      toast.error('Por favor selecciona una sede.');
+      return;
+    }
+
+    if (!dominioSeleccionado) {
+      toast.error('Por favor selecciona un dominio.');
+      return;
+    }
+
+    if (!fechaInicio || !fechaFin) {
+      toast.error('Por favor ingresa las fechas de inicio y fin.');
       return;
     }
 
     if (new Date(fechaInicio) >= new Date(fechaFin)) {
-      alert('La fecha de inicio debe ser anterior a la fecha de fin.');
+      toast.error('La fecha de inicio debe ser anterior a la fecha de fin.');
       return;
     }
 
-    const dominioValido = /^@([\w-]+\.)+[a-zA-Z]{2,}$/;
-    if (dominioSeleccionado === 'nuevo dominio' && !dominioValido.test(nuevoDominio.trim())) {
-      alert('Por favor ingresa un dominio válido, como @unsa.edu.pe');
+    if (numeroTurnos === 0) {
+      toast.error('Debe configurar al menos un turno.');
       return;
     }
+
+    // Validar que todos los turnos tengan hora de inicio
+    const turnosSinHora = turnosConfig.filter(t => !t.horaInicio);
+    if (turnosSinHora.length > 0) {
+      toast.error('Todos los turnos deben tener hora de inicio.');
+      return;
+    }
+
+    const areas = esExtraordinario ? ['Extraordinario'] : ['Biomédicas', 'Ingenierías', 'Sociales'];
 
     const objeto = {
-      name: procesoSeleccionado === 'Nuevo proceso' ? nuevoProceso : procesoSeleccionado,
+      name: procesoSeleccionado,
       year: anio,
+      sede: sedeSeleccionada,
       started: fechaInicio,
       finished: fechaFin,
       configuration: {
-        emailDomain: dominioSeleccionado === 'nuevo dominio' ? nuevoDominio : dominioSeleccionado,
+        emailDomain: dominioSeleccionado,
         createSchedules: generarHorarios,
-        shifts: turnosSeleccionados.map((turno) => ({
+        shifts: turnosConfig.map((turno) => ({
           name: turno.nombre,
           startTime: turno.horaInicio,
-          endTime: turno.horaFin,
-          classesToAreas: ['Biomédicas', 'Ingenierías', 'Sociales'].map(area => ({
+          endTime: calcularHoraFin(turno.horaInicio, horasPedagogicas),
+          classesToAreas: areas.map(area => ({
             area,
             quantityClasses: salonesPorTurno[turno.nombre]?.[area] || 0
           }))
@@ -77,143 +118,90 @@ export const Generar = () => {
       }
     };
 
-    //localStorage.setItem('procesoAdmision', JSON.stringify(objeto));
     console.log('Datos a enviar:', objeto);
     try {
       const response = await AdmissionsServices.crearAdmission(objeto)
       console.log('Respuesta del servidor:', response);
-      if (response.status === 200) {
-        toast.success('Proceso de admisión creado exitosamente.');
+      toast.success('Proceso de admisión creado exitosamente.');
+      navigate('..');
+    } catch (error) {
+      console.error('Error al crear el proceso de admisión:', error);
+      const errorMessage = error.response?.data?.message;
+      if (Array.isArray(errorMessage)) {
+        errorMessage.forEach(msg => toast.error(msg));
+      } else if (errorMessage) {
+        toast.error(errorMessage);
       } else {
         toast.error('Error al crear el proceso de admisión. Por favor, inténtalo de nuevo.');
       }
-    } catch (error) {
-      console.error('Error al crear el proceso de admisión:', error);
-      toast.error('Error al crear el proceso de admisión. Por favor, inténtalo de nuevo.');
-    }
-  };
-
-  const toggleTurnoSeleccionado = (turno) => {
-    const index = turnosSeleccionados.findIndex(t => t.nombre === turno.nombre);
-    if (index >= 0) {
-      setTurnosSeleccionados(turnosSeleccionados.filter(t => t.nombre !== turno.nombre));
-    } else {
-      setTurnosSeleccionados([...turnosSeleccionados, turno]);
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row mt-20 h-screen md:h-[82vh] md:m-5 items-center justify-center">
-      <div className="w-full mt-25 max-w-3xl bg-white shadow-md p-6 rounded">
-        <h1 className="text-center text-2xl font-bold mb-4">Crear proceso de Admisión</h1>
-
-        {/* Proceso */}
-        <label className="block mb-2">Nombre del proceso</label>
-        <select value={procesoSeleccionado} onChange={(e) => setProcesoSeleccionado(e.target.value)} className="w-full mb-4 border p-2">
-          <option value="">Selecciona un proceso</option>
-          {procesos.map((proceso) => (
-            <option key={proceso} value={proceso}>{proceso}</option>
-          ))}
-        </select>
-        {procesoSeleccionado === 'Nuevo proceso' && (
-          <input
-            type="text"
-            placeholder="Nuevo proceso"
-            className="w-full mb-4 border p-2"
-            value={nuevoProceso}
-            onChange={(e) => setNuevoProceso(e.target.value)}
-          />
-        )}
-
-        {/* Año */}
-        <label className="block mb-2">Año</label>
-        <input
-          type="number"
-          min={2025}
-          value={anio}
-          onChange={(e) => setAnio(parseInt(e.target.value))}
-          className="w-full mb-4 border p-2"
-        />
-
-        {/* Fechas */}
-        <label className="block mb-2">Fecha de inicio</label>
-        <input type="date" className="w-full mb-4 border p-2" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
-
-        <label className="block mb-2">Fecha de fin</label>
-        <input type="date" className="w-full mb-4 border p-2" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
-
-        {/* Dominio */}
-        <label className="block mb-2">Dominio de correo</label>
-        <select value={dominioSeleccionado} onChange={(e) => setDominioSeleccionado(e.target.value)} className="w-full mb-4 border p-2">
-          <option value="">Selecciona un dominio</option>
-          {dominios.map((dominio) => (
-            <option key={dominio} value={dominio}>{dominio}</option>
-          ))}
-        </select>
-        {dominioSeleccionado === 'nuevo dominio' && (
-          <input
-            type="text"
-            placeholder="@ejemplo.com"
-            className="w-full mb-4 border p-2"
-            value={nuevoDominio}
-            onChange={(e) => setNuevoDominio(e.target.value)}
-          />
-        )}
-
-        {/* Generar horarios */}
-        <label className="block mb-2">¿Generar Horarios?</label>
-        <div className="mb-4">
-          <input type="checkbox" checked={generarHorarios} onChange={(e) => setGenerarHorarios(e.target.checked)} className="mr-2" />
-          <span className="text-sm text-gray-600">Recomendamos ingresar esta opción</span>
-        </div>
-
-        {/* Selector de turnos */}
-        <label className="block mb-2">Selecciona Turnos</label>
-        <div className="mb-4">
-          {turnos.map((turno) => (
-            <div key={turno.nombre} className="mb-2">
-              <input
-                type="checkbox"
-                checked={turnosSeleccionados.some(t => t.nombre === turno.nombre)}
-                onChange={() => toggleTurnoSeleccionado(turno)}
-                className="mr-2"
-              />
-              {turno.nombre} ({turno.horaInicio} - {turno.horaFin})
-            </div>
-          ))}
-        </div>
-
-        {/* Salones por área */}
-        {turnosSeleccionados.map((turno) => (
-          <div key={turno.nombre} className="mb-4 border p-3 rounded">
-            <h2 className="font-bold mb-2">Configuración de turnos - {turno.nombre}</h2>
-            <p className="mb-2">Salones por área:</p>
-            {['Biomédicas', 'Sociales', 'Ingenierías'].map((area) => (
-              <div key={area} className="flex items-center mb-2">
-                <span className="w-1/2">{area}</span>
-                <input
-                  type="number"
-                  min={0}
-                  value={salonesPorTurno[turno.nombre]?.[area] || 0}
-                  onChange={(e) => handleSalonesChange(turno.nombre, area, e.target.value)}
-                  className="border p-1 w-20"
-                />
-              </div>
-            ))}
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
+          {/* Header */}
+          <div className="bg-[#78211E] px-8 py-6">
+            <h1 className="text-3xl font-bold text-white text-center">
+              Crear Proceso de Admisión
+            </h1>
+            <p className="text-red-100 text-center mt-2">
+              Configure los detalles del nuevo proceso académico
+            </p>
           </div>
-        ))}
 
-        {/* Botón enviar */}
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Registrar proceso
-        </button>
-        <div className="mt-5 w-full text-center">
-          <Button onClick={() => navigate("..")}>
-            Menú Principal
-          </Button>
+          <div className="p-8 space-y-6">
+            <InformacionBasica
+              procesoSeleccionado={procesoSeleccionado}
+              setProcesoSeleccionado={setProcesoSeleccionado}
+              anio={anio}
+              setAnio={setAnio}
+              sedeSeleccionada={sedeSeleccionada}
+              setSedeSeleccionada={setSedeSeleccionada}
+              sedes={sedes}
+              fechaInicio={fechaInicio}
+              setFechaInicio={setFechaInicio}
+              fechaFin={fechaFin}
+              setFechaFin={setFechaFin}
+              dominioSeleccionado={dominioSeleccionado}
+              setDominioSeleccionado={setDominioSeleccionado}
+              generarHorarios={generarHorarios}
+              setGenerarHorarios={setGenerarHorarios}
+            />
+
+            <ConfiguracionTurnos
+              numeroTurnos={numeroTurnos}
+              setNumeroTurnos={setNumeroTurnos}
+              turnosConfig={turnosConfig}
+              setTurnosConfig={setTurnosConfig}
+              horasPedagogicas={horasPedagogicas}
+              calcularHoraFin={calcularHoraFin}
+            />
+
+            <ConfiguracionSalones
+              turnosSeleccionados={turnosConfig}
+              salonesPorTurno={salonesPorTurno}
+              handleSalonesChange={handleSalonesChange}
+              esExtraordinario={esExtraordinario}
+            />
+
+            {/* Botones de Acción */}
+            <div className="flex gap-4 pt-4">
+              <button
+                onClick={handleSubmit}
+                className="flex-1 bg-[#78211E] hover:bg-[#5a1916] text-white font-bold py-4 px-6 rounded-lg shadow-lg transition transform hover:scale-105"
+              >
+                🚀 Registrar Proceso
+              </button>
+              <Button 
+                onClick={() => navigate("..")}
+                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-lg"
+              >
+                ⬅️ Volver
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

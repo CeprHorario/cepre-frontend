@@ -2,9 +2,9 @@ import React from "react";
 import { Dia } from "./Dia";
 import { Hora } from "./Hora";
 import { Curso } from "./Curso";
-import { HORAS_INI, HORAS_FIN } from "@/constants/horas";
 import { AREA_COLORS } from "@/constants/areaColors";
 import { DIAS } from "@/constants/dias";
+import { useHourSessions } from "@/hooks/useHourSessions";
 
 const COLORS_CELDAS = {
   "PERTENECE": "#b5e6b5",
@@ -12,11 +12,17 @@ const COLORS_CELDAS = {
 }
 
 // Función para verificar cruce de horas entre clase y turno
-const hayCruceDeHoras = (horaIniClase, horaFinClase, horaIniTurno, horaFinTurno) => {
-  const iniClase = HORAS_INI.indexOf(horaIniClase);
-  const finClase = HORAS_FIN.indexOf(horaFinClase);
-  const iniTurno = HORAS_INI.indexOf(horaIniTurno);
-  const finTurno = HORAS_FIN.indexOf(horaFinTurno);
+const hayCruceDeHoras = (horaIniClase, horaFinClase, horaIniTurno, horaFinTurno, horasIni, horasFin) => {
+  if (!horasIni || !horasFin) return false;
+  
+  const iniClase = horasIni.indexOf(horaIniClase);
+  const finClase = horasFin.indexOf(horaFinClase);
+  const iniTurno = horasIni.indexOf(horaIniTurno);
+  const finTurno = horasFin.indexOf(horaFinTurno);
+  
+  // Si alguna hora no está en el turno actual, no hay cruce
+  if (iniClase === -1 || finClase === -1 || iniTurno === -1 || finTurno === -1) return false;
+  
   return finClase >= iniTurno && iniClase <= finTurno;
 };
 
@@ -37,10 +43,10 @@ function compararTurnoYSalon(turno, salon) {
   return turnoDigito === salonDigito;
 }
 
-const agruparHoras = (horas) => {
+const agruparHoras = (horas, horasIni, horasFin) => {
   const horasOrdenadas = [...horas].sort((a, b) => {
     if (a.dia !== b.dia) return DIAS.indexOf(a.dia) - DIAS.indexOf(b.dia);
-    return HORAS_INI.indexOf(a.hora_ini) - HORAS_INI.indexOf(b.hora_ini);
+    return horasIni.indexOf(a.hora_ini) - horasIni.indexOf(b.hora_ini);
   });
 
   const grupos = [];
@@ -51,7 +57,7 @@ const agruparHoras = (horas) => {
       grupoActual &&
       grupoActual.dia === hora.dia &&
       grupoActual.clase === hora.clase &&
-      HORAS_FIN.indexOf(grupoActual.hora_fin) + 1 === HORAS_INI.indexOf(hora.hora_ini)
+      horasFin.indexOf(grupoActual.hora_fin) + 1 === horasIni.indexOf(hora.hora_ini)
     ) {
       // Agrupar si es misma asignatura y hora consecutiva
       grupoActual.hora_fin = hora.hora_fin;
@@ -75,19 +81,21 @@ const TablaTurno = ({
   handleCeldaClick,
   handleClickDia,
   handleClickHora,
+  horasIni,
+  horasFin,
 }) => {
-  const minIndex = HORAS_INI.indexOf(horaInicio);
-  const maxIndex = HORAS_FIN.indexOf(horaFin);
+  const minIndex = horasIni.indexOf(horaInicio);
+  const maxIndex = horasFin.indexOf(horaFin);
 
   const horasTurno = horarioAsignado.filter(
     (hora) => esHora2AntesQueHora1(horaFin, hora.hora_ini) &&
       esHora2AntesQueHora1(hora.hora_fin, horaInicio) && compararTurnoYSalon(nombreTurno, hora.clase));
 
-  const horasAgrupadas = agruparHoras(horasTurno);
+  const horasAgrupadas = agruparHoras(horasTurno, horasIni, horasFin);
 
-  const getRow = (horaIni) => HORAS_INI.indexOf(horaIni) - minIndex + 2;
+  const getRow = (horaIni) => horasIni.indexOf(horaIni) - minIndex + 2;
   const getRowSpan = (horaIni, horaFin) =>
-    HORAS_FIN.indexOf(horaFin) - HORAS_INI.indexOf(horaIni) + 1;
+    horasFin.indexOf(horaFin) - horasIni.indexOf(horaIni) + 1;
   const getColumn = (dia) => DIAS.indexOf(dia) + 2;
 
   return (
@@ -97,20 +105,20 @@ const TablaTurno = ({
         <Dia key={index} nombre={dia} onClick={handleClickDia ? () => handleClickDia(dia) : null} clickable={handleClickDia ? true : false} />
       ))}
 
-      {HORAS_INI.slice(minIndex, maxIndex + 1).map((hora, index) => (
+      {horasIni.slice(minIndex, maxIndex + 1).map((hora, index) => (
         <Hora
           key={index}
-          hora={`${hora} - ${HORAS_FIN[minIndex + index]}`}
+          hora={`${hora} - ${horasFin[minIndex + index]}`}
           onClick={handleClickHora ? () =>
-            handleClickHora?.(hora, HORAS_FIN[minIndex + index]) : null
+            handleClickHora?.(hora, horasFin[minIndex + index]) : null
           }
         />
       ))}
 
       {DIAS.flatMap((dia, i) =>
-        HORAS_INI.slice(minIndex, maxIndex + 1).map((hora, k) => {
-          const horaIndex = HORAS_INI.indexOf(hora);
-          const horaFin = HORAS_FIN[horaIndex];
+        horasIni.slice(minIndex, maxIndex + 1).map((hora, k) => {
+          const horaIndex = horasIni.indexOf(hora);
+          const horaFin = horasFin[horaIndex];
 
           const estaDisponible = disponibilidad.some(
             (d) => d.dia === dia && d.hora_ini === hora && d.hora_fin === horaFin
@@ -121,15 +129,11 @@ const TablaTurno = ({
               key={`bg-${dia}-${hora}`}
               className={`rounded-lg ${handleCeldaClick ? 'cursor-pointer' : ''}`}
               onClick={() => {
-                if (hayCruceDeHoras(hora, horaFin, horaInicio, horaFin)) {
-                  handleCeldaClick?.({
-                    dia,
-                    hora_ini: hora,
-                    hora_fin: horaFin,
-                  });
-                } else {
-                  alert("Este horario no pertenece al turno actual.");
-                }
+                handleCeldaClick?.({
+                  dia,
+                  hora_ini: hora,
+                  hora_fin: horaFin,
+                });
               }}
               style={{
                 backgroundColor: estaDisponible ? COLORS_CELDAS.PERTENECE : COLORS_CELDAS.NO_PERTENECE,
@@ -165,44 +169,35 @@ export const Horarios = ({
   handleClickDia,
   handleClickHora,
 }) => {
+  const { hoursByShift, loading } = useHourSessions();
+
+  if (loading) return <div className="p-4">Cargando horarios...</div>;
+  if (!turno || !hoursByShift[turno]) return <div className="p-4">Turno no encontrado</div>;
+
+  const turnoSessions = hoursByShift[turno];
+  const horaInicio = turnoSessions[0]?.startTime;
+  const horaFin = turnoSessions[turnoSessions.length - 1]?.endTime;
+
+  // Obtener las horas específicas del turno seleccionado
+  const horasIni = turnoSessions.map(s => s.startTime);
+  const horasFin = turnoSessions.map(s => s.endTime);
+
+  if (!horaInicio || !horaFin) return <div className="p-4">Error en configuración del turno</div>;
+
   return (
     <div className="p-4 space-y-10">
-      {turno === "Turno 1" && (
-        <TablaTurno
-          nombreTurno="Turno 01"
-          horaInicio="07:00"
-          horaFin="12:10"
-          horarioAsignado={horarioAsignado}
-          disponibilidad={disponibilidad}
-          handleCeldaClick={handleCeldaClick}
-          handleClickDia={handleClickDia}
-          handleClickHora={handleClickHora}
-        />
-      )}
-      {turno === "Turno 2" && (
-        <TablaTurno
-          nombreTurno="Turno 02"
-          horaInicio="11:30"
-          horaFin="16:40"
-          horarioAsignado={horarioAsignado}
-          disponibilidad={disponibilidad}
-          handleCeldaClick={handleCeldaClick}
-          handleClickDia={handleClickDia}
-          handleClickHora={handleClickHora}
-        />
-      )}
-      {turno === "Turno 3" && (
-        <TablaTurno
-          nombreTurno="Turno 03"
-          horaInicio="16:00"
-          horaFin="21:10"
-          horarioAsignado={horarioAsignado}
-          disponibilidad={disponibilidad}
-          handleCeldaClick={handleCeldaClick}
-          handleClickDia={handleClickDia}
-          handleClickHora={handleClickHora}
-        />
-      )}
+      <TablaTurno
+        nombreTurno={turno}
+        horaInicio={horaInicio}
+        horaFin={horaFin}
+        horarioAsignado={horarioAsignado}
+        disponibilidad={disponibilidad}
+        handleCeldaClick={handleCeldaClick}
+        handleClickDia={handleClickDia}
+        handleClickHora={handleClickHora}
+        horasIni={horasIni}
+        horasFin={horasFin}
+      />
     </div>
   );
 };
