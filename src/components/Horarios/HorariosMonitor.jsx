@@ -3,21 +3,15 @@ import { Dia } from "./Dia";
 import { Hora } from "./Hora";
 import { Curso } from "./Curso";
 import { useCursos } from "@/hooks/useCursos";
-import { HORAS_INI, HORAS_FIN } from "@/constants/horas";
 import { DIAS } from "@/constants/dias";
-
-const TURNOS = {
-  "Turno 01": { inicio: "07:00", fin: "12:10" },
-  "Turno 02": { inicio: "11:30", fin: "16:40" },
-  "Turno 03": { inicio: "16:00", fin: "21:10" },
-};
+import { useHourSessions } from "@/hooks/useHourSessions";
 
 const COLOR_SIN_ASIGNAR = "#393b3d"; // Color para asignaciones sin docente
 
-const agruparHoras = (horas) => {
+const agruparHoras = (horas, horasIni, horasFin) => {
   const horasOrdenadas = [...horas].sort((a, b) => {
     if (a.dia !== b.dia) return DIAS.indexOf(a.dia) - DIAS.indexOf(b.dia);
-    return HORAS_INI.indexOf(a.hora_ini) - HORAS_INI.indexOf(b.hora_ini);
+    return horasIni.indexOf(a.hora_ini) - horasIni.indexOf(b.hora_ini);
   });
 
   const grupos = [];
@@ -28,7 +22,7 @@ const agruparHoras = (horas) => {
       grupoActual &&
       grupoActual.dia === hora.dia &&
       grupoActual.curso === hora.curso &&
-      HORAS_FIN.indexOf(grupoActual.hora_fin) + 1 === HORAS_INI.indexOf(hora.hora_ini)
+      horasFin.indexOf(grupoActual.hora_fin) + 1 === horasIni.indexOf(hora.hora_ini)
     ) {
       // Agrupar si es misma asignatura y hora consecutiva
       grupoActual.hora_fin = hora.hora_fin;
@@ -43,16 +37,22 @@ const agruparHoras = (horas) => {
 };
 
 export const HorariosMonitor = ({ aula, cursosConDocente, horas = [], turno = "" }) => {
-  const horasAgrupadas = agruparHoras(horas);
+  const { horasIni, horasFin, hoursByShift, loading } = useHourSessions();
+  
+  if (loading) return <div>Cargando...</div>;
+
+  const turnoSessions = hoursByShift[turno] || [];
+  const horaInicio = turnoSessions[0]?.startTime || "07:00";
+  const horaFin = turnoSessions[turnoSessions.length - 1]?.endTime || "12:10";
+
+  const horasAgrupadas = agruparHoras(horas, horasIni, horasFin);
 
   const { cursos } = useCursos();
-  const horaInicio = TURNOS[turno]?.inicio || "07:00";
-  const horaFin = TURNOS[turno]?.fin || "12:10";
-  const minIndex = HORAS_INI.indexOf(horaInicio);
-  const maxIndex = HORAS_FIN.indexOf(horaFin);
+  const minIndex = horasIni.indexOf(horaInicio);
+  const maxIndex = horasFin.indexOf(horaFin);
 
-  const getRow = (horaIni) => HORAS_INI.indexOf(horaIni) - minIndex + 2;
-  const getRowSpan = (horaIni, horaFin) => HORAS_FIN.indexOf(horaFin) - HORAS_INI.indexOf(horaIni) + 1;
+  const getRow = (horaIni) => horasIni.indexOf(horaIni) - minIndex + 2;
+  const getRowSpan = (horaIni, horaFin) => horasFin.indexOf(horaFin) - horasIni.indexOf(horaIni) + 1;
   const getColumn = (dia) => DIAS.indexOf(dia) + 2;
 
   //Colores de curso
@@ -72,13 +72,13 @@ export const HorariosMonitor = ({ aula, cursosConDocente, horas = [], turno = ""
         ))}
 
         {/* Pintar todas las horas */}
-        {HORAS_INI.slice(minIndex, maxIndex + 1).map((hora, index) => (
-          <Hora key={index} hora={`${hora} - ${HORAS_FIN[minIndex + index]}`} />
+        {horasIni.slice(minIndex, maxIndex + 1).map((hora, index) => (
+          <Hora key={index} hora={`${hora} - ${horasFin[minIndex + index]}`} />
         ))}
 
         {/* Pintar todas las celdas grises claras */}
         {DIAS.flatMap((_, i) =>
-          HORAS_INI.slice(minIndex, maxIndex + 1).map((_, k) => (
+          horasIni.slice(minIndex, maxIndex + 1).map((_, k) => (
             <div
               key={`bg-${i}-${k}`}
               className="rounded-lg"

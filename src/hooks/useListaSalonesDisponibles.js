@@ -5,6 +5,8 @@ export const useListaSalonesDisponibles = ({ objApi, page = 1, limit = 10, area_
   const enabled = Boolean(objApi?.idDocente && objApi?.idCurso && objApi?.horario);
   const queryClient = useQueryClient();
 
+  console.log('🏫 useListaSalonesDisponibles - enabled:', enabled, 'objApi:', objApi);
+
   objApi = {
     ...objApi,
     page,
@@ -22,14 +24,18 @@ export const useListaSalonesDisponibles = ({ objApi, page = 1, limit = 10, area_
     isFetching,
   } = useQuery({
     queryKey: ["salonesDisponibles", objApi, page, limit, area_id, shift_id],
-    queryFn: () =>
-      SchedulesService.getClasesDisponibles(objApi),
+    queryFn: () => {
+      console.log('🏫 Ejecutando query getClasesDisponibles con objApi:', objApi);
+      return SchedulesService.getClasesDisponibles(objApi);
+    },
     staleTime: 1000 * 60 * 5, // 5 minutos sin volver a pedir los mismos datos
     cacheTime: 1000 * 60 * 10, // 10 minutos de retención en caché
     retry: 1,
     refetchOnWindowFocus: false,
     enabled, // evita ejecutar la query si no se tiene los datos necesarios
   });
+
+  console.log('🏫 Salones recibidos:', salones, 'isLoading:', isLoading, 'isError:', isError);
 
   const asignarSalonMutation = useMutation({
     mutationFn: ({ teacherId, classId }) =>

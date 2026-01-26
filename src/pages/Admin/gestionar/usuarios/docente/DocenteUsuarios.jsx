@@ -12,11 +12,21 @@ import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { MdAssignmentAdd } from "react-icons/md";
 import { useCursos } from "@/hooks/useCursos";
 
-const encabezado = ["N°", "Curso", "Apellidos", "Nombres", "Correo", "Número", "Máx. Horas", "Acciones"];
+const encabezado = [
+  "N°",
+  "Curso",
+  "Apellidos",
+  "Nombres",
+  "Correo",
+  "Número",
+  "Horas Máximas",
+  "Horas Totales",
+  "Acciones",
+];
 const VISTA = {
   TABLA: "tabla",
   FORMULARIO: "formulario",
-  ASIGNAR_SALON: "asignarSalonDoc"
+  ASIGNAR_SALON: "asignarSalonDoc",
 };
 
 export const DocenteUsuarios = ({ setMostrarCabecera }) => {
@@ -35,9 +45,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     eliminarProfesorMutation,
     refetch,
   } = useProfesores({ page, limit, curso_id });
-  const {
-    cursos
-  } = useCursos();
+  const { cursos } = useCursos();
 
   const [editingId, setEditingId] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -60,7 +68,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
   const handleLimitChange = (e) => setLimit(e.target.value);
 
   const esNumeroValido = (numero) => {
-    const regex = /^9\d{8}$/;  // Empieza en 9 y luego 8 dígitos (total 9 dígitos)
+    const regex = /^9\d{8}$/; // Empieza en 9 y luego 8 dígitos (total 9 dígitos)
     return regex.test(numero);
   };
 
@@ -77,7 +85,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
             setSelected({ 1: index });
             setCursoId(curso?.id || null);
           }, 0);
-        }
+        },
       },
     };
   }, [cursos]);
@@ -113,12 +121,12 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     setEditFormData({ ...editFormData, [name]: value });
   };
 
-
-
   const handleGuardar = async () => {
     try {
       if (!esNumeroValido(editFormData.numero)) {
-        toast.error("El número debe comenzar con 9 y tener exactamente 9 dígitos.");
+        toast.error(
+          "El número debe comenzar con 9 y tener exactamente 9 dígitos.",
+        );
         return;
       }
 
@@ -131,10 +139,13 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         maxHours: parseInt(editFormData.horas, 10),
       };
 
-      const profeActualizado = await actualizarProfesorMutation.mutateAsync(profesor);
+      const profeActualizado =
+        await actualizarProfesorMutation.mutateAsync(profesor);
 
       if (profeActualizado) {
-        toast.success(`Profesor "${profeActualizado.firstName}" actualizado correctamente`);
+        toast.success(
+          `Profesor "${profeActualizado.firstName}" actualizado correctamente`,
+        );
         setEditingId(null);
         setEditFormData({
           nombres: "",
@@ -164,18 +175,23 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
   const handleBorrar = async (id) => {
     try {
       const profesorEliminado = await eliminarProfesorMutation.mutateAsync(id);
-      if (profesorEliminado || profesorEliminado === '') {
+      if (profesorEliminado || profesorEliminado === "") {
         toast.success(`Profesor eliminado correctamente`);
       }
-    }
-    catch (error) {
+    } catch (error) {
       toast.error("Error al eliminar el docente");
       console.error("Error al eliminar el docente:", error);
     }
   };
 
   const handleAgregar = () => {
-    setEditFormData({ nombres: "", apellidos: "", correo: "", numero: "", extra: "" });
+    setEditFormData({
+      nombres: "",
+      apellidos: "",
+      correo: "",
+      numero: "",
+      extra: "",
+    });
     setVista(VISTA.FORMULARIO);
     setMostrarCabecera(false); // OCULTAR
   };
@@ -192,13 +208,16 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         firstName: formData.docente,
         lastName: formData.apellidos,
         phone: formData.numero,
-        phonesAdditional: formData.celular_adicional?.split(',') || [],
+        phonesAdditional: formData.celular_adicional?.split(",") || [],
         isCoordinator: formData.coordinador || false,
-      }
+      };
 
-      const profesorCreado = await crearProfesorMutation.mutateAsync(nuevoProfesor);
+      const profesorCreado =
+        await crearProfesorMutation.mutateAsync(nuevoProfesor);
 
-      toast.success(`Profesor "${profesorCreado?.userProfile?.firstName || ""}" creado correctamente`);
+      toast.success(
+        `Profesor "${profesorCreado?.userProfile?.firstName || ""}" creado correctamente`,
+      );
       setEditFormData({
         nombres: "",
         apellidos: "",
@@ -206,12 +225,11 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         numero: "",
         extra: "",
       });
-    }
-    catch (error) {
+    } catch (error) {
       toast.error("Error al crear el profesor");
       console.error("Error al agregar el profesor:", error);
     }
-  }
+  };
 
   const handleAsignarSalon = (id) => {
     setEditingId(id);
@@ -228,6 +246,8 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
   const getDatosProfesor = () => {
     if (!profesores || profesores.length === 0) return [];
 
+    console.log(profesores);
+
     return profesores.map((profesor, index) => {
       const esEdicion = editingId === profesor.id;
 
@@ -235,45 +255,88 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         index + (page - 1) * limit + 1,
         profesor.courseName || "-",
         esEdicion ? (
-          <Input type="text" name="apellidos" value={editFormData.apellidos} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="apellidos"
+            value={editFormData.apellidos}
+            onChange={handleEditChange}
+          />
         ) : (
           profesor.lastName || "-"
         ),
         esEdicion ? (
-          <Input type="text" name="nombres" value={editFormData.nombres} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="nombres"
+            value={editFormData.nombres}
+            onChange={handleEditChange}
+          />
         ) : (
           profesor.firstName || "-"
-        ),        
+        ),
         esEdicion ? (
-          <Input type="email" name="correo" value={editFormData.correo} onChange={handleEditChange} />
+          <Input
+            type="email"
+            name="correo"
+            value={editFormData.correo}
+            onChange={handleEditChange}
+          />
         ) : (
           profesor.email || "-"
         ),
         esEdicion ? (
-          <Input type="text" name="numero" value={editFormData.numero} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="numero"
+            value={editFormData.numero}
+            onChange={handleEditChange}
+          />
         ) : (
           profesor.phone || "-"
         ),
         esEdicion ? (
-          <Input type="number" name="horas" value={editFormData.horas} onChange={handleEditChange} />
+          <Input
+            type="number"
+            name="horas"
+            value={editFormData.horas}
+            onChange={handleEditChange}
+          />
         ) : (
           profesor.maxHours || "-"
         ),
+        profesor.scheduledHours || 0,
         esEdicion ? (
           <div className="flex gap-2 justify-center min-w-[190px]">
             <Button onClick={() => handleGuardar(profesor.id)}>Guardar</Button>
-            <ButtonNegative onClick={() => setEditingId(null)}>Cancelar</ButtonNegative>
+            <ButtonNegative onClick={() => setEditingId(null)}>
+              Cancelar
+            </ButtonNegative>
           </div>
         ) : (
           <div className="flex gap-2 justify-center min-w-[190px]">
-            <Button onClick={() => handleAsignarSalon(profesor.id)} tittle="Asignar Salón"><MdAssignmentAdd size="20" /></Button>
-            <Button onClick={() => handleModificar(profesor.id)} tittle="Editar Docente" ><FaUserEdit size="20" /></Button>
-            <ButtonNegative onClick={() => handleBorrar(profesor.id)} tittle="Borrar Docented"><FaUserMinus size="20" /></ButtonNegative>
+            <Button
+              onClick={() => handleAsignarSalon(profesor.id)}
+              tittle="Asignar Salón"
+            >
+              <MdAssignmentAdd size="20" />
+            </Button>
+            <Button
+              onClick={() => handleModificar(profesor.id)}
+              tittle="Editar Docente"
+            >
+              <FaUserEdit size="20" />
+            </Button>
+            <ButtonNegative
+              onClick={() => handleBorrar(profesor.id)}
+              tittle="Borrar Docented"
+            >
+              <FaUserMinus size="20" />
+            </ButtonNegative>
           </div>
-        )
+        ),
       ];
     });
-  }
+  };
 
   if (vista === VISTA.ASIGNAR_SALON) {
     return (
@@ -281,7 +344,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         docente={profesores.find((profesor) => profesor.id === editingId)}
         regresar={handleRegresar}
       />
-    )
+    );
   }
 
   if (vista === VISTA.FORMULARIO) {
@@ -289,7 +352,9 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
       <AgregarUsuarios
         rol="Docente"
         formData={editFormData}
-        handleChange={(e) => setEditFormData({ ...editFormData, [e.target.name]: e.target.value })}
+        handleChange={(e) =>
+          setEditFormData({ ...editFormData, [e.target.name]: e.target.value })
+        }
         handleGuardarNuevoUsuario={handleNuevoUsuario}
         regresar={handleRegresar}
       />
@@ -302,25 +367,43 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         <Button onClick={refetch}>
           <FaSyncAlt />
         </Button>
-        <h2 className="text-2xl font-bold text-center flex-1">GESTIÓN DE DOCENTES</h2>
+        <h2 className="text-2xl font-bold text-center flex-1">
+          GESTIÓN DE DOCENTES
+        </h2>
         <Button onClick={handleAgregar}>Agregar Docente</Button>
       </div>
-      {isLoading ? <SkeletonTabla numRows={limit} numColumns={encabezado.length} /> :
-        <Tabla encabezado={encabezado} datos={getDatosProfesor()} filtroDic={filtro} selected={selected} filtrar={false} />
-      }
+      {isLoading ? (
+        <SkeletonTabla numRows={limit} numColumns={encabezado.length} />
+      ) : (
+        <Tabla
+          encabezado={encabezado}
+          datos={getDatosProfesor()}
+          filtroDic={filtro}
+          selected={selected}
+          filtrar={false}
+        />
+      )}
       <div className="flex justify-between mt-4">
-        <Button onClick={handlePrev} disabled={page === 1} >  {/* disabled cambiar estilos */}
+        <Button onClick={handlePrev} disabled={page === 1}>
+          {" "}
+          {/* disabled cambiar estilos */}
           Anterior
         </Button>
-        <Button onClick={handleNext} disabled={page >= totalPages} >  {/* disabled cambiar estilos */}
+        <Button onClick={handleNext} disabled={page >= totalPages}>
+          {" "}
+          {/* disabled cambiar estilos */}
           Siguiente
         </Button>
-        <select value={limit} onChange={handleLimitChange} className="border border-gray-300 rounded p-2">
+        <select
+          value={limit}
+          onChange={handleLimitChange}
+          className="border border-gray-300 rounded p-2"
+        >
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={20}>20</option>
         </select>
       </div>
     </div>
-  )
+  );
 };

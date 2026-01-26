@@ -33,16 +33,15 @@ const fetchProfesoresData = async () => {
       curso: profesor.courseName,
       docente: `${profesor.firstName} ${profesor.lastName}`,
       correo: profesor.email,
-    }))
-  }
-  catch (error) {
+    }));
+  } catch (error) {
     if (error?.response?.status === 404) {
       toast.error("No se encontró profesores asignados.");
       return [];
     }
     console.error("Error fetching profesores data", error);
   }
-}
+};
 
 const fetchDatosMonitor = async () => {
   try {
@@ -55,15 +54,14 @@ const fetchDatosMonitor = async () => {
       salon_id: data?.salon_id || "",
       monitor_id: data?.monitorId || "",
     };
-  }
-  catch (error) {
+  } catch (error) {
     if (error?.response?.status === 404) {
       toast.error("No se encontró información del monitor.");
       return null;
     }
     console.error("Error fetching monitor data", error);
   }
-}
+};
 
 export const MonitorPanel = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -99,17 +97,21 @@ export const MonitorPanel = () => {
           setIsLoading(false);
 
           // Guardar en el estado
-          setHorario(horario?.map(hora => {
-            const profesor = profesores.find(prof => prof.curso === hora.curso);
+          setHorario(
+            horario?.map((hora) => {
+              const profesor = profesores.find(
+                (prof) => prof.curso === hora.curso,
+              );
 
-            if (profesor) {
-              return {
-                ...hora,
-                docente: profesor.docente,
-              };
-            }
-            return hora;
-          }));
+              if (profesor) {
+                return {
+                  ...hora,
+                  docente: profesor.docente,
+                };
+              }
+              return hora;
+            }),
+          );
           setListaProfesores(profesores);
           setMonitorInfo(monitor);
 

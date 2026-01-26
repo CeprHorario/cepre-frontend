@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { HourSessionsServices } from "@/services/HourSessionsServices";
+import { useMemo } from "react";
+import { useHourSessions } from "./useHourSessions";
 
 /**
  * Hook para transformar horas de disponibilidad en bloques horarios
@@ -11,32 +11,29 @@ import { HourSessionsServices } from "@/services/HourSessionsServices";
  * }}
  */
 export const useHorasABloques = () => {
-  const [hourSessions, setHourSessions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isReady, setIsReady] = useState(false);
+  const { hourSessions, loading, error } = useHourSessions();
+  const isReady = !loading && !error && hourSessions.length > 0;
 
-  const formatHora = useCallback((hora) => {
-    if (!hora || typeof hora !== "string") return null;
-    const trimmed = hora.trim();
-    if (!/^\d{1,2}:\d{2}(:\d{2})?$/.test(trimmed)) return null;
-    return trimmed.length === 5 ? `${trimmed}:00` : trimmed;
-  }, []);
-
-  const normalizarHora = (horaCompleta) => {
-    if (!horaCompleta || typeof horaCompleta !== "string") return "";
-    const match = horaCompleta.match(/T?(\d{2}:\d{2}:\d{2})/);
-    return match ? match[1] : "";
-  };
-
-  const capitalizar = (str) => {
-    const strSinTildes = str.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Elimina tildes
-    return strSinTildes.charAt(0).toUpperCase() + strSinTildes.slice(1).toLowerCase();
-  };
-
-  const mapearABloques = useCallback(
-    (disponibilidad = []) => {
+  const mapearABloques = useMemo(() => {
+    return (disponibilidad = []) => {
       if (!Array.isArray(disponibilidad) || !isReady) return [];
+
+      const formatHora = (hora) => {
+        if (!hora || typeof hora !== "string") return null;
+        const trimmed = hora.trim();
+        // Si ya está en formato HH:mm, retornar tal cual
+        if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
+          return trimmed.length === 4 ? `0${trimmed}` : trimmed; // Asegurar 2 dígitos en hora
+        }
+        // Si tiene segundos, quitarlos
+        if (/^\d{1,2}:\d{2}:\d{2}$/.test(trimmed)) return trimmed.slice(0, 5);
+        return null;
+      };
+
+      const capitalizar = (str) => {
+        const strSinTildes = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return strSinTildes.charAt(0).toUpperCase() + strSinTildes.slice(1).toLowerCase();
+      };
 
       const bloques = [];
 
@@ -60,10 +57,11 @@ export const useHorasABloques = () => {
         const formattedHoraIni = formatHora(hora_ini);
         const formattedHoraFin = formatHora(hora_fin);
 
+        // Ahora startTime y endTime ya vienen en formato HH:mm
         const match = hourSessions.find(
           (sesion) =>
-            normalizarHora(sesion.startTime) === formattedHoraIni &&
-            normalizarHora(sesion.endTime) === formattedHoraFin
+            sesion.startTime === formattedHoraIni &&
+            sesion.endTime === formattedHoraFin
         );
 
         if (!match) {
@@ -83,40 +81,8 @@ export const useHorasABloques = () => {
       });
 
       return bloques;
-    },
-    [hourSessions, formatHora, isReady]
-  );
-
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const cargarSesiones = async () => {
-      try {
-        const data = await HourSessionsServices.getHourSessions();
-
-        if (isMounted) {
-          setHourSessions(data);
-          setIsReady(true);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err);
-          setIsReady(false);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
     };
-
-    cargarSesiones();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  }, [hourSessions, isReady]);
 
   return {
     loading,

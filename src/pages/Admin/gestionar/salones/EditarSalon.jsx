@@ -8,12 +8,7 @@ import { formatTimeToHHMM } from "@/utils/formatTime";
 import { DIAS_DIC } from "@/constants/dias";
 import { BuscarProfesor } from "./BuscarProfesor";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
-
-const TURNOS = {
-  "Turno 01": { inicio: "07:00", fin: "12:10" },
-  "Turno 02": { inicio: "11:30", fin: "16:40" },
-  "Turno 03": { inicio: "16:00", fin: "21:10" },
-};
+import { useHourSessions } from "@/hooks/useHourSessions";
 
 const VISTAS = {
   EDITAR: "editar",
@@ -29,10 +24,16 @@ export const EditarSalon = ({ idSalon, regresar }) => {
   const { clases } = useClases();
   const { schedules: infoClases, teachers, loading, refetch } = useInfoClases(idSalon);
 
+  const { hoursByShift, loading: loadingHours } = useHourSessions();
+
   const salon = clases ? clases.find((a) => a.id === idSalon) : null;
   const turno = salon?.shift;
 
-  const rango = TURNOS[turno?.name] || null;
+  const turnoSessions = turno?.name && hoursByShift[turno.name] ? hoursByShift[turno.name] : [];
+  const rango = turnoSessions.length > 0 ? {
+    inicio: turnoSessions[0].startTime,
+    fin: turnoSessions[turnoSessions.length - 1].endTime
+  } : null;
   const [horariosSalon, setHorariosSalon] = useState([]);
   const [vistaActual, setVistaActual] = useState(VISTAS.EDITAR);
   const [cursosConDocente, setCursosConDocente] = useState([]);

@@ -1,16 +1,15 @@
-import { Dia } from './Dia';
-import { Hora } from './Hora';
-import { Curso } from './Curso';
-import React from 'react';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { AREA_COLORS } from '@/constants/areaColors';
-import { HORAS_INI, HORAS_FIN } from '@/constants/horas';
+import { Dia } from "./Dia";
+import { Hora } from "./Hora";
+import { Curso } from "./Curso";
+import React from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { AREA_COLORS } from "@/constants/areaColors";
 import { DIAS } from "@/constants/dias";
 
-const agruparHoras = (horas) => {
+const agruparHoras = (horas, horas_ini, horas_fin) => {
   const horasOrdenadas = [...horas].sort((a, b) => {
     if (a.dia !== b.dia) return DIAS.indexOf(a.dia) - DIAS.indexOf(b.dia);
-    return HORAS_INI.indexOf(a.hora_ini) - HORAS_INI.indexOf(b.hora_ini);
+    return horas_ini.indexOf(a.hora_ini) - horas_ini.indexOf(b.hora_ini);
   });
 
   const grupos = [];
@@ -21,7 +20,8 @@ const agruparHoras = (horas) => {
       grupoActual &&
       grupoActual.dia === hora.dia &&
       grupoActual.aula === hora.aula &&
-      HORAS_FIN.indexOf(grupoActual.hora_fin) + 1 === HORAS_INI.indexOf(hora.hora_ini)
+      horas_fin.indexOf(grupoActual.hora_fin) + 1 ===
+        horas_ini.indexOf(hora.hora_ini)
     ) {
       // Agrupar si es misma asignatura y hora consecutiva
       grupoActual.hora_fin = hora.hora_fin;
@@ -37,39 +37,52 @@ const agruparHoras = (horas) => {
 
 export const HorarioDocenteCompleto = ({
   horarios = [],
-  setClaseSeleccionada = () => { },
+  setClaseSeleccionada = () => {},
   idDocente = null,
   estadoEliminar = false,
+  horasIni = [],
+  horasFin = [],
 }) => {
   const isMobile = useIsMobile(1024);
 
   // Procesar los datos del horario
   const clasesProcesadas = horarios.map((item) => ({
     id: item.id,
-    aula: item.clase || 'Sin aula',
-    area: item.area || 'Sin área',
+    aula: item.clase || "Sin aula",
+    area: item.area || "Sin área",
     dia: item.dia,
     hora_ini: item.hora_ini,
     hora_fin: item.hora_fin,
   }));
 
-  const horasAgrupadas = agruparHoras(clasesProcesadas);
+  const horasAgrupadas = agruparHoras(clasesProcesadas, horasIni, horasFin);
 
   // Obtener rango de horas
-  const horasDisponibles = horasAgrupadas.flatMap(c => [c.hora_ini, c.hora_fin]);
-  const horaMinima = horasDisponibles.length ? horasDisponibles.sort()[0] : "07:00";
-  const horaMaxima = horasDisponibles.length ? horasDisponibles.sort().at(-1) : "12:10";
+  const horasDisponibles = horasAgrupadas.flatMap((c) => [
+    c.hora_ini,
+    c.hora_fin,
+  ]);
 
-  const minIndex = Math.max(HORAS_INI.indexOf(horaMinima), 0);
-  const maxIndex = Math.min(HORAS_FIN.indexOf(horaMaxima), HORAS_FIN.length - 1);
+  console.log("🔍 Horas disponibles:", horasDisponibles);
+
+  const horaMinima = horasDisponibles.length
+    ? horasDisponibles.sort()[0]
+    : "07:00";
+  const horaMaxima = horasDisponibles.length
+    ? horasDisponibles.sort().at(-1)
+    : "12:10";
+
+  const minIndex = Math.max(horasIni.indexOf(horaMinima), 0);
+  const maxIndex = Math.min(horasFin.indexOf(horaMaxima), horasFin.length - 1);
 
   // Funciones de ayuda para el grid
-  const getRow = horaIni => HORAS_INI.indexOf(horaIni) - minIndex + 2;
-  const getRowSpan = (horaIni, horaFin) => HORAS_FIN.indexOf(horaFin) - HORAS_INI.indexOf(horaIni) + 1;
-  const getColumn = dia => DIAS.indexOf(dia) + 2;
+  const getRow = (horaIni) => horasIni.indexOf(horaIni) - minIndex + 2;
+  const getRowSpan = (horaIni, horaFin) =>
+    horasFin.indexOf(horaFin) - horasIni.indexOf(horaIni) + 1;
+  const getColumn = (dia) => DIAS.indexOf(dia) + 2;
 
   const dias = DIAS;
-  const diasHeader = isMobile ? DIAS.map(dia => dia.charAt(0)) : dias;
+  const diasHeader = isMobile ? DIAS.map((dia) => dia.charAt(0)) : dias;
 
   if (!horasAgrupadas.length) {
     return (
@@ -90,16 +103,19 @@ export const HorarioDocenteCompleto = ({
       ))}
 
       {/* Horas en la primera columna */}
-      {HORAS_INI.slice(minIndex, maxIndex + 1).map((hora, index) => (
-        <Hora key={`hora-${index}`} hora={`${hora} - ${HORAS_FIN[minIndex + index]}`} />
+      {horasIni.slice(minIndex, maxIndex + 1).map((hora, index) => (
+        <Hora
+          key={`hora-${index}`}
+          hora={`${hora} - ${horasFin[minIndex + index]}`}
+        />
       ))}
 
       {/* Celdas vacías del grid */}
       {dias.flatMap((dia, i) =>
-        HORAS_INI.slice(minIndex, maxIndex + 1).map((_, k) => (
+        horasIni.slice(minIndex, maxIndex + 1).map((_, k) => (
           <div
             key={`celda-${dia}-${k}`}
-            className='rounded-lg'
+            className="rounded-lg"
             style={{
               backgroundColor: "#f4f4f4",
               borderRadius: ".2vw",
@@ -108,11 +124,11 @@ export const HorarioDocenteCompleto = ({
               color: "#000",
             }}
           ></div>
-        ))
+        )),
       )}
 
       {/* Clases asignadas */}
-      {horasAgrupadas.map(clase => (
+      {horasAgrupadas.map((clase) => (
         <Curso
           key={`${clase.aula}-${clase.dia}-${clase.hora_ini}-${clase.hora_fin}`}
           clase={{
@@ -123,11 +139,15 @@ export const HorarioDocenteCompleto = ({
             enlace: clase.enlace,
           }}
           nombre={clase.aula}
-          backgroundColor={estadoEliminar ? "#e3242b" : AREA_COLORS[clase.area] || "#f4351c"}  //rojo eliminar
+          backgroundColor={
+            estadoEliminar ? "#e3242b" : AREA_COLORS[clase.area] || "#f4351c"
+          } //rojo eliminar
           gridColumn={getColumn(clase.dia)}
           gridRow={getRow(clase.hora_ini)}
           gridSpan={getRowSpan(clase.hora_ini, clase.hora_fin)}
-          setClaseSeleccionada={() => setClaseSeleccionada({ idDocente, idClase: clase.id })}
+          setClaseSeleccionada={() =>
+            setClaseSeleccionada({ idDocente, idClase: clase.id })
+          }
         />
       ))}
     </div>

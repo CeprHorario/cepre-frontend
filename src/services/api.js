@@ -23,7 +23,7 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Interceptor para manejar errores 401 (token expirado||sin autorización)
@@ -31,14 +31,13 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      debugger
       console.warn("⚠️ Token expirado. Redirigiendo al login...");
       localStorage.removeItem("token"); // Eliminar token
       token = null;
       window.location.href = "/"; // Redirigir al login
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 /**
@@ -49,7 +48,14 @@ api.interceptors.response.use(
  * @param {boolean} [isList=false] - Indica si la respuesta es una lista y debe ordenarse.
  * @returns {Promise<any | null>}
  */
-export async function request(method, endpoint, data = {}, isList = false, isFormData = false) {
+
+export async function request(
+  method,
+  endpoint,
+  data = {},
+  isList = false,
+  isFormData = false,
+) {
   try {
     const config = {};
 
@@ -61,9 +67,10 @@ export async function request(method, endpoint, data = {}, isList = false, isFor
       };
     }
 
-    const response = method === "get" || method === "delete"
-      ? await api[method](endpoint, config)
-      : await api[method](endpoint, data, config);
+    const response =
+      method === "get" || method === "delete"
+        ? await api[method](endpoint, config)
+        : await api[method](endpoint, data, config);
 
     let result = response.data;
 
@@ -89,6 +96,5 @@ export async function request(method, endpoint, data = {}, isList = false, isFor
     throw error;
   }
 }
-
 
 export default api;
