@@ -41,3 +41,21 @@ export const HORAS_FIN: Array<string> = [
   "20:25",
   "21:10",
 ];
+
+export const HORAS_INI_EXTRAORDINARIO: Array<String> = [
+  "08:00",
+  "08:45",
+  "09:30",
+  "10:15",
+  "11:00",
+  "11:45",
+];
+
+export const HORAS_FIN_EXTRAORDINARIO: Array<string> = [
+  "08:40",
+  "09:25",
+  "10:10",
+  "10:55",
+  "11:40",
+  "12:25",
+];
