@@ -10,11 +10,20 @@ import { toast } from "react-toastify";
 import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { useTurnos } from "@/hooks/useTurnos";
 
-const encabezado = ["N°", "Salón", "Nombres", "Apellidos", "Correo", "Número", "Turno", "Acciones"];
+const encabezado = [
+  "N°",
+  "Salón",
+  "Nombres",
+  "Apellidos",
+  "Correo",
+  "Número",
+  "Turno",
+  "Acciones",
+];
 const VISTA = {
   TABLA: "tabla",
   FORMULARIO: "formulario",
-}
+};
 
 export const MonitorUsuarios = () => {
   const [vista, setVista] = useState(VISTA.TABLA);
@@ -63,7 +72,7 @@ export const MonitorUsuarios = () => {
             setSelected({ 6: index });
             setShiftId(turno?.id || null);
           }, 0);
-        }
+        },
       },
     };
   }, [turnos]);
@@ -94,7 +103,6 @@ export const MonitorUsuarios = () => {
     setEditFormData({ ...editFormData, [name]: value });
   };
 
-
   const handleGuardar = async () => {
     try {
       const monitor = {
@@ -105,7 +113,8 @@ export const MonitorUsuarios = () => {
         phone: editFormData.numero,
       };
 
-      const monitorActualizado = await actualizarMonitorMutation.mutateAsync(monitor);
+      const monitorActualizado =
+        await actualizarMonitorMutation.mutateAsync(monitor);
       if (monitorActualizado) {
         toast.success("Monitor actualizado correctamente");
         setEditingId(null);
@@ -135,11 +144,10 @@ export const MonitorUsuarios = () => {
   const handleBorrar = async (id) => {
     try {
       const monitorEliminado = await eliminarMonitorMutation.mutateAsync(id);
-      if (monitorEliminado || monitorEliminado === '') {
+      if (monitorEliminado || monitorEliminado === "") {
         toast.success("Monitor eliminado correctamente");
       }
-    }
-    catch (error) {
+    } catch (error) {
       toast.error("Error al eliminar el monitor");
       console.error("Error al eliminar el monitor:", error);
     }
@@ -155,22 +163,42 @@ export const MonitorUsuarios = () => {
         index + (page - 1) * limit + 1,
         monitor.className || "-",
         esEdicion ? (
-          <Input type="text" name="nombres" value={editFormData.nombres} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="nombres"
+            value={editFormData.nombres}
+            onChange={handleEditChange}
+          />
         ) : (
           monitor.firstName || "-"
         ),
         esEdicion ? (
-          <Input type="text" name="apellidos" value={editFormData.apellidos} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="apellidos"
+            value={editFormData.apellidos}
+            onChange={handleEditChange}
+          />
         ) : (
           monitor.lastName || "-"
         ),
         esEdicion ? (
-          <Input type="text" name="apellidos" value={editFormData.correo} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="correo"
+            value={editFormData.correo}
+            onChange={handleEditChange}
+          />
         ) : (
           monitor.email || "-"
         ),
         esEdicion ? (
-          <Input type="text" name="numero" value={editFormData.numero} onChange={handleEditChange} />
+          <Input
+            type="text"
+            name="numero"
+            value={editFormData.numero}
+            onChange={handleEditChange}
+          />
         ) : (
           monitor.phone || "-"
         ),
@@ -178,15 +206,26 @@ export const MonitorUsuarios = () => {
         esEdicion ? (
           <div className="flex gap-2 justify-center">
             <Button onClick={() => handleGuardar(monitor.id)}>Guardar</Button>
-            <ButtonNegative onClick={() => setEditingId(null)}>Cancelar</ButtonNegative>
+            <ButtonNegative onClick={() => setEditingId(null)}>
+              Cancelar
+            </ButtonNegative>
           </div>
         ) : (
           <div className="flex gap-2 justify-center">
-            <Button onClick={() => handleModificar(monitor.id)} tittle="Editar Monitor"><FaUserEdit size="20"/>
+            <Button
+              onClick={() => handleModificar(monitor.id)}
+              tittle="Editar Monitor"
+            >
+              <FaUserEdit size="20" />
             </Button>
-            <ButtonNegative onClick={() => handleBorrar(monitor.id)} tittle="Borrar Monitor"><FaUserMinus size="20"/></ButtonNegative>
+            <ButtonNegative
+              onClick={() => handleBorrar(monitor.id)}
+              tittle="Borrar Monitor"
+            >
+              <FaUserMinus size="20" />
+            </ButtonNegative>
           </div>
-        )
+        ),
       ];
     });
   };
@@ -196,8 +235,10 @@ export const MonitorUsuarios = () => {
       <AgregarUsuarios
         rol="Monitor"
         formData={editFormData}
-        handleChange={(e) => setEditFormData({ ...editFormData, [e.target.name]: e.target.value })}
-        handleGuardarNuevoUsuario={() => { }}
+        handleChange={(e) =>
+          setEditFormData({ ...editFormData, [e.target.name]: e.target.value })
+        }
+        handleGuardarNuevoUsuario={() => {}}
         setVista={setVista}
       />
     );
@@ -212,22 +253,38 @@ export const MonitorUsuarios = () => {
         <h2 className="text-2xl font-bold">GESTIÓN DE MONITORES</h2>
         <p></p>
       </div>
-      {isLoading ? <SkeletonTabla numRows={limit} numColums={encabezado.length} /> :
-        <Tabla encabezado={encabezado} datos={getDatosMonitores()} filtroDic={filtro} selected={selected} filtrar={false} />
-      }
+      {isLoading ? (
+        <SkeletonTabla numRows={limit} numColums={encabezado.length} />
+      ) : (
+        <Tabla
+          encabezado={encabezado}
+          datos={getDatosMonitores()}
+          filtroDic={filtro}
+          selected={selected}
+          filtrar={false}
+        />
+      )}
       <div className="flex justify-between mt-4">
-        <Button onClick={handlePrev} disabled={page === 1} >  {/* disabled cambiar estilos */}
+        <Button onClick={handlePrev} disabled={page === 1}>
+          {" "}
+          {/* disabled cambiar estilos */}
           Anterior
         </Button>
-        <Button onClick={handleNext} disabled={page >= totalPages} >  {/* disabled cambiar estilos */}
+        <Button onClick={handleNext} disabled={page >= totalPages}>
+          {" "}
+          {/* disabled cambiar estilos */}
           Siguiente
         </Button>
-        <select value={limit} onChange={handleLimitChange} className="border border-gray-300 rounded p-2">
+        <select
+          value={limit}
+          onChange={handleLimitChange}
+          className="border border-gray-300 rounded p-2"
+        >
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={20}>20</option>
         </select>
       </div>
     </div>
-  )
+  );
 };
