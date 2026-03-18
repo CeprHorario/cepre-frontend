@@ -41,7 +41,7 @@ export const TeachersServices = {
     if (!email || !courseId || !firstName || !lastName || !dni) {
       throw new Error("Faltan datos obligatorios");
     }
-    if (courseId == 12) {
+    if (courseId == 10) {
       maxHours = 21;
     }
 
@@ -176,7 +176,9 @@ export const TeachersServices = {
   },
 
   async teacherExport() {
-    const response = await api.get("/teachers/export", { responseType: "blob" });
+    const response = await api.get("/teachers/export", {
+      responseType: "blob",
+    });
     const disposition = response.headers["content-disposition"] || "";
     const match = disposition.match(/filename="?([^"]+)"?/);
     const fileName = match ? match[1] : "profesores.xlsx";
