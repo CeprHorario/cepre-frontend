@@ -1,4 +1,4 @@
-import { request } from "./api";
+import api, { request } from "./api";
 
 export const TeachersServices = {
   /**
@@ -6,9 +6,9 @@ export const TeachersServices = {
    * @returns {Promise<{ data: Array, total: number, page: number, limit: number }>}
    */
   async getTeachers(page = 1, limit = 20, curso_id = null) {
-    const url = `/teachers?page=${page}&limit=${limit}${curso_id ? `&courseId=${curso_id}` : ''}`;
+    const url = `/teachers?page=${page}&limit=${limit}${curso_id ? `&courseId=${curso_id}` : ""}`;
     return request("get", url, null, true);
-  },  
+  },
 
   /**
    * Obtiene un teacher por su ID.
@@ -27,7 +27,7 @@ export const TeachersServices = {
   async createTeacher({
     email,
     personalEmail,
-    maxHours = 30,
+    maxHours = 20,
     scheduledHours = 0,
     jobStatus,
     courseId,
@@ -41,7 +41,13 @@ export const TeachersServices = {
     if (!email || !courseId || !firstName || !lastName || !dni) {
       throw new Error("Faltan datos obligatorios");
     }
+    if (courseId == 12) {
+      maxHours = 21;
+    }
 
+    if (jobStatus == "FullTime") {
+      maxHours = 16;
+    }
     return request("post", "/teachers", {
       email,
       personalEmail,
@@ -65,7 +71,13 @@ export const TeachersServices = {
    */
   async updateTeacher({ userId, firstName, lastName, email, phone, maxHours }) {
     if (!userId) throw new Error("ID inválido");
-    return request("put", `/teachers/${userId}`, { firstName, lastName, email, phone, maxHours });
+    return request("put", `/teachers/${userId}`, {
+      firstName,
+      lastName,
+      email,
+      phone,
+      maxHours,
+    });
   },
 
   /**
@@ -102,7 +114,10 @@ export const TeachersServices = {
    */
   async getTeacherByIdCourse(id, page = 1, limit = 10) {
     if (!id) throw new Error("ID inválido");
-    return request("get", `/teachers/by-course/${id}?page=${page}&limit=${limit}`);
+    return request(
+      "get",
+      `/teachers/by-course/${id}?page=${page}&limit=${limit}`,
+    );
   },
 
   /**
@@ -114,7 +129,10 @@ export const TeachersServices = {
    */
   async getTeacherByQuery(query, page = 1, limit = 10) {
     if (!query) throw new Error("Query inválido");
-    return request("get", `/teachers/search?query=${query}&page=${page}&limit=${limit}`);
+    return request(
+      "get",
+      `/teachers/search?query=${query}&page=${page}&limit=${limit}`,
+    );
   },
 
   /**
@@ -127,8 +145,12 @@ export const TeachersServices = {
    * @returns {Promise<Object>}
    */
   async getTeacherAvailable({ courseId, hourSessions }, page = 1, limit = 10) {
-    if (!courseId || !hourSessions) throw new Error("Faltan datos obligatorios");
-    return request("post", `/teachers/available?page=${page}&limit=${limit}`, { courseId, hourSessions });
+    if (!courseId || !hourSessions)
+      throw new Error("Faltan datos obligatorios");
+    return request("post", `/teachers/available?page=${page}&limit=${limit}`, {
+      courseId,
+      hourSessions,
+    });
   },
 
   /**
@@ -151,5 +173,13 @@ export const TeachersServices = {
     const formData = new FormData();
     formData.append("archivo", archivo);
     return request("post", "/teachers/csv", formData, false, true);
+  },
+
+  async teacherExport() {
+    const response = await api.get("/teachers/export", { responseType: "blob" });
+    const disposition = response.headers["content-disposition"] || "";
+    const match = disposition.match(/filename="?([^"]+)"?/);
+    const fileName = match ? match[1] : "profesores.xlsx";
+    return { blob: response.data, fileName };
   },
 };
