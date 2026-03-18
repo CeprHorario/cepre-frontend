@@ -146,7 +146,11 @@ export const HorarioDocenteCompleto = ({
           gridRow={getRow(clase.hora_ini)}
           gridSpan={getRowSpan(clase.hora_ini, clase.hora_fin)}
           setClaseSeleccionada={() =>
-            setClaseSeleccionada({ idDocente, idClase: clase.id })
+            setClaseSeleccionada({
+              idDocente,
+              idClase: clase.id,
+              clase: clase.aula,
+            })
           }
         />
       ))}

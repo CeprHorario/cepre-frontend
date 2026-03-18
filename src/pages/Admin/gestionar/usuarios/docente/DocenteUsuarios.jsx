@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { MdAssignmentAdd } from "react-icons/md";
 import { useCursos } from "@/hooks/useCursos";
+import { TeachersServices } from "@/services/TeachersServices";
 
 const encabezado = [
   "N°",
@@ -196,6 +197,29 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     setMostrarCabecera(false); // OCULTAR
   };
 
+  const handleExportar = async () => {
+    try {
+      const { blob } = await TeachersServices.teacherExport();
+      const url = window.URL.createObjectURL(
+        new Blob([blob], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        }),
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      const timeStamp = new Date().toISOString().split("T")[0];
+      link.setAttribute("download", `docentes_${timeStamp}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(`Docentes exportados correctamente`);
+    } catch (error) {
+      toast.error("Error al exportar los docentes");
+      console.error("Error al exportar los docentes:", error);
+    }
+  };
+
   const handleNuevoUsuario = async (formData) => {
     setMostrarCabecera(true);
     try {
@@ -370,7 +394,10 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         <h2 className="text-2xl font-bold text-center flex-1">
           GESTIÓN DE DOCENTES
         </h2>
-        <Button onClick={handleAgregar}>Agregar Docente</Button>
+        <div className="flex gap-2">
+          <Button onClick={handleAgregar}>Agregar Docente</Button>
+          <Button onClick={handleExportar}>Exportar Docentes</Button>
+        </div>
       </div>
       {isLoading ? (
         <SkeletonTabla numRows={limit} numColumns={encabezado.length} />
