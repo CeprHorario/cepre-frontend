@@ -13,6 +13,7 @@ import { useHourSessions } from "./useHourSessions";
 export const useHorasABloques = () => {
   const { hourSessions, loading, error } = useHourSessions();
   const isReady = !loading && !error && hourSessions.length > 0;
+  console.log("🔍 HourSessions__:", hourSessions);
 
   const mapearABloques = useMemo(() => {
     return (disponibilidad = []) => {
@@ -31,16 +32,27 @@ export const useHorasABloques = () => {
       };
 
       const capitalizar = (str) => {
-        const strSinTildes = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        return strSinTildes.charAt(0).toUpperCase() + strSinTildes.slice(1).toLowerCase();
+        const strSinTildes = str
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        return (
+          strSinTildes.charAt(0).toUpperCase() +
+          strSinTildes.slice(1).toLowerCase()
+        );
       };
 
       const bloques = [];
 
       disponibilidad.forEach((item) => {
-        // Ya viene en formato correcto
-        if (item.id_hour_session && item.weekday && !item.hora_ini && !item.hora_fin) {
-          const valid = hourSessions.some(h => h.id === Number(item.id_hour_session));
+        if (
+          item.id_hour_session &&
+          item.weekday &&
+          !item.hora_ini &&
+          !item.hora_fin
+        ) {
+          const valid = hourSessions.some(
+            (h) => h.id === Number(item.id_hour_session),
+          );
           if (!valid) return;
 
           bloques.push({
@@ -58,14 +70,19 @@ export const useHorasABloques = () => {
         const formattedHoraFin = formatHora(hora_fin);
 
         // Ahora startTime y endTime ya vienen en formato HH:mm
-        const match = hourSessions.find(
+        const match = hourSessions.filter(
           (sesion) =>
             sesion.startTime === formattedHoraIni &&
-            sesion.endTime === formattedHoraFin
+            sesion.endTime === formattedHoraFin,
         );
 
         if (!match) {
-          console.warn("No se encontró bloque para:", formattedHoraIni, formattedHoraFin, dia);
+          console.warn(
+            "No se encontró bloque para:",
+            formattedHoraIni,
+            formattedHoraFin,
+            dia,
+          );
           return;
         }
 
@@ -73,11 +90,9 @@ export const useHorasABloques = () => {
           weekday: capitalizar(dia),
         };
 
-        bloques.push({ id_hour_session: match.id, ...base });
-
-        if (match.id === 7 || match.id === 14) {
-          bloques.push({ id_hour_session: match.id + 1, ...base });
-        }
+        match.forEach((m) => {
+          bloques.push({ id_hour_session: m.id, ...base });
+        });
       });
 
       return bloques;
