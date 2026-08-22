@@ -5,7 +5,11 @@ import { useHorarioAsignadoDocente } from "@/hooks/useHorarioAsignadoDocente";
 import { Button } from "@/components/ui/Button";
 import { useHourSessions } from "@/hooks/useHourSessions";
 
-export const HorarioCompleto = ({ setMostrarHorarioCompleto, docente }) => {
+export const HorarioCompleto = ({
+  setMostrarHorarioCompleto,
+  docente,
+  soloLectura = false,
+}) => {
   const { horario, loading, desasignarClaseMutation, refetch } =
     useHorarioAsignadoDocente({ idDocente: docente?.id });
   const [estadoEliminar, setEstadoEliminar] = React.useState(false);
@@ -50,13 +54,15 @@ export const HorarioCompleto = ({ setMostrarHorarioCompleto, docente }) => {
         <ButtonNegative onClick={() => setMostrarHorarioCompleto(false)}>
           Atrás
         </ButtonNegative>
-        <Button
-          onClick={() => {
-            setEstadoEliminar(!estadoEliminar);
-          }}
-        >
-          {estadoEliminar ? "Eliminando Clase" : "Eliminar Clase"}
-        </Button>
+        {!soloLectura && (
+          <Button
+            onClick={() => {
+              setEstadoEliminar(!estadoEliminar);
+            }}
+          >
+            {estadoEliminar ? "Eliminando Clase" : "Eliminar Clase"}
+          </Button>
+        )}
       </div>
     </div>
   );

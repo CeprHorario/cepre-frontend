@@ -3,14 +3,31 @@ import { FaSignOutAlt } from "react-icons/fa";
 import unsaLogo from "@/assets/logo-light.png";
 import { useAuth } from "@/contexts/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useCoordinatorCourse } from "@/hooks/useCoordinatorCourse";
 
 export const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { data: coordinatorCourse } = useCoordinatorCourse(
+    user?.role === "coordinador" ? user?.coordinatorCourseId : null,
+  );
+  const coordinatorCourseName = coordinatorCourse?.name;
 
 
   const handleLogout = () => {
     logout(navigate);
+  };
+
+  const getWelcomeText = () => {
+    if (!user) return "Bienvenido";
+
+    const fullName = `${user?.firstName?.split(" ")[0] || "Sin Nombres"} ${user?.lastName || ""}`;
+    const courseText =
+      user.role === "coordinador" && user.coordinatorCourseId != null
+        ? ` - ${coordinatorCourseName || `Curso ${user.coordinatorCourseId}`}`
+        : "";
+
+    return `Bienvenido ${user.role}${courseText}, ${fullName}`;
   };
 
   return (
@@ -29,7 +46,7 @@ export const Header = () => {
       </div>
       
         <p className="ml-2 md:ml-4 text-white text-sm md:text-lg font-semibold">
-          {user ? `Bienvenido ${user.role}, ${user?.firstName?.split(' ')[0] || 'Sin Nombres'} ${user?.lastName || ''}` : "Bienvenido"}
+          {getWelcomeText()}
         </p>
       </div>
 

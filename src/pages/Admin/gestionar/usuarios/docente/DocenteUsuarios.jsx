@@ -8,12 +8,13 @@ import { useProfesores } from "@/hooks/useProfesores";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { AsignarSalonDoc } from "./AsignarSalonDoc";
 import { toast } from "react-toastify";
-import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
+import { FaCalendarAlt, FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { MdAssignmentAdd } from "react-icons/md";
 import { useCursos } from "@/hooks/useCursos";
 import { TeachersServices } from "@/services/TeachersServices";
+import { HorarioCompleto } from "./HorarioCompleto";
 
-const encabezado = [
+const encabezadoBase = [
   "N°",
   "Curso",
   "Apellidos",
@@ -28,9 +29,16 @@ const VISTA = {
   TABLA: "tabla",
   FORMULARIO: "formulario",
   ASIGNAR_SALON: "asignarSalonDoc",
+  HORARIO: "horario",
 };
 
-export const DocenteUsuarios = ({ setMostrarCabecera }) => {
+export const DocenteUsuarios = ({
+  setMostrarCabecera = () => {},
+  soloLectura = false,
+  titulo = "GESTIÓN DE DOCENTES",
+  mostrarFiltroCurso = true,
+  ocultarHorasMaximas = false,
+}) => {
   const [vista, setVista] = useState(VISTA.TABLA);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -45,8 +53,12 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     actualizarProfesorMutation,
     eliminarProfesorMutation,
     refetch,
-  } = useProfesores({ page, limit, curso_id });
-  const { cursos } = useCursos();
+  } = useProfesores({
+    page,
+    limit,
+    curso_id: mostrarFiltroCurso ? curso_id : null,
+  });
+  const { cursos } = useCursos({ enabled: mostrarFiltroCurso });
 
   const [editingId, setEditingId] = useState(null);
   const [editFormData, setEditFormData] = useState({
@@ -74,7 +86,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
   };
 
   const filtro = useMemo(() => {
-    if (!cursos?.length) return {};
+    if (!mostrarFiltroCurso || !cursos?.length) return {};
 
     return {
       1: {
@@ -85,11 +97,22 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
             const index = cursos.indexOf(curso);
             setSelected({ 1: index });
             setCursoId(curso?.id || null);
+            setPage(1);
           }, 0);
         },
       },
     };
-  }, [cursos]);
+  }, [cursos, mostrarFiltroCurso]);
+
+  const encabezado = useMemo(
+    () =>
+      encabezadoBase
+        .filter((_, index) => !ocultarHorasMaximas || index !== 6)
+        .map((item, index, items) =>
+          soloLectura && index === items.length - 1 ? "Horario" : item,
+        ),
+    [ocultarHorasMaximas, soloLectura],
+  );
 
   const handleModificar = (id) => {
     const profesor = profesores.find((profesor) => profesor.id === id);
@@ -261,6 +284,12 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     setMostrarCabecera(false); // OCULTAR
   };
 
+  const handleVerHorario = (id) => {
+    setEditingId(id);
+    setVista(VISTA.HORARIO);
+    setMostrarCabecera(false);
+  };
+
   const handleRegresar = () => {
     setEditingId(null);
     setVista(VISTA.TABLA);
@@ -275,7 +304,7 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     return profesores.map((profesor, index) => {
       const esEdicion = editingId === profesor.id;
 
-      return [
+      const fila = [
         index + (page - 1) * limit + 1,
         profesor.courseName || "-",
         esEdicion ? (
@@ -318,7 +347,10 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
         ) : (
           profesor.phone || "-"
         ),
-        esEdicion ? (
+      ];
+
+      if (!ocultarHorasMaximas) {
+        fila.push(esEdicion ? (
           <Input
             type="number"
             name="horas"
@@ -327,9 +359,21 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
           />
         ) : (
           profesor.maxHours || "-"
-        ),
+        ));
+      }
+
+      fila.push(
         profesor.scheduledHours || 0,
-        esEdicion ? (
+        soloLectura ? (
+          <div className="flex gap-2 justify-center min-w-[120px]">
+            <Button
+              onClick={() => handleVerHorario(profesor.id)}
+              tittle="Ver horario"
+            >
+              <FaCalendarAlt size="18" />
+            </Button>
+          </div>
+        ) : esEdicion ? (
           <div className="flex gap-2 justify-center min-w-[190px]">
             <Button onClick={() => handleGuardar(profesor.id)}>Guardar</Button>
             <ButtonNegative onClick={() => setEditingId(null)}>
@@ -358,7 +402,9 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
             </ButtonNegative>
           </div>
         ),
-      ];
+      );
+
+      return fila;
     });
   };
 
@@ -385,19 +431,31 @@ export const DocenteUsuarios = ({ setMostrarCabecera }) => {
     );
   }
 
+  if (vista === VISTA.HORARIO) {
+    return (
+      <HorarioCompleto
+        docente={profesores.find((profesor) => profesor.id === editingId)}
+        setMostrarHorarioCompleto={(mostrar) => {
+          if (!mostrar) handleRegresar();
+        }}
+        soloLectura
+      />
+    );
+  }
+
   return (
     <div className="overflow-x-auto w-full text-center mb-3">
       <div className="flex justify-between items-center mt-1 mb-6 px-4">
         <Button onClick={refetch}>
           <FaSyncAlt />
         </Button>
-        <h2 className="text-2xl font-bold text-center flex-1">
-          GESTIÓN DE DOCENTES
-        </h2>
-        <div className="flex gap-2">
-          <Button onClick={handleAgregar}>Agregar Docente</Button>
-          <Button onClick={handleExportar}>Exportar Docentes</Button>
-        </div>
+        <h2 className="text-2xl font-bold text-center flex-1">{titulo}</h2>
+        {!soloLectura && (
+          <div className="flex gap-2">
+            <Button onClick={handleAgregar}>Agregar Docente</Button>
+            <Button onClick={handleExportar}>Exportar Docentes</Button>
+          </div>
+        )}
       </div>
       {isLoading ? (
         <SkeletonTabla numRows={limit} numColumns={encabezado.length} />
