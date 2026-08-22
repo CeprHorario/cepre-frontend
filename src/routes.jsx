@@ -11,6 +11,7 @@ import { DocentePanel } from "./pages/Docente/DocentePanel";
 import { MonitorPanel } from "./pages/Monitor/MonitorPanel";
 import { SupervisorPanel } from "./pages/Supervisor/SupervisorPanel";
 import { HorarioMonitorPanel } from "./pages/Supervisor/HorarioMonitorPanel";
+import { CoordinatorPanel } from "./pages/Coordinator/CoordinatorPanel";
 import { NotFound } from "./pages/NotFound";
 import { GoogleAuthHandler } from "./pages/Login/GoogleAuthHandler";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
           { path: "monitor", element: <MonitorPanel /> },
           { path: "supervisor", element: <SupervisorPanel /> },
           { path: "supervisor/horario", element: <HorarioMonitorPanel /> },
+          { path: "coordinador", element: <CoordinatorPanel /> },
           { path: "*", element: <NotFound /> },
         ],
       },

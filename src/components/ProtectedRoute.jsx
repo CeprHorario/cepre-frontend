@@ -30,8 +30,10 @@ export const ProtectedRoute = () => {
     const rolePaths = {
       administrador: "/admin",
       profesor: "/docente",
+      docente: "/docente",
       monitor: "/monitor",
       supervisor: "/supervisor",
+      coordinador: "/coordinador",
     };
 
     const expectedPath = rolePaths[userRole] || "/";
