@@ -26,9 +26,9 @@ export const SupervisorsServices = {
    * @param {Object} data - Datos del supervisor a crear.
    * @returns {Promise<Object>}
    */
-  async createSupervisor({ email, dni, firstName, lastName, phone, phonesAdditional = [], personalEmail, shiftId }) {
+  async createSupervisor({ email, dni, firstName, lastName, phone, phonesAdditional = [], personalEmail, shift_id, shiftId }) {
     if (!email || !dni || !firstName || !lastName) throw new Error("Faltan datos obligatorios");
-    return request("post", "/supervisors", { email, dni, firstName, lastName, phone, phonesAdditional, personalEmail, shiftId });
+    return request("post", "/supervisors", { email, dni, firstName, lastName, phone, phonesAdditional, personalEmail, shift_id: shift_id || shiftId });
   },
 
   /**
@@ -36,9 +36,9 @@ export const SupervisorsServices = {
    * @param {Object} data - Datos a actualizar.
    * @returns {Promise<Object>}
    */
-  async updateSupervisor({ id, firstName, lastName, personalEmail, phone, shiftId }) {
+  async updateSupervisor({ id, email, firstName, lastName, personalEmail, phone, shift_id, shiftId }) {
     if (!id) throw new Error("ID inválido");
-    return request("put", `/supervisors/${id}`, { firstName, lastName, personalEmail, phone, shiftId });
+    return request("put", `/supervisors/${id}`, { email, firstName, lastName, personalEmail, phone, shift_id: shift_id || shiftId });
   },
 
   /**

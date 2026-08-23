@@ -3,11 +3,13 @@ import { ButtonCabecera } from "@/components/ui/ButtonCabecera";
 import { DocenteUsuarios } from "./docente/DocenteUsuarios";
 import { MonitorUsuarios } from "./monitor/MonitorUsuarios";
 import { SupervisorUsuarios } from "./supervisor/SupervisorUsuarios";
+import { CoordinadorUsuarios } from "./coordinador/CoordinadorUsuarios";
 
 const ROLES = {
   DOCENTE: "Docente",
   MONITOR: "Monitor",
   SUPERVISOR: "Supervisor",
+  COORDINADOR: "Coordinador",
 };
 
 export const Usuarios = () => {
@@ -22,7 +24,7 @@ export const Usuarios = () => {
   return (
     <div className="overflow-x-auto w-full text-center text-xs sm:text-sm">
       {mostrarCabecera && ( // SOLO SI mostrarCabecera es true
-        <div className="flex w-80 justify-between mx-auto mb-4">
+        <div className="flex w-full max-w-xl justify-between mx-auto mb-4 gap-2">
           {Object.values(ROLES).map((tipoRol) => (
             <ButtonCabecera
               key={tipoRol}
@@ -37,6 +39,7 @@ export const Usuarios = () => {
       {rol === ROLES.DOCENTE && <DocenteUsuarios setMostrarCabecera={setMostrarCabecera} />}
       {rol === ROLES.MONITOR && <MonitorUsuarios />}
       {rol === ROLES.SUPERVISOR && <SupervisorUsuarios setMostrarCabecera={setMostrarCabecera} />}
+      {rol === ROLES.COORDINADOR && <CoordinadorUsuarios />}
     </div>
   );
 };
