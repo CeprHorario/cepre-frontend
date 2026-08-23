@@ -50,7 +50,11 @@ export const CoordinadorForm = ({
   const [formData, setFormData] = useState(() => ({
     ...valorInicial,
     email: coordinador?.email || "",
-    courseId: coordinador?.courseId || coordinador?.coordinatorCourseId || coordinador?.course?.id || "",
+    courseId:
+      coordinador?.courseId ||
+      coordinador?.coordinatorCourseId ||
+      coordinador?.course?.id ||
+      "",
     dni: coordinador?.dni || "",
     firstName: coordinador?.firstName || "",
     lastName: coordinador?.lastName || "",
@@ -62,14 +66,14 @@ export const CoordinadorForm = ({
   const titulo = esEdicion ? "Editar coordinador" : "Crear coordinador";
   const cursosOptions = useMemo(
     () => cursos.map((curso) => ({ id: curso.id, name: curso.name })),
-    [cursos]
+    [cursos],
   );
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
     if (name === "dni") {
-      setFormData((prev) => ({ ...prev, [name]: value.replace(/[^0-9]/g, "").slice(0, 8) }));
+      setFormData((prev) => ({ ...prev, [name]: value.slice(0, 10) }));
       return;
     }
 
@@ -93,7 +97,8 @@ export const CoordinadorForm = ({
     };
 
     if (formData.courseId !== "" || esEdicion) {
-      payload.courseId = formData.courseId === "" ? null : Number(formData.courseId);
+      payload.courseId =
+        formData.courseId === "" ? null : Number(formData.courseId);
     }
 
     if (esEdicion) {
@@ -114,8 +119,8 @@ export const CoordinadorForm = ({
       return false;
     }
 
-    if (formData.dni.length !== 8) {
-      toast.error("El DNI debe tener 8 digitos");
+    if (formData.dni.length > 10) {
+      toast.error("El DNI no debe tener mas de 10 digitos");
       return false;
     }
 
@@ -146,25 +151,55 @@ export const CoordinadorForm = ({
 
   return (
     <div className="flex w-full justify-center overflow-x-auto">
-      <form onSubmit={handleSubmit} className="w-full max-w-3xl rounded-lg bg-white p-6 text-left shadow-lg">
-        <h2 className="mb-4 text-center text-2xl font-bold text-[#78211E]">{titulo}</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-3xl rounded-lg bg-white p-6 text-left shadow-lg"
+      >
+        <h2 className="mb-4 text-center text-2xl font-bold text-[#78211E]">
+          {titulo}
+        </h2>
         <p className="mb-2 text-center text-sm text-gray-600">
-          Los campos marcados con <span className="font-bold text-[#78211E]">*</span> son obligatorios.
+          Los campos marcados con{" "}
+          <span className="font-bold text-[#78211E]">*</span> son obligatorios.
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <FieldLabel text="Correo institucional:" required />
-            <Input type="email" name="email" value={formData.email} onChange={handleChange} required />
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
 
             <FieldLabel text="DNI:" required />
-            <Input type="text" name="dni" value={formData.dni} onChange={handleChange} required />
+            <Input
+              type="text"
+              name="dni"
+              value={formData.dni}
+              onChange={handleChange}
+              required
+            />
 
             <FieldLabel text="Nombres:" required />
-            <Input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
+            <Input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
 
             <FieldLabel text="Apellidos:" required />
-            <Input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
+            <Input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div>
@@ -184,10 +219,20 @@ export const CoordinadorForm = ({
             </select>
 
             <FieldLabel text="Correo personal:" />
-            <Input type="email" name="personalEmail" value={formData.personalEmail} onChange={handleChange} />
+            <Input
+              type="email"
+              name="personalEmail"
+              value={formData.personalEmail}
+              onChange={handleChange}
+            />
 
             <FieldLabel text="Celular:" />
-            <Input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+            <Input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+            />
 
             <FieldLabel text="Celulares adicionales:" />
             <Input
