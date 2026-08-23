@@ -13,6 +13,7 @@ import { MdAssignmentAdd } from "react-icons/md";
 import { useCursos } from "@/hooks/useCursos";
 import { TeachersServices } from "@/services/TeachersServices";
 import { HorarioCompleto } from "./HorarioCompleto";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezadoBase = [
   "N°",
@@ -44,6 +45,7 @@ export const DocenteUsuarios = ({
   const [limit, setLimit] = useState(10);
   const [curso_id, setCursoId] = useState(null);
   const [selected, setSelected] = useState({});
+  const [profesorAEliminar, setProfesorAEliminar] = useState(null);
   const {
     profesores,
     totalPages,
@@ -196,11 +198,13 @@ export const DocenteUsuarios = ({
     }
   };
 
-  const handleBorrar = async (id) => {
+  const handleBorrar = async () => {
+    if (!profesorAEliminar?.id) return;
     try {
-      const profesorEliminado = await eliminarProfesorMutation.mutateAsync(id);
+      const profesorEliminado = await eliminarProfesorMutation.mutateAsync(profesorAEliminar.id);
       if (profesorEliminado || profesorEliminado === "") {
         toast.success(`Profesor eliminado correctamente`);
+        setProfesorAEliminar(null);
       }
     } catch (error) {
       toast.error("Error al eliminar el docente");
@@ -395,7 +399,7 @@ export const DocenteUsuarios = ({
               <FaUserEdit size="20" />
             </Button>
             <ButtonNegative
-              onClick={() => handleBorrar(profesor.id)}
+              onClick={() => setProfesorAEliminar(profesor)}
               tittle="Borrar Docented"
             >
               <FaUserMinus size="20" />
@@ -439,6 +443,7 @@ export const DocenteUsuarios = ({
           if (!mostrar) handleRegresar();
         }}
         soloLectura
+        mostrarEnlacesClases={soloLectura}
       />
     );
   }
@@ -468,6 +473,15 @@ export const DocenteUsuarios = ({
           filtrar={false}
         />
       )}
+      <ConfirmModal
+        open={!!profesorAEliminar}
+        title="Eliminar docente"
+        message={`Se eliminará el docente "${profesorAEliminar?.firstName || ""} ${profesorAEliminar?.lastName || ""}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar docente"
+        isLoading={eliminarProfesorMutation.isPending}
+        onCancel={() => setProfesorAEliminar(null)}
+        onConfirm={handleBorrar}
+      />
       <div className="flex justify-between mt-4">
         <Button onClick={handlePrev} disabled={page === 1}>
           {" "}

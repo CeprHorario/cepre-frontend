@@ -9,6 +9,7 @@ import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { toast } from "react-toastify";
 import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { useTurnos } from "@/hooks/useTurnos";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezado = [
   "N°",
@@ -31,6 +32,7 @@ export const MonitorUsuarios = () => {
   const [limit, setLimit] = useState(10);
   const [shift_id, setShiftId] = useState(null); // Estado para el ID del turno seleccionado
   const [selected, setSelected] = useState({});
+  const [monitorAEliminar, setMonitorAEliminar] = useState(null);
   const {
     monitores,
     totalPages,
@@ -141,11 +143,13 @@ export const MonitorUsuarios = () => {
     }
   };
 
-  const handleBorrar = async (id) => {
+  const handleBorrar = async () => {
+    if (!monitorAEliminar?.id) return;
     try {
-      const monitorEliminado = await eliminarMonitorMutation.mutateAsync(id);
+      const monitorEliminado = await eliminarMonitorMutation.mutateAsync(monitorAEliminar.id);
       if (monitorEliminado || monitorEliminado === "") {
         toast.success("Monitor eliminado correctamente");
+        setMonitorAEliminar(null);
       }
     } catch (error) {
       toast.error("Error al eliminar el monitor");
@@ -219,7 +223,7 @@ export const MonitorUsuarios = () => {
               <FaUserEdit size="20" />
             </Button>
             <ButtonNegative
-              onClick={() => handleBorrar(monitor.id)}
+              onClick={() => setMonitorAEliminar(monitor)}
               tittle="Borrar Monitor"
             >
               <FaUserMinus size="20" />
@@ -264,6 +268,15 @@ export const MonitorUsuarios = () => {
           filtrar={false}
         />
       )}
+      <ConfirmModal
+        open={!!monitorAEliminar}
+        title="Eliminar monitor"
+        message={`Se eliminará el monitor "${monitorAEliminar?.firstName || ""} ${monitorAEliminar?.lastName || ""}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar monitor"
+        isLoading={eliminarMonitorMutation.isPending}
+        onCancel={() => setMonitorAEliminar(null)}
+        onConfirm={handleBorrar}
+      />
       <div className="flex justify-between mt-4">
         <Button onClick={handlePrev} disabled={page === 1}>
           {" "}

@@ -24,32 +24,16 @@ export const useSupervisores = ({ page = 1, limit = 20 } = {}) => {
   // Mutación para crear un supervisor
   const crearSupervisorMutation = useMutation({
     mutationFn: SupervisorsServices.createSupervisor,
-    onSuccess: (nuevoSupervisor) => {
-      queryClient.setQueryData(["supervisores", page, limit], (prev) => {
-        if (!prev) return;
-        return {
-          ...prev,
-          data: [nuevoSupervisor, ...prev.data],
-          total: prev.total + 1,
-        };
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supervisores"] });
     },
   });
 
   // Mutación para actualizar un supervisor
   const actualizarSupervisorMutation = useMutation({
     mutationFn: SupervisorsServices.updateSupervisor,
-    onSuccess: (supervisorActualizado) => {
-      queryClient.setQueryData(["supervisores", page, limit], (prev) => {
-        if (!prev) return;
-
-        return {
-          ...prev,
-          data: prev.data.map((s) =>
-            s.id === supervisorActualizado.id ? { ...supervisorActualizado, shiftId: s.shiftId } : s
-          ),
-        };
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supervisores"] });
     },
   });
 

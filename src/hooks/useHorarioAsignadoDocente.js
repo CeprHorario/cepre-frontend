@@ -15,6 +15,8 @@ const formatearHorario = (data) => {
           hora_ini: formatTimeToHHMM(item.hourSession?.startTime),
           hora_fin: formatTimeToHHMM(item.hourSession?.endTime),
           clase: clase.className || "ASIGNADO",
+          urlClassroom: clase.urlClassroom || clase.classes?.urlClassroom || "",
+          urlMeet: clase.urlMeet || clase.classes?.urlMeet || "",
         }))
         : []
     )
