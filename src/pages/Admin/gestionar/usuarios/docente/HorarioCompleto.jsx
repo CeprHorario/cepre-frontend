@@ -7,6 +7,17 @@ import { useHourSessions } from "@/hooks/useHourSessions";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { Tabla } from "@/components/ui/Tabla";
 
+const esEnlaceValido = (url) => {
+  if (!url) return false;
+
+  try {
+    const enlace = new URL(url);
+    return enlace.protocol === "http:" || enlace.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 export const HorarioCompleto = ({
   setMostrarHorarioCompleto,
   docente,
@@ -36,19 +47,28 @@ export const HorarioCompleto = ({
     return Array.from(clases.values());
   }, [horario]);
 
-  const renderLink = (url, label) =>
-    url ? (
+  const renderLink = (url, label) => {
+    const enlace = url?.trim();
+
+    if (!enlace) {
+      return <span className="text-gray-500">Sin enlace</span>;
+    }
+
+    if (!esEnlaceValido(enlace)) {
+      return <span className="font-semibold text-red-600">Enlace invalido</span>;
+    }
+
+    return (
       <a
-        href={url}
+        href={enlace}
         target="_blank"
         rel="noreferrer"
         className="text-blue-600 underline hover:text-blue-800 break-all"
       >
         {label}
       </a>
-    ) : (
-      <span className="text-gray-500">Sin enlace</span>
     );
+  };
 
   const handleClaseSeleccionada = (clase) => {
     if (!estadoEliminar || !clase) return;
