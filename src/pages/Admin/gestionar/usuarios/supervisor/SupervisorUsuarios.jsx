@@ -10,6 +10,7 @@ import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { FaSyncAlt, FaUserEdit, FaUserMinus } from "react-icons/fa";
 import { MdAssignmentAdd } from "react-icons/md";
 import { useTurnos } from "@/hooks/useTurnos";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezado = ["N°", "Nombres", "Apellidos", "Correo", "Número", "Turno", "Acciones"];
 const VISTA = {
@@ -32,6 +33,7 @@ export const SupervisorUsuarios = () => {
   } = useSupervisores({ page, limit });
   const { turnos } = useTurnos();
   const [editingId, setEditingId] = useState(null);
+  const [supervisorAEliminar, setSupervisorAEliminar] = useState(null);
   const [editFormData, setEditFormData] = useState({
     nombres: "",
     apellidos: "",
@@ -128,11 +130,13 @@ export const SupervisorUsuarios = () => {
     }
   };
 
-  const handleBorrar = async (id) => {
+  const handleBorrar = async () => {
+    if (!supervisorAEliminar?.id) return;
     try {
-      const supervisorEliminado = await eliminarSupervisorMutation.mutateAsync(id);
+      const supervisorEliminado = await eliminarSupervisorMutation.mutateAsync(supervisorAEliminar.id);
       if (supervisorEliminado || supervisorEliminado === '') {
         toast.success("Supervisor eliminado correctamente");
+        setSupervisorAEliminar(null);
       }
     }
     catch (error) {
@@ -189,7 +193,7 @@ export const SupervisorUsuarios = () => {
           <div className="flex gap-2 justify-center">
             <Button onClick={() => handleAsignarSalonSup(supervisor.id)} tittle="Asignar Salón"><MdAssignmentAdd size="20"/></Button>
             <Button onClick={() => handleModificar(supervisor.id)} tittle="Editar Supervisor" ><FaUserEdit size="20"/></Button>
-            <ButtonNegative onClick={() => handleBorrar(supervisor.id)} tittle="Borrar Supervisor"><FaUserMinus size="20"/></ButtonNegative>
+            <ButtonNegative onClick={() => setSupervisorAEliminar(supervisor)} tittle="Borrar Supervisor"><FaUserMinus size="20"/></ButtonNegative>
           </div>
         )
       ];
@@ -218,6 +222,15 @@ export const SupervisorUsuarios = () => {
       {isLoading ? <SkeletonTabla numRows={6} /> :
         <Tabla encabezado={encabezado} datos={getDatosSupervisores()} filtroDic={filtro} />
       }
+      <ConfirmModal
+        open={!!supervisorAEliminar}
+        title="Eliminar supervisor"
+        message={`Se eliminará el supervisor "${supervisorAEliminar?.firstName || ""} ${supervisorAEliminar?.lastName || ""}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar supervisor"
+        isLoading={eliminarSupervisorMutation.isPending}
+        onCancel={() => setSupervisorAEliminar(null)}
+        onConfirm={handleBorrar}
+      />
 
       <div className="flex justify-between mt-4">
         <Button onClick={handlePrev} disabled={page === 1}>

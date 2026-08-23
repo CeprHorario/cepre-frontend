@@ -11,6 +11,7 @@ import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { EditarSalon } from "./EditarSalon";
 import { FaSyncAlt } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezadoCursos = ["N° de Aula", "Área", "Turno", "Estado", "Acciones"];
 const VISTAS = {
@@ -40,6 +41,7 @@ export const Salones = () => {
   const { turnos, isLoading: isLoadingTurnos } = useTurnos();
 
   const [salonAEditar, setSalonAEditar] = useState(null);
+  const [salonAEliminar, setSalonAEliminar] = useState(null);
   const [vistaActual, setVistaActual] = useState(VISTAS.LISTA);
 
   const filtro = useMemo(() => {
@@ -51,9 +53,10 @@ export const Salones = () => {
     };
   }, [areas, turnos]);
 
-  const handleBorrar = async (id) => {
+  const handleBorrar = async () => {
+    if (!salonAEliminar?.id) return;
     try {
-      await eliminarClaseMutation.mutateAsync(id);
+      await eliminarClaseMutation.mutateAsync(salonAEliminar.id);
       toast.success("Salón eliminado correctamente");
     } catch (error) {
       console.error("Error al eliminar el aula:", error);
@@ -107,7 +110,7 @@ export const Salones = () => {
   const getAcciones = (aula) => (
     <div className="inline-flex gap-10">
       <Button onClick={() => handleEditar(aula)}>Editar</Button>
-      <ButtonNegative onClick={() => handleBorrar(aula.id)}>Borrar</ButtonNegative>
+      <ButtonNegative onClick={() => setSalonAEliminar(aula)}>Borrar</ButtonNegative>
     </div>
   );
 
@@ -150,6 +153,18 @@ export const Salones = () => {
       ) : (
         <Tabla encabezado={encabezadoCursos} datos={getDatosAulas()} filtroDic={filtro} />
       )}
+      <ConfirmModal
+        open={!!salonAEliminar}
+        title="Eliminar salón"
+        message={`Se eliminará el salón "${salonAEliminar?.name || ""}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar salón"
+        isLoading={eliminarClaseMutation.isPending}
+        onCancel={() => setSalonAEliminar(null)}
+        onConfirm={async () => {
+          await handleBorrar();
+          setSalonAEliminar(null);
+        }}
+      />
       <div className="mb-4"></div>
     </div>
   );

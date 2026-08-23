@@ -5,12 +5,14 @@ import { useProfesoresDisponibles } from "@/hooks/useListaProfesDisponibles";
 import { useHorasABloques } from "@/hooks/useHorasABloques";
 import { toast } from "react-toastify";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezado = ["N°", "Docente", "Correo", "Teléfono", "Acciones"];
 
 export const BuscarProfesor = ({ curso: { id: courseId, name }, profesor, horario, idSalon, setAsignar, setDesasignar }) => {
   const [profesorAsignado, setProfesorAsignado] = useState(profesor);
   const [wasAssigned, setWasAssigned] = useState(false);
+  const [confirmarDesasignacion, setConfirmarDesasignacion] = useState(false);
   const { mapearABloques } = useHorasABloques();
   const horarioApi = useMemo(() => mapearABloques(horario).map((bloque) => ({
     hourSessionId: bloque.id_hour_session, weekday: bloque.weekday
@@ -117,7 +119,7 @@ export const BuscarProfesor = ({ curso: { id: courseId, name }, profesor, horari
 
 
 
-            <Button onClick={() => { handleEliminarAsignacion(profesorAsignado.id) }} >
+            <Button onClick={() => setConfirmarDesasignacion(true)} >
               Eliminar Docente
             </Button>
 
@@ -127,6 +129,18 @@ export const BuscarProfesor = ({ curso: { id: courseId, name }, profesor, horari
       {isLoading || data === undefined ? (<SkeletonTabla />) :
         (< Tabla encabezado={encabezado} datos={mapProfesoresToTabla()} />)
       }
+      <ConfirmModal
+        open={confirmarDesasignacion}
+        title="Eliminar docente asignado"
+        message={`Se quitará a "${getNombreCompleto(profesorAsignado)}" del salón seleccionado. Esta acción no se puede deshacer.`}
+        confirmText="Eliminar docente"
+        isLoading={desasignarClaseMutation.isPending}
+        onCancel={() => setConfirmarDesasignacion(false)}
+        onConfirm={async () => {
+          await handleEliminarAsignacion(profesorAsignado.id);
+          setConfirmarDesasignacion(false);
+        }}
+      />
     </div>
   )
 }

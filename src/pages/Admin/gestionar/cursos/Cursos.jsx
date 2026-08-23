@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { useCursos } from "@/hooks/useCursos";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { FaSyncAlt } from "react-icons/fa";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 const encabezadoCursos = ["N°", "Curso", "Color", "Acciones"];
 
@@ -24,6 +25,7 @@ export const Cursos = () => {
   const [editandoId, setEditandoId] = useState(null);
   const [formData, setFormData] = useState({ name: "", color: "" });
   const [vistaActual, setVistaActual] = useState("lista"); // "lista" o "agregar"
+  const [cursoAEliminar, setCursoAEliminar] = useState(null);
 
   const handleModificar = (curso) => {
     setEditandoId(curso.id);
@@ -58,11 +60,13 @@ export const Cursos = () => {
     setFormData({ name: "", color: "" });
   };
 
-  const handleBorrar = async (id) => {
+  const handleBorrar = async () => {
+    if (!cursoAEliminar?.id) return;
     try {
-      const cursoEliminado = await eliminarCursoMutation.mutateAsync(id);
+      const cursoEliminado = await eliminarCursoMutation.mutateAsync(cursoAEliminar.id);
       if (cursoEliminado) {
         toast.success(`Curso eliminado correctamente`);
+        setCursoAEliminar(null);
       }
     } catch (error) {
       if (error.response?.status === 404) {
@@ -124,7 +128,7 @@ export const Cursos = () => {
     ) : (
       <div className="inline-flex gap-10">
         <Button onClick={() => handleModificar(curso)}> Modificar </Button>
-        <ButtonNegative onClick={() => handleBorrar(curso.id)}>Borrar  </ButtonNegative>
+        <ButtonNegative onClick={() => setCursoAEliminar(curso)}>Borrar</ButtonNegative>
       </div>
     );
   };
@@ -146,6 +150,15 @@ export const Cursos = () => {
       {isLoading ? <SkeletonTabla /> : (
         <Tabla encabezado={encabezadoCursos} datos={getDatosCursos()} />
       )}
+      <ConfirmModal
+        open={!!cursoAEliminar}
+        title="Eliminar curso"
+        message={`Se eliminará el curso "${cursoAEliminar?.name || ""}". Esta acción no se puede deshacer.`}
+        confirmText="Eliminar curso"
+        isLoading={eliminarCursoMutation.isPending}
+        onCancel={() => setCursoAEliminar(null)}
+        onConfirm={handleBorrar}
+      />
       <div className="mb-4"></div>
     </div>
   );
