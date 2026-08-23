@@ -20,20 +20,25 @@ export const CoordinatorsServices = {
     phonesAdditional = [],
     personalEmail,
   }) {
-    if (!email || courseId === undefined || !dni || !firstName || !lastName) {
+    if (!email || !dni || !firstName || !lastName) {
       throw new Error("Faltan datos obligatorios");
     }
 
-    return request("post", "/coordinators", {
+    const payload = {
       email,
-      courseId,
       dni,
       firstName,
       lastName,
       phone,
       phonesAdditional,
       personalEmail,
-    });
+    };
+
+    if (courseId !== undefined) {
+      payload.courseId = courseId;
+    }
+
+    return request("post", "/coordinators", payload);
   },
 
   async updateCoordinator({

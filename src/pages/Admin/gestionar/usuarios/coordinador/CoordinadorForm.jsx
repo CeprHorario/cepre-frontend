@@ -84,7 +84,6 @@ export const CoordinadorForm = ({
   const construirPayload = () => {
     const payload = {
       email: formData.email.trim(),
-      courseId: formData.courseId === "" ? null : Number(formData.courseId),
       dni: formData.dni.trim(),
       firstName: formData.firstName.trim(),
       lastName: formData.lastName.trim(),
@@ -92,6 +91,10 @@ export const CoordinadorForm = ({
       phonesAdditional: limpiarTelefonos(formData.phonesAdditional),
       personalEmail: formData.personalEmail.trim() || undefined,
     };
+
+    if (formData.courseId !== "" || esEdicion) {
+      payload.courseId = formData.courseId === "" ? null : Number(formData.courseId);
+    }
 
     if (esEdicion) {
       payload.id = coordinador.id;
