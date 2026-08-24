@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/Button";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { Tabla } from "@/components/ui/Tabla";
 
-const encabezado = ["Curso", "Docente", "Correo del docente", "Acciones"];
-
-export const TablaCursos = ({ docentes = [], buscarProfesor }) => {
+export const TablaCursos = ({ docentes = [], buscarProfesor, soloLectura = false }) => {
   const { cursos, isLoading, isError, error } = useCursos();
+  const encabezado = soloLectura
+    ? ["Curso", "Docente", "Correo del docente"]
+    : ["Curso", "Docente", "Correo del docente", "Acciones"];
 
-  if (isLoading) return <SkeletonTabla numRows={5} numColums={4} />;
+  if (isLoading) return <SkeletonTabla numRows={5} numColums={encabezado.length} />;
 
   if (isError) {
     return (
@@ -19,30 +20,35 @@ export const TablaCursos = ({ docentes = [], buscarProfesor }) => {
     );
   }
 
-  const docentesPorCurso = {}
-  docentes.map((docente) => {
+  const docentesPorCurso = {};
+  docentes.forEach((docente) => {
     if (docente.teacherId !== "no asignado") {
-      const cursoId = docente.courseName;
-      docentesPorCurso[cursoId] = {
+      docentesPorCurso[docente.courseName] = {
         id: docente.teacherId,
         firstName: docente.firstName,
         lastName: docente.lastName,
         email: docente.email,
       };
     }
-  }, {});
+  });
 
   const datos = cursos.map((curso) => {
     const docente = docentesPorCurso[curso.name];
-
-    return [
+    const fila = [
       curso.name,
       docente ? `${docente.firstName} ${docente.lastName}` : "-",
       docente?.email || "-",
-      <Button key={curso.id} onClick={() => { buscarProfesor(curso, docente) }}>
-        Modificar
-      </Button>,
     ];
+
+    if (!soloLectura) {
+      fila.push(
+        <Button key={curso.id} onClick={() => buscarProfesor(curso, docente)}>
+          Modificar
+        </Button>,
+      );
+    }
+
+    return fila;
   });
 
   return (

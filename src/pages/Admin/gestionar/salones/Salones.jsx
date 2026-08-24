@@ -1,40 +1,111 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { FaSyncAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 import { Tabla } from "@/components/ui/Tabla";
 import { Button } from "@/components/ui/Button";
 import { ButtonNegative } from "@/components/ui/ButtonNegative";
 import { AgregarSalon } from "./AgregarSalon";
-import { toast } from "react-toastify";
 import { useClases } from "@/hooks/useClases";
 import { useAreas } from "@/hooks/useAreas";
 import { useTurnos } from "@/hooks/useTurnos";
 import { SkeletonTabla } from "@/components/skeletons/SkeletonTabla";
 import { EditarSalon } from "./EditarSalon";
-import { FaSyncAlt } from "react-icons/fa";
-import { useSearchParams } from "react-router-dom";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
-const encabezadoCursos = ["N° de Aula", "Área", "Turno", "Estado", "Acciones"];
 const VISTAS = {
   LISTA: "lista",
   AGREGAR: "agregar",
-  EDITAR: "editar"
+  EDITAR: "editar",
 };
 
 const ESTADOS_SALON = {
   COMPLETO: "Listo",
-  FALTAN_DOCENTES: "Falta Docentes"
-}
+  FALTAN_DOCENTES: "Falta Docentes",
+};
 
-export const Salones = () => {
+const esLinkMeetValido = (url) => {
+  if (!url?.trim()) return false;
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol.startsWith("http") && parsedUrl.hostname === "meet.google.com";
+  } catch {
+    return false;
+  }
+};
+
+const esLinkClassroomValido = (url) => {
+  if (!url?.trim()) return false;
+
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol.startsWith("http") && parsedUrl.hostname === "classroom.google.com";
+  } catch {
+    return false;
+  }
+};
+
+const EnlaceMeet = ({ url }) => {
+  if (!url?.trim()) return <span className="font-semibold text-amber-700">Faltante</span>;
+
+  if (!esLinkMeetValido(url)) {
+    return <span className="font-semibold text-red-700">Link invalido</span>;
+  }
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="text-blue-700 hover:underline break-all"
+    >
+      Abrir Meet
+    </a>
+  );
+};
+
+const EnlaceClassroom = ({ url }) => {
+  if (!url?.trim()) return <span className="font-semibold text-amber-700">Faltante</span>;
+
+  if (!esLinkClassroomValido(url)) {
+    return <span className="font-semibold text-red-700">Link invalido</span>;
+  }
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="text-blue-700 hover:underline break-all"
+    >
+      Abrir Classroom
+    </a>
+  );
+};
+
+export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES" }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const vistaClase = useMemo(() => searchParams.get("salon") || "", [searchParams]);
+  const encabezadoCursos = useMemo(
+    () => [
+      "N de Aula",
+      "Area",
+      "Turno",
+      "Estado",
+      "Meet",
+      "Classroom",
+      soloLectura ? "Ver" : "Acciones",
+    ],
+    [soloLectura],
+  );
 
   const {
     clases,
     isLoading: isLoadingClases,
     eliminarClaseMutation,
     crearClaseMutation,
-    refetch
+    refetch,
   } = useClases();
 
   const { areas, isLoading: isLoadingAreas } = useAreas();
@@ -49,7 +120,7 @@ export const Salones = () => {
     return {
       1: { options: areas.map((a) => a.name) },
       2: { options: turnos.map((t) => t.name) },
-      3: { options: ["Listo", "Falta Docentes"] }
+      3: { options: ["Listo", "Falta Docentes"] },
     };
   }, [areas, turnos]);
 
@@ -57,10 +128,10 @@ export const Salones = () => {
     if (!salonAEliminar?.id) return;
     try {
       await eliminarClaseMutation.mutateAsync(salonAEliminar.id);
-      toast.success("Salón eliminado correctamente");
+      toast.success("Salon eliminado correctamente");
     } catch (error) {
       console.error("Error al eliminar el aula:", error);
-      toast.error("Error al eliminar el salón");
+      toast.error("Error al eliminar el salon");
     }
   };
 
@@ -82,16 +153,16 @@ export const Salones = () => {
   const handleEditar = useCallback((aula) => {
     setSalonAEditar(aula?.id);
     setVistaActual(VISTAS.EDITAR);
-    setSearchParams(prev => {
+    setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.set('salon', aula?.name || '');
+      newParams.set("salon", aula?.name || "");
       return newParams;
     });
-  }, [setSalonAEditar, setVistaActual, setSearchParams]);
+  }, [setSearchParams]);
 
   useEffect(() => {
     if (vistaClase && clases.length) {
-      const aula = clases.find((aula) => aula.name === vistaClase);
+      const aula = clases.find((item) => item.name === vistaClase);
       if (aula) {
         handleEditar(aula);
       }
@@ -100,9 +171,9 @@ export const Salones = () => {
 
   const handleRegresar = () => {
     setVistaActual(VISTAS.LISTA);
-    setSearchParams(prev => {
+    setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
-      newParams.delete('salon'); // (opcionalmente usa .delete en lugar de .remove, más estándar)
+      newParams.delete("salon");
       return newParams;
     }, { replace: true });
   };
@@ -114,28 +185,36 @@ export const Salones = () => {
     </div>
   );
 
+  const getVista = (aula) => (
+    <div className="inline-flex justify-center">
+      <Button onClick={() => handleEditar(aula)}>Ver</Button>
+    </div>
+  );
+
   const getDatosAulas = () => {
     if (!clases || !Array.isArray(clases)) return [];
-  
+
     const clasesOrdenadas = [...clases].sort((a, b) =>
-      a.name?.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+      a.name?.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
     );
-  
+
     return clasesOrdenadas.map((aula) => [
       aula.name || "Sin nombre",
-      aula.area?.name || "Sin área",
+      aula.area?.name || "Sin area",
       aula.shift?.name || "Sin turno",
       ESTADOS_SALON[aula?.status] || "Sin estado",
-      getAcciones(aula),
+      <EnlaceMeet url={aula.urlMeet} />,
+      <EnlaceClassroom url={aula.urlClassroom} />,
+      soloLectura ? getVista(aula) : getAcciones(aula),
     ]);
-  }  
+  };
 
   if (vistaActual === VISTAS.AGREGAR) {
     return <AgregarSalon onAgregarSalon={handleAgregarSalon} regresar={handleRegresar} areas={areas} turnos={turnos} />;
   }
 
   if (vistaActual === VISTAS.EDITAR) {
-    return <EditarSalon idSalon={salonAEditar} regresar={handleRegresar} />;
+    return <EditarSalon idSalon={salonAEditar} regresar={handleRegresar} soloLectura={soloLectura} />;
   }
 
   return (
@@ -144,8 +223,8 @@ export const Salones = () => {
         <Button onClick={refetch}>
           <FaSyncAlt />
         </Button>
-        <h2 className="text-2xl font-bold text-center flex-1">GESTIÓN DE SALONES</h2>
-        <Button onClick={handleAgregar}>Agregar Salón</Button>
+        <h2 className="text-2xl font-bold text-center flex-1">{titulo}</h2>
+        {soloLectura ? <div className="w-24" /> : <Button onClick={handleAgregar}>Agregar Salon</Button>}
       </div>
 
       {isLoadingAreas || isLoadingTurnos || isLoadingClases ? (
@@ -155,9 +234,9 @@ export const Salones = () => {
       )}
       <ConfirmModal
         open={!!salonAEliminar}
-        title="Eliminar salón"
-        message={`Se eliminará el salón "${salonAEliminar?.name || ""}". Esta acción no se puede deshacer.`}
-        confirmText="Eliminar salón"
+        title="Eliminar salon"
+        message={`Se eliminara el salon "${salonAEliminar?.name || ""}". Esta accion no se puede deshacer.`}
+        confirmText="Eliminar salon"
         isLoading={eliminarClaseMutation.isPending}
         onCancel={() => setSalonAEliminar(null)}
         onConfirm={async () => {
