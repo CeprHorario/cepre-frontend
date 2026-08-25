@@ -23,8 +23,8 @@ export const CoordinatorPanel = () => {
     : `Panel de Coordinador - ${coordinatorCourseName}`;
 
   const renderContenido = () => {
-    if (esCoordinadorGeneral && vistaActual === VISTAS.SALONES) {
-      return <Salones soloLectura titulo="CONSULTA DE SALONES" />;
+    if (vistaActual === VISTAS.SALONES) {
+      return <Salones soloLectura titulo="CONSULTA DE SALONES" permitirDetalle={esCoordinadorGeneral} />;
     }
 
     return (
@@ -52,32 +52,30 @@ export const CoordinatorPanel = () => {
             </p>
           </div>
 
-          {esCoordinadorGeneral && (
-            <div className="mb-5 flex flex-wrap justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => setVistaActual(VISTAS.DOCENTES)}
-                className={`rounded-md px-4 py-2 font-semibold shadow-sm transition-colors ${
-                  vistaActual === VISTAS.DOCENTES
-                    ? "bg-[#78211E] text-white"
-                    : "bg-white text-[#78211E] hover:bg-gray-100"
-                }`}
-              >
-                Docentes
-              </button>
-              <button
-                type="button"
-                onClick={() => setVistaActual(VISTAS.SALONES)}
-                className={`rounded-md px-4 py-2 font-semibold shadow-sm transition-colors ${
-                  vistaActual === VISTAS.SALONES
-                    ? "bg-[#78211E] text-white"
-                    : "bg-white text-[#78211E] hover:bg-gray-100"
-                }`}
-              >
-                Salones
-              </button>
-            </div>
-          )}
+          <div className="mb-5 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setVistaActual(VISTAS.DOCENTES)}
+              className={`rounded-md px-4 py-2 font-semibold shadow-sm transition-colors ${
+                vistaActual === VISTAS.DOCENTES
+                  ? "bg-[#78211E] text-white"
+                  : "bg-white text-[#78211E] hover:bg-gray-100"
+              }`}
+            >
+              Docentes
+            </button>
+            <button
+              type="button"
+              onClick={() => setVistaActual(VISTAS.SALONES)}
+              className={`rounded-md px-4 py-2 font-semibold shadow-sm transition-colors ${
+                vistaActual === VISTAS.SALONES
+                  ? "bg-[#78211E] text-white"
+                  : "bg-white text-[#78211E] hover:bg-gray-100"
+              }`}
+            >
+              Salones
+            </button>
+          </div>
 
           {renderContenido()}
         </div>

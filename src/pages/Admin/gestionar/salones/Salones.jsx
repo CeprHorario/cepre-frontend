@@ -84,20 +84,27 @@ const EnlaceClassroom = ({ url }) => {
   );
 };
 
-export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES" }) => {
+export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES", permitirDetalle = true }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const vistaClase = useMemo(() => searchParams.get("salon") || "", [searchParams]);
   const encabezadoCursos = useMemo(
-    () => [
+    () => {
+      const columnas = [
       "N de Aula",
       "Area",
       "Turno",
       "Estado",
       "Meet",
       "Classroom",
-      soloLectura ? "Ver" : "Acciones",
-    ],
-    [soloLectura],
+      ];
+
+      if (!soloLectura || permitirDetalle) {
+        columnas.push(soloLectura ? "Ver" : "Acciones");
+      }
+
+      return columnas;
+    },
+    [soloLectura, permitirDetalle],
   );
 
   const {
@@ -151,6 +158,8 @@ export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES" }) 
   };
 
   const handleEditar = useCallback((aula) => {
+    if (!permitirDetalle) return;
+
     setSalonAEditar(aula?.id);
     setVistaActual(VISTAS.EDITAR);
     setSearchParams((prev) => {
@@ -158,16 +167,16 @@ export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES" }) 
       newParams.set("salon", aula?.name || "");
       return newParams;
     });
-  }, [setSearchParams]);
+  }, [permitirDetalle, setSearchParams]);
 
   useEffect(() => {
-    if (vistaClase && clases.length) {
+    if (permitirDetalle && vistaClase && clases.length) {
       const aula = clases.find((item) => item.name === vistaClase);
       if (aula) {
         handleEditar(aula);
       }
     }
-  }, [vistaClase, clases, handleEditar]);
+  }, [permitirDetalle, vistaClase, clases, handleEditar]);
 
   const handleRegresar = () => {
     setVistaActual(VISTAS.LISTA);
@@ -198,15 +207,22 @@ export const Salones = ({ soloLectura = false, titulo = "GESTION DE SALONES" }) 
       a.name?.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" })
     );
 
-    return clasesOrdenadas.map((aula) => [
+    return clasesOrdenadas.map((aula) => {
+      const fila = [
       aula.name || "Sin nombre",
       aula.area?.name || "Sin area",
       aula.shift?.name || "Sin turno",
       ESTADOS_SALON[aula?.status] || "Sin estado",
       <EnlaceMeet url={aula.urlMeet} />,
       <EnlaceClassroom url={aula.urlClassroom} />,
-      soloLectura ? getVista(aula) : getAcciones(aula),
-    ]);
+      ];
+
+      if (!soloLectura || permitirDetalle) {
+        fila.push(soloLectura ? getVista(aula) : getAcciones(aula));
+      }
+
+      return fila;
+    });
   };
 
   if (vistaActual === VISTAS.AGREGAR) {
