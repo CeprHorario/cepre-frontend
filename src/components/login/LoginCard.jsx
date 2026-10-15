@@ -1,56 +1,75 @@
 import React, { useState } from "react";
+import { FaLock } from "react-icons/fa";
 import { GoogleButton } from "./GoogleButton";
-import escudo from "@/assets/escudo_unsa.png";
+import escudo from "@/assets/LOGO_UNSA.png";
 import logo from "@/assets/logo-light.png";
 
-export const LoginCard = ({ onGoogleLogin, isLoading }) => {
+export const LoginCard = ({ onGoogleLogin, isLoading, embedded = false }) => {
   return (
-    <div className="w-full max-w-md bg-white/85 backdrop-blur-sm rounded-2xl shadow-2xl p-8 transition-all duration-300 animate-fadeIn">
-      <div className="flex flex-col items-center gap-4 mb-6">
-        <div className="flex flex-row items-center justify-center gap-12">
+    <section
+      className={`relative w-full max-w-md overflow-hidden rounded-2xl transition-all duration-300 animate-fadeIn ${
+        embedded
+          ? "bg-transparent px-1 py-5"
+          : "border border-slate-200 bg-white/95 p-7 shadow-[0_22px_60px_rgba(71,31,30,0.18)] backdrop-blur-sm sm:p-8"
+      }`}
+    >
+      {!embedded && (
+        <div className="absolute inset-x-0 top-0 h-1.5 bg-[#78211E]" />
+      )}
+
+      <div className="flex flex-col items-center">
+        <div className="flex w-full items-center justify-center gap-5 rounded-2xl border border-slate-200 bg-[#FAF7F7] px-5 py-4">
           <Escudo />
+          <div className="h-10 w-px bg-slate-300" aria-hidden="true" />
           <Logo />
         </div>
-        <div className="w-full border-t-2 border-gray-300" />
+
+        <div className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#78211E]/8 px-3 py-1.5 text-xs font-semibold text-[#78211E]">
+          <FaLock size={10} aria-hidden="true" />
+          Acceso institucional seguro
+        </div>
+
+        <h1 className="mt-4 text-center text-2xl font-bold text-slate-900">
+          Iniciar sesión
+        </h1>
+        <p className="mt-2 text-center text-sm leading-6 text-slate-600">
+          Ingresa al sistema de horarios con tu cuenta institucional de
+          CEPRUNSA.
+        </p>
       </div>
-      <h1 className="text-xl text-gray-800 font-semibold text-center mb-6">
-        Universidad Nacional de San Agustín
-      </h1>
-      <div className="space-y-4">
-        <div className="text-center text-gray-700">
-          <p>Accede con tu cuenta institucional</p>
-          <p className="text-sm text-gray-500 mt-1">Usa tu correo CEPRUNSA</p>
-        </div>
-        <div className="px-2 md:px-3">
-          <GoogleButton onClick={onGoogleLogin} isLoading={isLoading} />
-        </div>
-        <div className="flex justify-end mt-2">
-          <a href="#" className="text-blue-500 hover:underline text-sm">
-            Aviso de Cookies
-          </a>
-        </div>
+
+      <div className="mt-7">
+        <GoogleButton onClick={onGoogleLogin} isLoading={isLoading} />
+        <p className="mt-4 text-center text-xs leading-5 text-slate-500">
+          Utiliza el correo institucional autorizado para tu perfil.
+        </p>
       </div>
-    </div>
+
+      <div className="mt-6 border-t border-slate-200 pt-4 text-center">
+        <p className="text-xs text-slate-400">
+          Universidad Nacional de San Agustín de Arequipa
+        </p>
+      </div>
+    </section>
   );
 };
 
-
 export const Escudo = () => (
-  <div className="h-12 w-auto">
+  <div className="flex h-12 shrink-0 items-center justify-center">
     <OptimizedImage
       src={escudo}
-      alt="LOGO CEPRUNSA"
-      className="h-full w-auto object-contain"
+      alt="Escudo de la Universidad Nacional de San Agustín"
+      className="h-12 object-contain"
     />
   </div>
 );
 
 export const Logo = () => (
-  <div className="h-12 w-auto">
+  <div className="flex h-12 min-w-0 max-w-52 items-center justify-center">
     <OptimizedImage
       src={logo}
-      alt="ESCUDO CEPRUNSA"
-      className="h-full w-auto object-contain"
+      alt="CEPRUNSA"
+      className="h-12 max-w-full object-contain"
     />
   </div>
 );
@@ -61,7 +80,7 @@ const OptimizedImage = ({ src, alt, className }) => {
   return (
     <div className={`relative ${className}`}>
       {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-gray-200" />
+        <div className="absolute inset-0 animate-pulse rounded bg-slate-200" />
       )}
       <img
         src={src}

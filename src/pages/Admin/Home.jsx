@@ -18,7 +18,8 @@ export const Home = () => {
   const options = [
     { path: 'generar', title: 'Generar Proceso', img: 'validar.png' },
     { path: 'gestionar', title: 'Gestionar Datos', img: 'gestionar.png' },
-    { path: 'importar', title: 'Importar Archivos', img: 'importar.png' }   
+    { path: 'importar', title: 'Importar Archivos', img: 'importar.png' },
+    { path: 'configuracion', title: 'Configurar Sistema', img: 'gestionar.png' }
     
   ];
 

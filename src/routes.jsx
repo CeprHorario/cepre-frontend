@@ -15,6 +15,7 @@ import { CoordinatorPanel } from "./pages/Coordinator/CoordinatorPanel";
 import { NotFound } from "./pages/NotFound";
 import { GoogleAuthHandler } from "./pages/Login/GoogleAuthHandler";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ConfiguracionSistema } from "./pages/Admin/configuracion/ConfiguracionSistema";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
               { path: "importar", element: <Importar /> },
               { path: "gestionar", element: <Gestionar /> },              
               { path: "generar", element: <Generar /> },
+              { path: "configuracion", element: <ConfiguracionSistema /> },
             ],
           },
           { path: "docente", element: <DocentePanel /> },

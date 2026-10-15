@@ -1,4 +1,5 @@
 import axios from "axios";
+import { MAINTENANCE_MODE_EVENT } from "@/constants/systemEvents";
 
 let token = localStorage.getItem("token");
 
@@ -30,6 +31,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    if (
+      error.response?.status === 503 &&
+      error.response?.data?.code === "MAINTENANCE_MODE"
+    ) {
+      window.dispatchEvent(
+        new CustomEvent(MAINTENANCE_MODE_EVENT, {
+          detail: error.response.data,
+        }),
+      );
+    }
+
     if (error.response?.status === 401) {
       console.warn("⚠️ Token expirado. Redirigiendo al login...");
       localStorage.removeItem("token"); // Eliminar token
