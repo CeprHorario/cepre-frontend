@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginCard } from "@/components/login/LoginCard";
 
-export const Login = () => {
+export const Login = ({ embedded = false }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,8 +45,12 @@ export const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="h-screen p-5 flex flex-col items-center justify-center  bg-opacity-90">
-      <LoginCard onGoogleLogin={handleLogin} isLoading={isLoading} />
+    <div className={`${embedded ? "py-6" : "h-screen p-5"} flex flex-col items-center justify-center bg-opacity-90`}>
+      <LoginCard
+        onGoogleLogin={handleLogin}
+        isLoading={isLoading}
+        embedded={embedded}
+      />
     </div>
   );
 };
