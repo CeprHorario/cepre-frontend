@@ -1,47 +1,90 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* Establecer el fondo blanco globalmente */
-html, body, #root {
-  @apply bg-white text-black;
-  font-family: "Poppins", sans-serif;
+/* Identidad CEPRUNSA: guinda y marino del logo, dorado del escudo UNSA */
+@theme {
+  --font-sans: "Open Sans", system-ui, sans-serif;
+  --font-display: "Montserrat", "Open Sans", sans-serif;
+
+  --color-guinda-50: #f7ecee;
+  --color-guinda-100: #ebd3d8;
+  --color-guinda-600: #8a1c33;
+  --color-guinda-700: #661124;
+  --color-guinda-800: #4e0d1b;
+
+  --color-marino-50: #eceef6;
+  --color-marino-100: #d7daea;
+  --color-marino-300: #9ea3c4;
+  --color-marino-400: #8c91b5;
+  --color-marino-600: #343b6b;
+  --color-marino-700: #2e3566;
+  --color-marino-800: #232850;
+  --color-marino-900: #1c2140;
+
+  --color-oro-100: #fbf3e3;
+  --color-oro-300: #e9c98b;
+  --color-oro-500: #d2ae6d;
+  --color-oro-700: #8a6a2a;
+
+  --color-ink-900: #1a1c2b;
+  --color-ink-700: #3a3d52;
+  --color-ink-500: #5b5f73;
+  --color-ink-300: #9c9b9a;
+
+  --color-line: #e3e4ea;
+  --color-line-soft: #eeeff3;
+  --color-field: #cfd1db;
+  --color-surface-2: #f8f8fa;
+  --color-app: #f4f4f6;
+
+  --color-ok-50: #e3f1e9;
+  --color-ok-600: #1f7a4d;
+  --color-ok-700: #1f6b44;
+  --color-warn-50: #fbf0d9;
+  --color-warn-700: #7a5200;
+  --color-danger-50: #fbe7e5;
+  --color-danger-600: #b42318;
+  --color-danger-700: #a3201a;
+
+  --shadow-pop: 0 18px 48px rgba(26, 28, 43, 0.16);
 }
 
-/* Estilo de notificación exito  */
-.Toastify__toast--success {
-  background : #14974d !important;
-  color: white;
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
-/* Icono de éxito blanco */
-.Toastify__toast--success .Toastify__toast-icon svg {
-  fill: white !important;
+body {
+  margin: 0;
+  background: var(--color-app);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Barra de progreso blanca en toasts de éxito */
-.Toastify__toast--success .Toastify__progress-bar {
-  background-color: white !important;
-  opacity: 1 !important;
-  filter: none !important;
+:focus-visible {
+  outline: 2px solid var(--color-guinda-600);
+  outline-offset: 2px;
 }
 
-/* Estilo de notificación error  */
-.Toastify__toast--error {
-  background : #d9534f !important;
-  color: white;
+/* Header guinda con la línea dorada que lo une al menú marino */
+.app-header {
+  background: var(--color-guinda-700);
+  box-shadow: inset 0 -3px 0 var(--color-oro-500);
 }
 
-/* Icono de error blanco */
-.Toastify__toast--error .Toastify__toast-icon svg {
-  fill: white !important;
+/* Recorte blanco del logo, heredado de la versión anterior */
+.logo-cutout {
+  background: #fff;
+  border-bottom-right-radius: 28px;
+  clip-path: polygon(0 0, 100% 0, 100% 92%, 0 100%);
 }
 
-/* Barra de progreso blanca en toasts de error */
-.Toastify__toast--error .Toastify__progress-bar {
-  background-color: white !important;
-  opacity: 1 !important;
-  filter: none !important;
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.Toastify__toast {
+  font-family: var(--font-sans);
+  border-radius: 12px;
 }
