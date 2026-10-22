@@ -1,40 +1,42 @@
-import type { Weekday } from "@/api/types";
-import { cellKey, type CellKey } from "@/components/schedule/WeekGrid";
-import { normalizeWeekday } from "@/lib/schedule";
+import type { AvailabilityInterval } from "@/api/types";
 
-/**
- * La disponibilidad del docente aún no tiene endpoint en el backend:
- * se guarda en este navegador. Se migra el formato de la versión anterior.
- */
-const key = (teacherId: string) => `ceprunsa:disponibilidad:${teacherId}`;
-const legacyKey = (teacherId: string) => `disponibilidad-${teacherId}`;
-
-export function loadAvailability(teacherId: string): Set<CellKey> {
-  try {
-    const raw = localStorage.getItem(key(teacherId));
-    if (raw) return new Set(JSON.parse(raw) as CellKey[]);
-
-    const legacy = localStorage.getItem(legacyKey(teacherId));
-    if (legacy) {
-      const items = JSON.parse(legacy) as { dia?: string; hora_ini?: string }[];
-      const migrated = new Set<CellKey>();
-      items.forEach((item) => {
-        const day = item.dia ? normalizeWeekday(item.dia) : null;
-        if (day && item.hora_ini) migrated.add(cellKey(day as Weekday, item.hora_ini));
-      });
-      saveAvailability(teacherId, migrated);
-      return migrated;
-    }
-  } catch {
-    // datos corruptos: se empieza vacío
+/** Intervalos del docente independientes del turno, en formato HH:mm. */
+export function isCovered(intervals: AvailabilityInterval[], target: AvailabilityInterval): boolean {
+  let cursor = target.start;
+  for (const interval of intervals.filter((i) => i.weekday === target.weekday).sort((a, b) => a.start.localeCompare(b.start))) {
+    if (interval.start > cursor) break;
+    if (interval.end > cursor) cursor = interval.end;
+    if (cursor >= target.end) return true;
   }
-  return new Set();
+  return false;
 }
 
-export function saveAvailability(teacherId: string, cells: Set<CellKey>) {
-  try {
-    localStorage.setItem(key(teacherId), JSON.stringify([...cells]));
-  } catch {
-    // sin almacenamiento disponible
+export function overlaps(a: AvailabilityInterval, b: AvailabilityInterval): boolean {
+  return a.weekday === b.weekday && a.start < b.end && b.start < a.end;
+}
+
+export function toggleAvailability(intervals: AvailabilityInterval[], targets: AvailabilityInterval[]): AvailabilityInterval[] {
+  return changeIntervals(intervals, targets, !targets.every((target) => isCovered(intervals, target)));
+}
+
+export function changeIntervals(intervals: AvailabilityInterval[], targets: AvailabilityInterval[], add: boolean): AvailabilityInterval[] {
+  let result = [...intervals];
+  for (const target of targets) {
+    if (add) result.push(target);
+    else result = result.flatMap((interval) => {
+      if (!overlaps(interval, target)) return [interval];
+      const fragments: AvailabilityInterval[] = [];
+      if (interval.start < target.start) fragments.push({ ...interval, end: target.start });
+      if (interval.end > target.end) fragments.push({ ...interval, start: target.end });
+      return fragments;
+    });
   }
+  const merged: AvailabilityInterval[] = [];
+  for (const interval of result.sort((a, b) => a.weekday.localeCompare(b.weekday) || a.start.localeCompare(b.start))) {
+    const previous = merged.at(-1);
+    if (previous && previous.weekday === interval.weekday && interval.start <= previous.end) {
+      previous.end = previous.end > interval.end ? previous.end : interval.end;
+    } else merged.push({ ...interval });
+  }
+  return merged;
 }

@@ -286,3 +286,10 @@ export interface Slot {
   hourSessionId: number;
   weekday: Weekday;
 }
+
+/** Disponibilidad por tiempo real, compartida entre turnos. */
+export interface AvailabilityInterval {
+  weekday: Weekday;
+  start: string;
+  end: string;
+}

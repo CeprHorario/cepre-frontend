@@ -3,8 +3,8 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FiCheck, FiChevronLeft, FiTrash2 } from "react-icons/fi";
 import { apiErrorMessage } from "@/api/client";
-import { useAreas, useAssignmentMutations, useAvailableClasses, useCourses, usePeriods, useTeacher, useTeachers, useTeacherSchedule } from "@/api/queries";
-import type { Slot, TeacherSummary, Weekday } from "@/api/types";
+import { useAreas, useAssignmentMutations, useAvailableClasses, useCourses, usePeriods, useTeacher, useTeachers, useTeacherSchedule, useTeacherAvailability, useSaveTeacherAvailability } from "@/api/queries";
+import type { AvailabilityInterval, Slot, TeacherSummary } from "@/api/types";
 import { cellKey, WeekGrid, type CellKey } from "@/components/schedule/WeekGrid";
 import { AreaBadge, Badge } from "@/components/ui/Badge";
 import { Button, IconButton } from "@/components/ui/Button";
@@ -15,10 +15,14 @@ import { Segmented } from "@/components/ui/Segmented";
 import { LoadingScreen, Skeleton } from "@/components/ui/Spinner";
 import { formatPhone, fullName, initials, JOB_STATUS_LABEL, shortClassName } from "@/lib/format";
 import { layoutEntries, toHHMM, WEEKDAY_SHORT, WEEKDAYS, type ScheduleEntry } from "@/lib/schedule";
-import { loadAvailability, saveAvailability } from "./availability";
+import { toggleAvailability, isCovered, overlaps } from "./availability";
 
 export function AsignarSalonesPage({ basePath }: { basePath: string }) {
   const { id = "" } = useParams();
+  return <AsignarSalones key={id} id={id} basePath={basePath} />;
+}
+
+function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
   const navigate = useNavigate();
   const location = useLocation();
   const fromList = (location.state as { teacher?: TeacherSummary } | null)?.teacher;
@@ -59,15 +63,35 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
 
   const rows = useMemo(() => periods.filter((p) => p.shiftId === shiftId).map((p) => ({ start: p.start, end: p.end })), [periods, shiftId]);
 
-  const [marked, setMarked] = useState<Set<CellKey>>(() => loadAvailability(id));
+  const availability = useTeacherAvailability(id);
+  const saveAvailability = useSaveTeacherAvailability(id);
+  const [draft, setDraft] = useState<AvailabilityInterval[] | null>(null);
+  const intervals = useMemo(() => draft ?? availability.data ?? [], [draft, availability.data]);
+  const marked = new Set<CellKey>(WEEKDAYS.flatMap((day) => rows.filter((row) => isCovered(intervals, { weekday: day, ...row })).map((row) => cellKey(day, row.start))));
   const [editing, setEditing] = useState(false);
   const [areaId, setAreaId] = useState<number | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [toRemove, setToRemove] = useState<string | null>(null);
 
-  const updateMarked = (next: Set<CellKey>) => {
-    setMarked(next);
-    saveAvailability(id, next);
+  const updateIntervals = (next: AvailabilityInterval[]) => {
+    setDraft(next);
+    setSelected(new Set());
+  };
+
+  const finishEditing = async () => {
+    try {
+      await saveAvailability.mutateAsync(intervals);
+      setDraft(null);
+      setEditing(false);
+      toast.success("Disponibilidad guardada");
+    } catch (error) {
+      toast.error(apiErrorMessage(error, "No se pudo guardar la disponibilidad"));
+    }
+  };
+
+  const startEditing = () => {
+    setDraft(availability.data ?? []);
+    setEditing(true);
     setSelected(new Set());
   };
 
@@ -88,17 +112,26 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
   );
   const assignedCells = useMemo(() => new Set(assignedEntries.map((e) => cellKey(e.day, e.start))), [assignedEntries]);
   const assignedHours = assignedEntries.length;
+  const assignedNotes = new Map<CellKey, string>();
+  for (const day of WEEKDAYS) for (const row of rows) {
+    const occupied = assignedEntries.filter((entry) => overlaps(
+      { weekday: day, ...row }, { weekday: entry.day, start: entry.start, end: entry.end },
+    ));
+    if (occupied.length) assignedNotes.set(cellKey(day, row.start), occupied.map((entry) => `${entry.title} · ${entry.start}–${entry.end}`).join("\n"));
+  }
 
-  // Disponibilidad efectiva = marcada y no ocupada; se envía como sesiones (todas las del mismo horario)
+  // Un bloque requiere cobertura completa y no debe solaparse con clases de ningún turno.
   const slots: Slot[] = useMemo(() => {
     const result: Slot[] = [];
-    marked.forEach((key) => {
-      if (assignedCells.has(key)) return;
-      const [day, start] = key.split("|") as [Weekday, string];
-      periods.filter((p) => p.start === start).forEach((p) => result.push({ hourSessionId: p.id, weekday: day }));
-    });
+    if (editing) return result;
+    for (const day of WEEKDAYS) for (const period of periods) {
+      const target = { weekday: day, start: period.start, end: period.end };
+      if (isCovered(intervals, target) && !assignedEntries.some((entry) => overlaps(target, { weekday: entry.day, start: entry.start, end: entry.end }))) {
+        result.push({ hourSessionId: period.id, weekday: day });
+      }
+    }
     return result;
-  }, [marked, assignedCells, periods]);
+  }, [intervals, assignedEntries, periods, editing]);
 
   const available = useAvailableClasses({ teacherId: id, courseId: teacher?.courseId, slots, areaId });
   const candidates = available.data ?? [];
@@ -117,20 +150,18 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
   );
 
   // Cruces entre salones seleccionados
-  const previewCells = new Map<CellKey, string>();
   const conflicts = new Set<string>();
-  selectedClasses.forEach((cls) =>
-    cls.schedules.forEach((s) => {
-      const key = cellKey(s.weekday, toHHMM(s.hourSession.startTime));
-      const other = previewCells.get(key);
-      if (other && other !== cls.id) conflicts.add(cls.id).add(other);
-      previewCells.set(key, cls.id);
-    }),
-  );
+  const classConflicts = (a: typeof candidates[number], b: typeof candidates[number]) => a.schedules.some((s) => b.schedules.some((t) => overlaps(
+    { weekday: s.weekday, start: toHHMM(s.hourSession.startTime), end: toHHMM(s.hourSession.endTime) },
+    { weekday: t.weekday, start: toHHMM(t.hourSession.startTime), end: toHHMM(t.hourSession.endTime) },
+  )));
+  selectedClasses.forEach((cls, index) => selectedClasses.slice(0, index).forEach((other) => {
+    if (classConflicts(cls, other)) conflicts.add(cls.id).add(other.id);
+  }));
   const conflictsWith = (clsId: string) =>
     candidates
       .filter((c) => c.id !== clsId && selected.has(c.id))
-      .find((c) => c.schedules.some((s) => candidates.find((x) => x.id === clsId)?.schedules.some((t) => t.weekday === s.weekday && toHHMM(t.hourSession.startTime) === toHHMM(s.hourSession.startTime))));
+      .find((c) => { const target = candidates.find((x) => x.id === clsId); return target ? classConflicts(c, target) : false; });
 
   const projected = previewEntries.length;
   const maxHours = teacher?.maxHours ?? null;
@@ -138,18 +169,19 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
 
   const gridEntries = layoutEntries(
     [
-      ...assignedEntries.map((e) => ({ ...e, meta: { variant: "assigned" } })),
+      ...assignedEntries.flatMap((e) => rows.filter((row) => row.start < e.end && e.start < row.end).map((row) => ({ ...e, start: row.start, end: row.end, meta: { variant: "assigned" } }))),
       ...previewEntries.filter((e) => !assignedCells.has(cellKey(e.day, e.start))),
     ],
     rows,
   ).map((e) => ({ ...e, variant: (e.meta?.preview ? "preview" : "assigned") as "preview" | "assigned" }));
 
   const toggle = (cells: CellKey[]) => {
-    const free = cells.filter((c) => !assignedCells.has(c));
-    const allOn = free.every((c) => marked.has(c));
-    const next = new Set(marked);
-    free.forEach((c) => (allOn ? next.delete(c) : next.add(c)));
-    updateMarked(next);
+    const targets = cells.flatMap((key) => {
+      const row = rows.find((r) => key.endsWith(`|${r.start}`));
+      const day = WEEKDAYS.find((d) => key.startsWith(`${d}|`));
+      return row && day ? [{ weekday: day, ...row }] : [];
+    });
+    updateIntervals(toggleAvailability(intervals, targets));
   };
 
   const confirmAssign = async () => {
@@ -177,10 +209,11 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
     }
   };
 
-  if (!teacher || loadingPeriods) return <LoadingScreen />;
+  if (!teacher || loadingPeriods || availability.isPending) return <LoadingScreen />;
+  if (availability.isError) return <Alert tone="danger">No se pudo cargar la disponibilidad. <Button onClick={() => availability.refetch()}>Reintentar</Button></Alert>;
 
   const courseColor = courses.data?.find((c) => c.id === teacher.courseId)?.color;
-  const markedCount = [...marked].filter((c) => !assignedCells.has(c)).length;
+  const markedCount = marked.size;
 
   return (
     <>
@@ -226,18 +259,19 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
             title="Disponibilidad"
             description={
               editing
-                ? "Toca una celda, el nombre de un día o una hora para marcar o desmarcar. Se guarda en este navegador."
-                : `${markedCount} bloques marcados. Los bloques verdes ya están asignados.`
+                ? "Pulsa un día para marcarlo en todos los turnos. Las horas ocupadas se indican en verde. Guarda al terminar."
+                : `${markedCount} bloques disponibles en este turno. Los bloques verdes ya están asignados.`
             }
             actions={
               <>
-                {editing && markedCount > 0 && (
-                  <Button size="sm" variant="ghost" onClick={() => updateMarked(new Set())}>
+                {editing && intervals.length > 0 && (
+                  <Button size="sm" variant="ghost" disabled={saveAvailability.isPending} onClick={() => updateIntervals([])}>
                     Limpiar
                   </Button>
                 )}
-                <Button size="sm" variant={editing ? "primary" : "secondary"} icon={editing ? <FiCheck /> : undefined} onClick={() => setEditing((v) => !v)}>
-                  {editing ? "Listo" : "Editar disponibilidad"}
+                {editing && <Button size="sm" variant="ghost" disabled={saveAvailability.isPending} onClick={() => { setDraft(null); setEditing(false); }}>Cancelar</Button>}
+                <Button size="sm" loading={saveAvailability.isPending} variant={editing ? "primary" : "secondary"} icon={editing ? <FiCheck /> : undefined} onClick={() => editing ? void finishEditing() : startEditing()}>
+                  {editing ? "Guardar disponibilidad" : "Editar disponibilidad"}
                 </Button>
               </>
             }
@@ -256,11 +290,12 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
           )}
           <WeekGrid
             rows={rows}
-            entries={gridEntries}
+            entries={editing ? [] : gridEntries}
             marked={marked}
-            onToggleCell={editing ? (day, start) => toggle([cellKey(day, start)]) : undefined}
-            onToggleDay={editing ? (day) => toggle(rows.map((r) => cellKey(day, r.start))) : undefined}
-            onToggleRow={editing ? (start) => toggle(WEEKDAYS.map((d) => cellKey(d, start))) : undefined}
+            cellNotes={editing ? assignedNotes : undefined}
+            onToggleCell={editing && !saveAvailability.isPending ? (day, start) => toggle([cellKey(day, start)]) : undefined}
+            onToggleDay={editing && !saveAvailability.isPending ? (day) => updateIntervals(toggleAvailability(intervals, periods.map((period) => ({ weekday: day, start: period.start, end: period.end })))) : undefined}
+            onToggleRow={editing && !saveAvailability.isPending ? (start) => toggle(WEEKDAYS.map((d) => cellKey(d, start))) : undefined}
           />
           <div className="flex flex-wrap gap-4 text-xs text-ink-500">
             <Legend className="border-2 border-guinda-700 bg-guinda-50" label="Disponible" />
@@ -280,7 +315,7 @@ export function AsignarSalonesPage({ basePath }: { basePath: string }) {
                 </option>
               ))}
             </Select>
-            {slots.length === 0 ? (
+            {editing ? <EmptyState title="Guarda la disponibilidad" description="Los salones compatibles se mostrarán con la disponibilidad guardada." /> : slots.length === 0 ? (
               <EmptyState title="Marca la disponibilidad" description="Edita la disponibilidad para ver los salones donde el docente puede dictar." />
             ) : available.isLoading ? (
               <div className="flex flex-col gap-2">

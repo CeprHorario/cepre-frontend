@@ -2,6 +2,7 @@ import { isAxiosError } from "axios";
 import { del, get, patch, post, put, qs, upload, api } from "./client";
 import type {
   Admission,
+  AvailabilityInterval,
   Area,
   AvailableClassroom,
   AvailableTeacher,
@@ -165,6 +166,9 @@ export const TeachersApi = {
 };
 
 export const SchedulesApi = {
+  availability: (teacherId: string) => get<AvailabilityInterval[]>(`/schedules/teachers/${teacherId}/availability`),
+  saveAvailability: (teacherId: string, intervals: AvailabilityInterval[]) =>
+    put<AvailabilityInterval[]>(`/schedules/teachers/${teacherId}/availability`, { intervals }),
   assignTeacher: (teacherId: string, classId: string) =>
     patch<unknown>("/schedules/asignar/profesor", { teacherId, classroomIds: [classId] }),
   unassignTeacher: (teacherId: string, classId: string) =>

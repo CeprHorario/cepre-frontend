@@ -14,6 +14,8 @@ interface WeekGridProps {
   days?: Weekday[];
   /** Celdas marcadas (disponibilidad) */
   marked?: Set<CellKey>;
+  /** Indicativo de ocupación que permite seguir editando la disponibilidad. */
+  cellNotes?: Map<CellKey, string>;
   /** Si se pasan, la grilla es editable */
   onToggleCell?: (day: Weekday, start: string) => void;
   onToggleDay?: (day: Weekday) => void;
@@ -30,6 +32,7 @@ export function WeekGrid({
   entries = [],
   days = WEEKDAYS,
   marked,
+  cellNotes,
   onToggleCell,
   onToggleDay,
   onToggleRow,
@@ -100,6 +103,8 @@ export function WeekGrid({
             const key = cellKey(day, row.start);
             if (occupied.has(key)) return null;
             const isMarked = marked?.has(key);
+            const note = cellNotes?.get(key);
+            const noteContent = note ? <span className="pointer-events-none flex flex-col gap-0.5 overflow-hidden text-[10px] leading-tight text-[#0B5A30]"><strong>Ocupado</strong><span className="truncate">{note.split("\n")[0]}</span></span> : null;
             const style = { gridColumn: d + 2, gridRow: r + 2 };
             if (editable) {
               return (
@@ -107,22 +112,25 @@ export function WeekGrid({
                   key={key}
                   type="button"
                   aria-pressed={isMarked}
-                  aria-label={`${WEEKDAY_LABEL[day]} ${row.start}${isMarked ? ", disponible" : ""}`}
+                  aria-label={`${WEEKDAY_LABEL[day]} ${row.start}${isMarked ? ", disponible" : ""}${note ? `, ocupado: ${note}` : ""}`}
+                  title={note}
                   onClick={() => onToggleCell?.(day, row.start)}
                   className={cn(
-                    "cursor-pointer rounded-lg border transition-colors",
-                    isMarked ? "border-2 border-guinda-700 bg-guinda-50" : "border-line bg-white hover:border-guinda-600/50 hover:bg-[#FCF7F8]",
+                    "min-w-0 cursor-pointer rounded-lg border px-2 py-1 text-left transition-colors",
+                    isMarked ? "border-2 border-guinda-700" : "border-line hover:border-guinda-600/50",
+                    note ? "bg-[#E2F2E8]" : isMarked ? "bg-guinda-50" : "bg-white hover:bg-[#FCF7F8]",
                   )}
                   style={style}
-                />
+                >{noteContent}</button>
               );
             }
             return (
               <div
                 key={key}
-                className={cn("rounded-lg", isMarked ? "border-2 border-guinda-700 bg-guinda-50" : "bg-surface-2")}
+                className={cn("min-w-0 rounded-lg px-2 py-1", isMarked && "border-2 border-guinda-700", note ? "bg-[#E2F2E8]" : isMarked ? "bg-guinda-50" : "bg-surface-2")}
+                title={note}
                 style={style}
-              />
+              >{noteContent}</div>
             );
           }),
         )}

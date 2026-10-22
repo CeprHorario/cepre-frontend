@@ -38,8 +38,18 @@ El coordinador reutiliza las páginas del admin con `readOnly` (`HorarioDocenteP
 
 ## Contratos del backend en los que se apoya el front
 
+La disponibilidad del docente pertenece al proceso y se guarda en la base de datos como intervalos de día e inicio/fin, independientes del turno. `features/admin/docentes/availability.ts` calcula cobertura completa, unión y sustracción de intervalos. La pantalla de asignación confirma con «Guardar disponibilidad» y permite cancelar; no utiliza `localStorage`. Las marcas antiguas del navegador no se importan automáticamente porque no identifican el proceso.
+
+Los turnos coincidentes comparten disponibilidad. Un bloque parcialmente cubierto no se marca completo. Las clases ya asignadas no se eliminan al cambiar disponibilidad; toda asignación nueva exige cobertura completa y ausencia de cruces por tiempo real, incluso entre turnos.
+
+En la edición, pulsar el encabezado de un día marca o desmarca sus bloques de **todos los turnos**. Pulsar una hora afecta esa fila del turno visible. `WeekGrid.cellNotes` muestra un indicativo verde de ocupación con salón y horas reales, incluso en cruces parciales entre turnos, sin bloquear la edición de disponibilidad.
+
 | Endpoint | Campos que la UI necesita |
 |---|---|
+| `GET /schedules/teachers/:teacherId/availability` | Solo admin. Lista `{ weekday, start, end }`, horas `HH:mm` (fin admite `24:00`), del proceso autorizado |
+| `PUT /schedules/teachers/:teacherId/availability` | Solo admin. `{ intervals: [{ weekday, start, end }] }`; reemplazo transaccional y normalización de intervalos solapados/contiguos; `[]` limpia |
+| `GET /schedules/salones/disponibles` | Requiere `teacher_id`; filtra por disponibilidad persistida y cruces del docente, además de los bloques consultados |
+| `POST /teachers/available`, `PATCH /schedules/asignar/profesor` | Exigen disponibilidad persistida y ausencia de cruces reales entre horarios de cualquier turno |
 | `GET /monitors/cargar/horario`, `GET /monitors/:userId/horario` | `courseName` (del bloque, no del docente), `hasTeacher`, `shiftId` |
 | `GET /classes/getClassOfTeacher` | `shiftId` de cada salón |
 | `GET /supervisors/getMonitors` | `email`, `phone`, `personalEmail` del monitor |

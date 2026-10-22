@@ -14,7 +14,7 @@ import {
   SystemApi,
   TeachersApi,
 } from "./services";
-import type { AvailableClassroom, Paginated, Slot } from "./types";
+import type { AvailabilityInterval, AvailableClassroom, Paginated, Slot } from "./types";
 import { toPeriods } from "@/lib/schedule";
 
 const MINUTE = 60_000;
@@ -214,6 +214,24 @@ export function useTeacher(id: string | undefined) {
 
 export function useTeacherSchedule(id: string | undefined) {
   return useQuery({ queryKey: keys.teacherSchedule(id ?? ""), queryFn: () => TeachersApi.schedules(id!), enabled: Boolean(id) });
+}
+
+export function useTeacherAvailability(id: string) {
+  return useQuery({ queryKey: ["teachers", "availability", id], queryFn: () => SchedulesApi.availability(id), enabled: Boolean(id), staleTime: 0, refetchOnWindowFocus: true });
+}
+
+export function useSaveTeacherAvailability(id: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (intervals: AvailabilityInterval[]) => SchedulesApi.saveAvailability(id, intervals),
+    onSuccess: (intervals) => {
+      client.setQueryData(["teachers", "availability", id], intervals);
+      return Promise.all([
+        client.invalidateQueries({ queryKey: ["classes", "available"] }),
+        client.invalidateQueries({ queryKey: ["teachers", "available"] }),
+      ]);
+    },
+  });
 }
 
 export function useAvailableTeachers(courseId: number | undefined, slots: Slot[]) {
