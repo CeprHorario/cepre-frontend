@@ -88,7 +88,11 @@ export function useConfigHistory() {
 
 export function useSystemMutations() {
   const client = useQueryClient();
-  const refresh = () => client.invalidateQueries({ queryKey: ["system"] });
+  const refresh = async () => {
+    // Cancelar respuestas del proceso anterior antes de recargar sus datos.
+    await client.cancelQueries();
+    await client.resetQueries({ predicate: (query) => query.queryKey[0] !== "me" });
+  };
   return {
     update: useMutation({ mutationFn: SystemApi.updateConfig, onSuccess: refresh }),
     rollback: useMutation({ mutationFn: SystemApi.rollback, onSuccess: refresh }),
@@ -172,6 +176,10 @@ export function useClassMutations() {
   const client = useQueryClient();
   const refresh = () => client.invalidateQueries({ queryKey: keys.classes });
   return {
+    createMany: useMutation({
+      mutationFn: ClassesApi.createMany,
+      onSuccess: () => client.invalidateQueries({ queryKey: ["monitors"] }).then(refresh),
+    }),
     create: useMutation({
       mutationFn: ClassesApi.create,
       onSuccess: () => client.invalidateQueries({ queryKey: ["monitors"] }).then(refresh),

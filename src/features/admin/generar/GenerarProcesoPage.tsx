@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FiAlertTriangle, FiCheck, FiChevronLeft, FiChevronRight, FiPlus, FiTrash2 } from "react-icons/fi";
 import { apiErrorMessage } from "@/api/client";
-import { useCreateAdmission, useSedes, useShifts } from "@/api/queries";
-import type { CreateAdmissionPayload } from "@/api/services";
+import { useCreateAdmission, useSedes, useShifts, useSystemMutations } from "@/api/queries";
+import { SystemApi, type CreateAdmissionPayload } from "@/api/services";
 import { Button, IconButton } from "@/components/ui/Button";
 import { Card, SectionLabel } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/EmptyState";
@@ -28,6 +28,8 @@ interface Draft {
   finished: string;
   domain: string;
   createSchedules: boolean;
+  sessionMinutes: number;
+  breakMinutes: number;
   shifts: { start: string; classes: Record<string, number> }[];
 }
 
@@ -39,13 +41,15 @@ const initialDraft: Draft = {
   finished: "",
   domain: "@cepr.unsa.pe",
   createSchedules: true,
+  sessionMinutes: 40,
+  breakMinutes: 5,
   shifts: [{ start: "07:00", classes: {} }],
 };
 
 const STEPS = ["Datos del proceso", "Turnos", "Salones por área", "Revisar y crear"];
 
-/** 7 horas pedagógicas (6 en Extraordinario) de 40 min con 5 min de descanso, sin descanso final */
-const endTime = (start: string, hours: number) => (start ? addMinutes(start, hours * 45 - 5) : "");
+/** 7 bloques (6 en Extraordinario), con duración configurable y sin descanso final. */
+const endTime = (start: string, hours: number, session: number, rest: number) => (start ? addMinutes(start, hours * session + (hours - 1) * rest) : "");
 const shiftName = (index: number) => `Turno ${String(index + 1).padStart(2, "0")}`;
 
 export function GenerarProcesoPage() {
@@ -53,8 +57,10 @@ export function GenerarProcesoPage() {
   const sedes = useSedes();
   const currentShifts = useShifts();
   const create = useCreateAdmission();
+  const { update } = useSystemMutations();
   const [step, setStep] = useState(0);
   const [tried, setTried] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [draft, setDraft] = useState<Draft>(() => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
@@ -83,7 +89,7 @@ export function GenerarProcesoPage() {
   const setShift = (index: number, patch: Partial<Draft["shifts"][number]>) =>
     setDraft((d) => ({ ...d, shifts: d.shifts.map((s, i) => (i === index ? { ...s, ...patch } : s)) }));
 
-  const shifts = draft.shifts.map((s, i) => ({ ...s, name: shiftName(i), end: endTime(s.start, hours) }));
+  const shifts = draft.shifts.map((s, i) => ({ ...s, name: shiftName(i), end: endTime(s.start, hours, draft.sessionMinutes, draft.breakMinutes) }));
   const overlaps = useMemo(() => {
     const result = new Set<number>();
     shifts.forEach((a, i) =>
@@ -102,8 +108,8 @@ export function GenerarProcesoPage() {
       (!draft.started || !draft.finished) && "Indica las fechas de inicio y fin",
       draft.started && draft.finished && draft.started >= draft.finished && "La fecha de inicio debe ser anterior a la de fin",
     ].filter(Boolean) as string[],
-    [!shifts.length && "Agrega al menos un turno", shifts.some((s) => !s.start) && "Todos los turnos necesitan hora de inicio"].filter(Boolean) as string[],
-    [totalClasses === 0 && "Indica al menos un salón"].filter(Boolean) as string[],
+    [!shifts.length && "Agrega al menos un turno", shifts.some((s) => !s.start) && "Todos los turnos necesitan hora de inicio", (!Number.isInteger(draft.sessionMinutes) || draft.sessionMinutes < 1 || draft.sessionMinutes > 180) && "La hora pedagógica debe tener entre 1 y 180 minutos", (!Number.isInteger(draft.breakMinutes) || draft.breakMinutes < 0 || draft.breakMinutes > 120) && "El descanso debe tener entre 0 y 120 minutos", shifts.some((s) => minutesOf(s.end) >= 24 * 60) && "Los turnos deben terminar antes de medianoche"].filter(Boolean) as string[],
+    [totalClasses === 0 && "Indica al menos un salón", shifts.some((s) => areas.every((area) => !(s.classes[area] > 0))) && "Cada turno debe tener al menos un salón"].filter(Boolean) as string[],
     [],
   ];
 
@@ -115,6 +121,9 @@ export function GenerarProcesoPage() {
   };
 
   const submit = async () => {
+    if (submitting) return;
+    const invalidStep = stepErrors.findIndex((errors) => errors.length > 0);
+    if (invalidStep >= 0) { setStep(invalidStep); setTried(true); return; }
     const payload: CreateAdmissionPayload = {
       name: draft.process,
       year: draft.year,
@@ -124,21 +133,39 @@ export function GenerarProcesoPage() {
       configuration: {
         emailDomain: draft.domain,
         createSchedules: draft.createSchedules,
+        sessionMinutes: draft.sessionMinutes,
+        breakMinutes: draft.breakMinutes,
         shifts: shifts.map((s) => ({
           name: s.name,
           startTime: s.start,
           endTime: s.end,
-          classesToAreas: areas.map((area) => ({ area, quantityClasses: s.classes[area] ?? 0 })),
+          classesToAreas: areas.filter((area) => (s.classes[area] ?? 0) > 0).map((area) => ({ area, quantityClasses: s.classes[area] ?? 0 })),
         })),
       },
     };
+    setSubmitting(true);
     try {
-      await create.mutateAsync(payload);
+      const created = await create.mutateAsync(payload);
       localStorage.removeItem(DRAFT_KEY);
+      try {
+        const config = await SystemApi.config();
+        await update.mutateAsync({
+          expectedVersion: config.version,
+          maintenance: config.maintenance,
+          schemaRouting: { ...config.schemaRouting, adminSchema: created.data.name },
+          changeReason: `Preparar proceso ${draft.process} ${draft.year}`,
+        });
+      } catch (error) {
+        toast.warning(`Proceso creado; falta seleccionarlo para administradores en Configurar sistema. ${apiErrorMessage(error, "No se pudo actualizar la configuración.")}`);
+        navigate("/admin/configuracion");
+        return;
+      }
       toast.success("Proceso de admisión creado");
       navigate("/admin");
     } catch (error) {
       toast.error(apiErrorMessage(error, "No se pudo crear el proceso"));
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -234,8 +261,12 @@ export function GenerarProcesoPage() {
 
           {step === 1 && (
             <>
+              <Card className="grid gap-4 p-5 sm:grid-cols-2">
+                <Field label="Hora pedagógica (minutos)" hint="Duración de cada bloque de clase.">{(p) => <Input {...p} type="number" min={1} max={180} step={1} value={draft.sessionMinutes} onChange={(e) => set("sessionMinutes", Number(e.target.value))} />}</Field>
+                <Field label="Descanso entre bloques (minutos)" hint="No se agrega descanso después del último bloque.">{(p) => <Input {...p} type="number" min={0} max={120} step={1} value={draft.breakMinutes} onChange={(e) => set("breakMinutes", Number(e.target.value))} />}</Field>
+              </Card>
               <p className="text-sm leading-6 text-ink-500">
-                Indica solo la hora de inicio. El fin se calcula con {hours} horas pedagógicas (40 min de clase y 5 de descanso).
+                Indica la hora de inicio. El fin se calcula con {hours} bloques de {draft.sessionMinutes} minutos y descansos de {draft.breakMinutes} minutos.
               </p>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[13px] font-semibold text-ink-700">Plantilla:</span>
@@ -327,6 +358,8 @@ export function GenerarProcesoPage() {
                   {draft.sede} · {draft.domain}
                 </dd>
                 <dt className="text-ink-500">Turnos</dt>
+                <dd className="font-semibold">{draft.sessionMinutes} min de clase · {draft.breakMinutes} min de descanso</dd>
+                <dt className="text-ink-500">Horarios</dt>
                 <dd className="font-semibold">{shifts.map((s) => `${s.name} (${s.start}–${s.end})`).join(", ")}</dd>
                 <dt className="text-ink-500">Salones y monitores</dt>
                 <dd className="font-semibold">{totalClasses} salones, un monitor por salón</dd>
@@ -337,7 +370,7 @@ export function GenerarProcesoPage() {
                 label="Generar horarios automáticamente"
                 description="Usa las plantillas de cada área. Recomendado."
               />
-              <Alert tone="info">Crear el proceso no cambia lo que ven los usuarios. Eso se decide en Configurar sistema.</Alert>
+              <Alert tone="info">Al crear el proceso, los administradores pasarán a trabajar en él. Los demás usuarios conservarán su proceso hasta que lo cambies en Configurar sistema.</Alert>
             </Card>
           )}
 
@@ -350,7 +383,7 @@ export function GenerarProcesoPage() {
                 Continuar <FiChevronRight />
               </Button>
             ) : (
-              <Button onClick={submit} loading={create.isPending}>
+              <Button onClick={submit} loading={submitting}>
                 Crear proceso
               </Button>
             )}

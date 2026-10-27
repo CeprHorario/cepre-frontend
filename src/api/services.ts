@@ -49,6 +49,8 @@ export interface CreateAdmissionPayload {
   configuration: {
     emailDomain: string;
     createSchedules: boolean;
+    sessionMinutes: number;
+    breakMinutes: number;
     shifts: {
       name: string;
       startTime: string;
@@ -61,7 +63,7 @@ export interface CreateAdmissionPayload {
 export const AdmissionsApi = {
   list: () => get<Admission[]>("/admissions"),
   current: () => get<Admission>("/admissions/current"),
-  create: (payload: CreateAdmissionPayload) => post<unknown>("/admissions", payload),
+  create: (payload: CreateAdmissionPayload) => post<{ success: boolean; data: { name: string } }>("/admissions", payload),
 };
 
 export const CatalogApi = {
@@ -101,6 +103,7 @@ export interface DeactivateResult {
 }
 
 export const ClassesApi = {
+  createMany: (data: { area_id: number; shift_id: number; quantity: number }) => post<{ created: number; monitorsCreated: number; scheduleBlocks: number; classes: { id: string; name: string }[] }>("/classes/bulk", data),
   list: () => get<Classroom[]>("/classes"),
   /** Crea el salón con el siguiente número del área y turno, su monitor y su horario base */
   create: (data: { area_id: number; shift_id: number; monitor?: ClassMonitorPayload }) => post<Classroom>("/classes", data),

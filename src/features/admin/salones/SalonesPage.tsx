@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, PageHeader } from "@/components/ui/Card";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Field, SearchInput, Select } from "@/components/ui/Field";
+import { Field, Input, SearchInput, Select } from "@/components/ui/Field";
 import { Dialog } from "@/components/ui/Overlay";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Spinner";
@@ -113,7 +113,7 @@ export function SalonesPage({ basePath, readOnly = false, allowDetail = true, ti
             />
             {!readOnly && (
               <Button icon={<FiPlus />} onClick={() => setCreateOpen(true)}>
-                Agregar salón
+                Agregar salones
               </Button>
             )}
           </>
@@ -212,7 +212,7 @@ export function SalonesPage({ basePath, readOnly = false, allowDetail = true, ti
         })
       )}
 
-      {createOpen && <CreateClassDialog onClose={() => setCreateOpen(false)} />}
+      {createOpen && !readOnly && <CreateClassDialog onClose={() => setCreateOpen(false)} />}
     </>
   );
 }
@@ -252,34 +252,38 @@ function RoomCard({ classroom, to }: { classroom: Classroom; to?: string }) {
 function CreateClassDialog({ onClose }: { onClose: () => void }) {
   const areas = useAreas();
   const shifts = useShifts();
-  const { create } = useClassMutations();
+  const { createMany } = useClassMutations();
   const [areaId, setAreaId] = useState("");
   const [shiftId, setShiftId] = useState("");
+  const [quantity, setQuantity] = useState("1");
+  const count = Number(quantity);
+  const valid = Number.isInteger(count) && count >= 1 && count <= 500;
 
   const submit = async () => {
+    if (!areaId || !shiftId || !valid || createMany.isPending) return;
     try {
-      const created = await create.mutateAsync({ area_id: Number(areaId), shift_id: Number(shiftId) });
-      toast.success(`Salón ${created?.name ?? ""} creado`);
+      const result = await createMany.mutateAsync({ area_id: Number(areaId), shift_id: Number(shiftId), quantity: count });
+      toast.success(`${result.created} ${result.created === 1 ? "salón creado" : "salones creados"}, con sus monitores y horarios base`);
       onClose();
     } catch (error) {
-      toast.error(apiErrorMessage(error, "No se pudo crear el salón"));
+      toast.error(apiErrorMessage(error, "No se creó ningún salón"));
     }
   };
 
   return (
     <Dialog
       open
-      onClose={onClose}
-      title="Agregar salón"
-      description="El nombre se asigna automáticamente según el área y el turno."
+      onClose={createMany.isPending ? () => {} : onClose}
+      title="Agregar salones"
+      description="Elige el área, el turno y cuántos salones quieres agregar. Cada uno tendrá su cuenta de monitor y su horario base."
       size="sm"
       footer={
         <>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} disabled={createMany.isPending}>
             Cancelar
           </Button>
-          <Button onClick={submit} loading={create.isPending} disabled={!areaId || !shiftId}>
-            Crear salón
+          <Button onClick={submit} loading={createMany.isPending} disabled={!areaId || !shiftId || !valid}>
+            {valid ? `Crear ${count} ${count === 1 ? "salón" : "salones"}` : "Crear salones"}
           </Button>
         </>
       }
@@ -287,7 +291,7 @@ function CreateClassDialog({ onClose }: { onClose: () => void }) {
       <div className="flex flex-col gap-4">
         <Field label="Área" required>
           {(p) => (
-            <Select {...p} value={areaId} onChange={(e) => setAreaId(e.target.value)}>
+            <Select {...p} value={areaId} disabled={createMany.isPending} onChange={(e) => setAreaId(e.target.value)}>
               <option value="">Selecciona…</option>
               {(areas.data ?? []).map((a) => (
                 <option key={a.id} value={a.id}>
@@ -299,7 +303,7 @@ function CreateClassDialog({ onClose }: { onClose: () => void }) {
         </Field>
         <Field label="Turno" required>
           {(p) => (
-            <Select {...p} value={shiftId} onChange={(e) => setShiftId(e.target.value)}>
+            <Select {...p} value={shiftId} disabled={createMany.isPending} onChange={(e) => setShiftId(e.target.value)}>
               <option value="">Selecciona…</option>
               {(shifts.data ?? []).map((s) => (
                 <option key={s.id} value={s.id}>
@@ -309,6 +313,10 @@ function CreateClassDialog({ onClose }: { onClose: () => void }) {
             </Select>
           )}
         </Field>
+        <Field label="Cantidad de salones a agregar" required hint="Entre 1 y 500 para el área y turno seleccionados." error={!valid ? "Escribe un entero entre 1 y 500." : null}>
+          {(p) => <Input {...p} type="number" min={1} max={500} step={1} value={quantity} disabled={createMany.isPending} onChange={(e) => setQuantity(e.target.value)} />}
+        </Field>
+        {valid && <p className="text-sm text-ink-500">Se agregarán {count} salones y {count} cuentas de monitor. Los nombres se numeran automáticamente; después puedes completar los datos de los monitores desde Importar archivos.</p>}
       </div>
     </Dialog>
   );
