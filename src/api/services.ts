@@ -35,6 +35,7 @@ import type {
 } from "./types";
 
 export const AuthApi = {
+  logout: () => post<{ success: boolean }>("/auth/logout"),
   me: () => get<CurrentUser>("/auth/user-info"),
   googleUrl: () => `${import.meta.env.VITE_API_BACK_URL}/api/auth/google`,
 };

@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useRef, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { MAINTENANCE_EVENT, tokenStore } from "@/api/client";
+import { MAINTENANCE_EVENT } from "@/api/client";
+import { toast } from 'react-toastify';
 import { AuthApi } from "@/api/services";
 import { keys, useMe, useSystemStatus } from "@/api/queries";
 import type { CurrentUser, Role, SystemStatus } from "@/api/types";
@@ -37,22 +38,21 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const client = useQueryClient();
-  const [hasToken, setHasToken] = useState(Boolean(tokenStore.get()));
+  const loginPopup = useRef<Window | null>(null);
   const [loggingIn, setLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const me = useMe();
   const status = useSystemStatus();
 
-  // El backend responde en una ventana emergente con postMessage({ token } | { error })
+  // El popup confirma la cookie de sesión sin entregar credenciales al JavaScript.
   useEffect(() => {
     const receive = (event: MessageEvent) => {
-      if (event.origin !== import.meta.env.VITE_API_BACK_URL) return;
-      const data = event.data as { token?: string; error?: string };
+      if (event.origin !== new URL(import.meta.env.VITE_API_BACK_URL).origin || !loginPopup.current || event.source !== loginPopup.current) return;
+      const data = event.data as { authenticated?: boolean; error?: string };
       setLoggingIn(false);
-      if (data?.token) {
-        tokenStore.set(data.token);
-        setHasToken(true);
+      if (data?.authenticated === true) {
         setLoginError(null);
+        client.removeQueries({ predicate: query => query.queryKey[0] !== 'me' && query.queryKey[0] !== 'system' });
         client.invalidateQueries({ queryKey: keys.me });
       } else if (data?.error) {
         setLoginError("Tu cuenta no está registrada en el sistema o no tiene un rol asignado.");
@@ -79,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoginError(null);
     setLoggingIn(true);
     const popup = window.open(AuthApi.googleUrl(), "ceprunsa-login", `width=${width},height=${height},left=${left},top=${top}`);
+    loginPopup.current = popup;
     if (!popup) {
       setLoggingIn(false);
       setLoginError("El navegador bloqueó la ventana de inicio de sesión. Permite las ventanas emergentes e inténtalo de nuevo.");
@@ -93,23 +94,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    tokenStore.clear();
-    setHasToken(false);
-    client.clear();
-    window.location.href = "/";
+    void AuthApi.logout().then(() => { client.clear(); window.location.href = '/'; })
+      .catch(() => toast.error('No se pudo cerrar la sesión. Intenta nuevamente.'));
   }, [client]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      user: hasToken ? (me.data ?? null) : null,
-      loading: hasToken && me.isLoading,
+      user: me.isError ? null : (me.data ?? null),
+      loading: me.isLoading,
       status: status.data,
       loginWithGoogle,
       loggingIn,
       loginError,
       logout,
     }),
-    [hasToken, me.data, me.isLoading, status.data, loginWithGoogle, loggingIn, loginError, logout],
+    [me.data, me.isLoading, me.isError, status.data, loginWithGoogle, loggingIn, loginError, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

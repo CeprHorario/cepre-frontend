@@ -6,15 +6,15 @@ import { ToastContainer } from "react-toastify";
 import { Analytics } from "@vercel/analytics/react";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
-import { tokenStore } from "@/api/client";
 import { AuthProvider } from "@/auth/AuthProvider";
 import { router } from "@/app/router";
 
-// Compatibilidad: algunos enlaces antiguos traen el token en la URL (?token=…)
-const urlToken = new URLSearchParams(window.location.search).get("token");
-if (urlToken) {
-  tokenStore.set(urlToken);
-  window.history.replaceState(null, "", window.location.pathname);
+// Retira credenciales antiguas; la sesión actual vive en una cookie HttpOnly.
+try { localStorage.removeItem('token'); } catch { /* La sesión por cookie no depende de Web Storage. */ }
+const cleanUrl = new URL(window.location.href);
+if (cleanUrl.searchParams.has('token')) {
+  cleanUrl.searchParams.delete('token');
+  window.history.replaceState(null, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
 }
 
 const queryClient = new QueryClient({

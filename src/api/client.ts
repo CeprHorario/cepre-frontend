@@ -1,23 +1,11 @@
 import axios, { AxiosError } from "axios";
 
 export const MAINTENANCE_EVENT = "ceprunsa:maintenance-mode";
-const TOKEN_KEY = "token";
-
-export const tokenStore = {
-  get: () => localStorage.getItem(TOKEN_KEY),
-  set: (token: string) => localStorage.setItem(TOKEN_KEY, token),
-  clear: () => localStorage.removeItem(TOKEN_KEY),
-};
 
 export const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BACK_URL}/api`,
-  headers: { "Content-Type": "application/json" },
-});
-
-api.interceptors.request.use((config) => {
-  const token = tokenStore.get();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  headers: { "Content-Type": "application/json", "X-Requested-With": "ceprunsa" },
+  withCredentials: true,
 });
 
 api.interceptors.response.use(
@@ -26,11 +14,6 @@ api.interceptors.response.use(
     const status = error.response?.status;
     if (status === 503 && error.response?.data?.code === "MAINTENANCE_MODE") {
       window.dispatchEvent(new CustomEvent(MAINTENANCE_EVENT, { detail: error.response.data }));
-    }
-    // Solo un token inválido cierra la sesión; un 401 por falta de permiso no debe expulsar al usuario
-    if (status === 401 && tokenStore.get() && error.config?.url?.includes("/auth/user-info")) {
-      tokenStore.clear();
-      window.location.href = "/";
     }
     return Promise.reject(error);
   },

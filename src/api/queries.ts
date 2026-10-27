@@ -1,6 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { tokenStore } from "./client";
 import {
   AdmissionsApi,
   AuthApi,
@@ -58,8 +57,9 @@ export function useMe() {
   return useQuery({
     queryKey: keys.me,
     queryFn: AuthApi.me,
-    enabled: Boolean(tokenStore.get()),
-    staleTime: 10 * MINUTE,
+    staleTime: MINUTE,
+    refetchInterval: MINUTE,
+    refetchOnWindowFocus: true,
     retry: false,
   });
 }
