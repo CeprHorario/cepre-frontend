@@ -202,6 +202,35 @@ export const SchedulesApi = {
   },
 };
 
+export type ImportKind = "docentes" | "monitores" | "supervisores" | "disponibilidad";
+export interface ImportPreview {
+  schema: string;
+  total: number;
+  valid: number;
+  rows: { line: number; values: Record<string, string>; errors: string[] }[];
+}
+export interface ImportColumn {
+  key: string;
+  label: string;
+  required: boolean;
+  headerRequired: boolean;
+  format: string;
+  example: string;
+  description: string;
+}
+export const ImportsApi = {
+  columns: (kind: ImportKind) => get<ImportColumn[]>(`/imports/${kind}/columns`),
+  template: async (kind: ImportKind) => (await api.get<Blob>(`/imports/${kind}/template`, { responseType: "blob" })).data,
+  preview: async (kind: ImportKind, file: File) => {
+    const form = new FormData(); form.append("archivo", file);
+    return (await api.post<ImportPreview>(`/imports/${kind}/preview`, form, { headers: { "Content-Type": "multipart/form-data" } })).data;
+  },
+  apply: async (kind: ImportKind, file: File, schema: string) => {
+    const form = new FormData(); form.append("archivo", file); form.append("schema", schema);
+    return (await api.post<{ processed: number; people?: number; teachers?: number; blocks?: number }>(`/imports/${kind}/apply`, form, { headers: { "Content-Type": "multipart/form-data" } })).data;
+  },
+};
+
 export const MonitorsApi = {
   list: (params: { page: number; limit: number; shift_id?: number | null; area_id?: number | null }) =>
     get<Paginated<MonitorSummary>>(`/monitors${qs(params)}`),

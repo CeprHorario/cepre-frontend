@@ -1,366 +1,186 @@
-import { useMemo, useRef, useState, type DragEvent } from "react";
+import { useRef, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { FiCheck, FiDownload, FiFileText, FiShield, FiUploadCloud, FiUsers } from "react-icons/fi";
-import { apiErrorMessage, post } from "@/api/client";
-import { SupervisorsApi } from "@/api/services";
-import { useCourses, useShifts, useSupervisors, useTeachers } from "@/api/queries";
-import type { Course, JobStatus, Shift } from "@/api/types";
+import { FiCheck, FiDownload, FiUploadCloud } from "react-icons/fi";
+import { ImportsApi, type ImportKind, type ImportPreview } from "@/api/services";
+import { apiErrorMessage } from "@/api/client";
 import { SimpleLayout } from "@/components/layout/ModuleLayout";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, PageHeader } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/EmptyState";
-import { Checkbox } from "@/components/ui/Field";
-import { cn } from "@/lib/cn";
-import { normalizeKey, parseCsv, plain, toCsv } from "@/lib/csv";
 import { downloadBlob } from "@/lib/format";
-import { isDni, isEmail, isLoginEmail, isPeruMobile, splitPhones } from "@/lib/validators";
 
-type Kind = "docentes" | "supervisores";
-
-interface Row {
-  line: number;
-  values: Record<string, string>;
-  errors: string[];
-  payload?: Record<string, unknown>;
-}
-
-const TEMPLATES: Record<Kind, string[]> = {
-  docentes: ["dni", "nombres", "apellidos", "correo", "correo_personal", "celular", "celulares_adicionales", "curso", "dedicacion", "horas_maximas"],
-  supervisores: ["dni", "nombres", "apellidos", "correo", "correo_personal", "celular", "turno"],
-};
-
-const EXAMPLES: Record<Kind, string[]> = {
-  docentes: ["41230098", "Pablo", "Arce Luna", "parce@cepr.unsa.pe", "pablo@gmail.com", "987654321", "", "Física", "Medio tiempo", "20"],
-  supervisores: ["72118833", "Inés", "Bellido Rosas", "ibellido@cepr.unsa.pe", "", "951004732", "Turno 01"],
-};
-
-const JOB_ALIASES: Record<string, JobStatus> = {
-  fulltime: "FullTime",
-  "tiempo completo": "FullTime",
-  parttime: "PartTime",
-  "medio tiempo": "PartTime",
-  freetime: "FreeTime",
-  "tiempo libre": "FreeTime",
-};
-
-function pick(values: Record<string, string>, ...keys: string[]) {
-  for (const key of keys) if (values[normalizeKey(key)]) return values[normalizeKey(key)];
-  return "";
-}
-
-function findCourse(courses: Course[], name: string) {
-  return courses.find((c) => plain(c.name) === plain(name));
-}
-
-function suggestCourse(courses: Course[], name: string) {
-  const target = plain(name);
-  return courses.find((c) => plain(c.name).startsWith(target.slice(0, 4)));
-}
-
-function validate(kind: Kind, raw: Record<string, string>[], courses: Course[], shifts: Shift[]): Row[] {
-  const seenEmails = new Map<string, number>();
-  const seenDni = new Map<string, number>();
-  return raw.map((values, index) => {
-    const line = index + 2;
-    const errors: string[] = [];
-    const dni = pick(values, "dni");
-    const firstName = pick(values, "nombres", "firstName");
-    const lastName = pick(values, "apellidos", "lastName");
-    const email = pick(values, "correo", "email", "correo_institucional");
-    const personalEmail = pick(values, "correo_personal", "personalEmail");
-    const phone = pick(values, "celular", "phone", "telefono");
-    const extraPhones = splitPhones(pick(values, "celulares_adicionales", "phonesAdditional"));
-
-    if (!isDni(dni)) errors.push(`DNI con ${dni.length} dígitos`);
-    if (!firstName || !lastName) errors.push("Faltan nombres o apellidos");
-    if (!isLoginEmail(email)) errors.push("Correo no válido");
-    if (personalEmail && !isEmail(personalEmail)) errors.push("Correo personal no válido");
-    if (phone && !isPeruMobile(phone)) errors.push("Celular no válido");
-    if (seenEmails.has(email.toLowerCase())) errors.push(`Correo repetido (fila ${seenEmails.get(email.toLowerCase())})`);
-    if (seenDni.has(dni)) errors.push(`DNI repetido (fila ${seenDni.get(dni)})`);
-    seenEmails.set(email.toLowerCase(), line);
-    seenDni.set(dni, line);
-
-    const base = { dni, firstName, lastName, email, personalEmail: personalEmail || undefined, phone: phone || undefined };
-
-    if (kind === "docentes") {
-      const courseName = pick(values, "curso", "course");
-      const course = findCourse(courses, courseName);
-      if (!course) {
-        const suggestion = suggestCourse(courses, courseName);
-        errors.push(courseName ? `Curso «${courseName}» no existe${suggestion ? ` · ¿${suggestion.name}?` : ""}` : "Falta el curso");
-      }
-      const jobRaw = pick(values, "dedicacion", "jobStatus");
-      const jobStatus = JOB_ALIASES[plain(jobRaw)] ?? JOB_ALIASES[plain(jobRaw).replace(/\s/g, "")];
-      if (!jobStatus) errors.push("Dedicación no válida");
-      const maxHours = Number(pick(values, "horas_maximas", "maxHours")) || undefined;
-      return {
-        line,
-        values,
-        errors,
-        payload: errors.length ? undefined : { ...base, phonesAdditional: extraPhones, courseId: course!.id, jobStatus, maxHours, isCoordinator: false },
-      };
-    }
-
-    const shiftName = pick(values, "turno", "shift");
-    const shift = shifts.find((s) => plain(s.name) === plain(shiftName));
-    if (!shift) errors.push(shiftName ? `Turno «${shiftName}» no existe` : "Falta el turno");
-    return { line, values, errors, payload: errors.length ? undefined : { ...base, phonesAdditional: extraPhones, shift_id: shift!.id } };
-  });
-}
+const OPTIONS: { value: ImportKind; label: string; description: string }[] = [
+  { value: "docentes", label: "Registrar docentes", description: "Registra docentes nuevos con su curso, datos personales y horas máximas." },
+  { value: "monitores", label: "Datos de monitores por salón", description: "Completa los datos personales del monitor identificando su salón y turno. Conserva el correo y la cuenta creados con el salón." },
+  { value: "supervisores", label: "Supervisores y sus salones", description: "Registra o actualiza supervisores por correo y los vincula a los monitores de los salones indicados. Repite los mismos datos para varios salones del mismo turno." },
+  { value: "disponibilidad", label: "Agregar disponibilidad docente", description: "Por docente y día, elige Rango con horas, Turno completo o Todo el día. Los alcances completos usan los horarios del proceso seleccionado. Conserva la disponibilidad anterior y no asigna salones." },
+];
 
 export function ImportarPage() {
-  const [kind, setKind] = useState<Kind>("docentes");
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [raw, setRaw] = useState<Record<string, string>[]>([]);
-  const [onlyErrors, setOnlyErrors] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [result, setResult] = useState<string | null>(null);
+  const client = useQueryClient();
   const input = useRef<HTMLInputElement>(null);
-  const courses = useCourses();
-  const shifts = useShifts();
-  const teachers = useTeachers({ page: 1, limit: 1 });
-  const supervisors = useSupervisors({ page: 1, limit: 1 });
-
-  const rows = useMemo(() => validate(kind, raw, courses.data ?? [], shifts.data ?? []), [kind, raw, courses.data, shifts.data]);
-  const valid = rows.filter((r) => r.payload);
-  const invalid = rows.filter((r) => !r.payload);
-  const visible = onlyErrors ? invalid : [...invalid, ...valid];
+  const dragDepth = useRef(0);
+  const [dragging, setDragging] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [kind, setKind] = useState<ImportKind>("docentes");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<ImportPreview | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [onlyErrors, setOnlyErrors] = useState(false);
+  const [page, setPage] = useState(0);
+  const [result, setResult] = useState<string | null>(null);
+  const option = OPTIONS.find((o) => o.value === kind)!;
+  const schema = useQuery({ queryKey: ["imports", "columns", kind], queryFn: () => ImportsApi.columns(kind), staleTime: 5 * 60_000 });
+  const rows = preview?.rows.filter((row) => !onlyErrors || row.errors.length > 0) ?? [];
+  const visible = rows.slice(page * 50, page * 50 + 50);
+  const columns = Object.keys(preview?.rows[0]?.values ?? {});
 
   const reset = () => {
-    setFileName(null);
-    setRaw([]);
-    setResult(null);
+    setPreview(null); setFile(null); setResult(null); setPage(0); setOnlyErrors(false);
+    setUploadError(null); setDragging(false); dragDepth.current = 0;
     if (input.current) input.current.value = "";
   };
 
-  const readFile = async (file: File) => {
-    setResult(null);
-    const text = await file.text();
-    try {
-      if (file.name.toLowerCase().endsWith(".json")) {
-        const data = JSON.parse(text) as Record<string, unknown>[];
-        if (!Array.isArray(data)) throw new Error("El JSON debe ser una lista");
-        setRaw(data.map((item) => Object.fromEntries(Object.entries(item).map(([k, v]) => [normalizeKey(k), Array.isArray(v) ? v.join(",") : String(v ?? "")]))));
-      } else if (file.name.toLowerCase().endsWith(".csv")) {
-        setRaw(parseCsv(text));
-      } else {
-        toast.error("Sube un archivo .csv o .json");
-        return;
-      }
-      setFileName(file.name);
-    } catch (error) {
-      toast.error(error instanceof Error ? `No se pudo leer el archivo: ${error.message}` : "No se pudo leer el archivo");
+  const validate = async (selected: File) => {
+    if (busy) return;
+    setUploadError(null); setPreview(null); setResult(null); setFile(selected); setPage(0); setOnlyErrors(false);
+    if (!/\.(xlsx|csv|json)$/i.test(selected.name)) {
+      setUploadError("Formato no admitido. Usa Excel (.xlsx), CSV o JSON."); return;
     }
-  };
-
-  const onDrop = (event: DragEvent) => {
-    event.preventDefault();
-    setDragging(false);
-    const file = event.dataTransfer.files[0];
-    if (file) void readFile(file);
-  };
-
-  const downloadTemplate = () => {
-    const csv = toCsv([TEMPLATES[kind], EXAMPLES[kind]]);
-    downloadBlob(new Blob([String.fromCharCode(0xfeff) + csv], { type: "text/csv;charset=utf-8" }), `plantilla_${kind}.csv`);
-  };
-
-  const send = async () => {
-    setSending(true);
-    setProgress(0);
-    try {
-      if (kind === "docentes") {
-        await post("/teachers/json", valid.map((r) => r.payload));
-        setProgress(valid.length);
-        setResult(`${valid.length} docentes importados`);
-      } else {
-        let ok = 0;
-        for (const row of valid) {
-          try {
-            await SupervisorsApi.create(row.payload as never);
-            ok += 1;
-          } catch (error) {
-            toast.error(`Fila ${row.line}: ${apiErrorMessage(error)}`);
-          }
-          setProgress((p) => p + 1);
-        }
-        setResult(`${ok} de ${valid.length} supervisores importados`);
-      }
-      toast.success("Importación terminada");
-    } catch (error) {
-      toast.error(apiErrorMessage(error, "No se pudo importar el archivo"));
-    } finally {
-      setSending(false);
+    if (!selected.size || selected.size > 8 * 1024 * 1024) {
+      setUploadError("El archivo debe tener contenido y pesar como máximo 8 MB."); return;
     }
+    setBusy(true);
+    try { setPreview(await ImportsApi.preview(kind, selected)); }
+    catch (error) { setUploadError(apiErrorMessage(error, "No se pudo validar el archivo")); }
+    finally { setBusy(false); }
   };
 
-  const options: { value: Kind; label: string; count?: number; icon: React.ReactNode }[] = [
-    { value: "docentes", label: "Docentes", count: teachers.data?.total, icon: <FiUsers /> },
-    { value: "supervisores", label: "Supervisores", count: supervisors.data?.total, icon: <FiShield /> },
-  ];
-  const headers = TEMPLATES[kind];
+  const chooseFiles = (files: FileList | null) => {
+    if (busy || !files?.length) return;
+    if (files.length !== 1) {
+      setPreview(null); setFile(null); setResult(null);
+      setUploadError("Arrastra un solo archivo para revisar el lote."); return;
+    }
+    void validate(files[0]);
+  };
+
+  const download = async () => {
+    setBusy(true);
+    try { downloadBlob(await ImportsApi.template(kind), `plantilla_${kind}.xlsx`); }
+    catch (error) { toast.error(apiErrorMessage(error, "No se pudo descargar la plantilla")); }
+    finally { setBusy(false); }
+  };
+
+  const apply = async () => {
+    if (!file || !preview || preview.valid !== preview.total) return;
+    setBusy(true);
+    try {
+      const applied = await ImportsApi.apply(kind, file, preview.schema);
+      reset();
+      setResult(`Lote completado: ${applied.processed} filas${applied.people !== undefined ? ` · ${applied.people} personas` : ""}${applied.teachers !== undefined ? ` · ${applied.teachers} docentes` : ""}${applied.blocks !== undefined ? ` · ${applied.blocks} bloques desasignados` : ""}.`);
+      await Promise.all(["teachers", "classes", "monitors", "supervisors"].map((key) => client.invalidateQueries({ queryKey: [key] })));
+      toast.success("Lote aplicado correctamente");
+    } catch (error) {
+      toast.error(apiErrorMessage(error, "No se aplicó el lote"));
+      // Refresh errors if another administrator changed records after the preview.
+      try { setPreview(await ImportsApi.preview(kind, file)); } catch { setPreview(null); }
+    } finally { setBusy(false); }
+  };
 
   return (
     <SimpleLayout crumbs={[{ label: "Menú principal", to: "/admin" }, { label: "Importar archivos" }]}>
-      <main className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-4 py-7 sm:px-10">
-        <PageHeader title="Importar archivos" description="Los registros se agregan al proceso actual. Revisa la vista previa antes de confirmar." />
-
-        <div role="radiogroup" aria-label="Tipo de registro" className="flex flex-wrap gap-3">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              role="radio"
-              aria-checked={kind === option.value}
-              onClick={() => {
-                setKind(option.value);
-                reset();
-              }}
-              className={cn(
-                "flex min-w-[200px] flex-1 cursor-pointer items-center gap-3 rounded-2xl border bg-white px-4 py-3.5 text-left",
-                kind === option.value ? "border-2 border-guinda-700 bg-[#FCF7F8]" : "border-line hover:border-marino-300",
-              )}
-            >
-              <span className={cn("flex size-10 items-center justify-center rounded-xl text-lg", kind === option.value ? "bg-guinda-700 text-white" : "bg-marino-50 text-marino-900")}>
-                {option.icon}
-              </span>
-              <span className="flex flex-col">
-                <strong className="text-[15px] text-marino-900">{option.label}</strong>
-                <span className="text-xs text-ink-500">{option.count ?? "…"} registrados</span>
-              </span>
-            </button>
-          ))}
-        </div>
-        <Alert tone="info">Los monitores no se importan: se crean automáticamente al generar el proceso, uno por salón.</Alert>
-
-        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <Card className="flex flex-col gap-5 p-5">
-            <Step n={1} done={false} title="Descarga la plantilla">
-              <span className="text-[13px] leading-6 text-ink-500">Columnas: {headers.join(", ")}.</span>
-              <Button size="sm" variant="secondary" icon={<FiDownload />} onClick={downloadTemplate} className="w-fit">
-                Plantilla CSV
-              </Button>
-            </Step>
-            <Step n={2} done={Boolean(fileName)} title="Sube el archivo">
-              {fileName ? (
-                <div className="flex items-center gap-3 rounded-xl border border-line bg-surface-2 px-3 py-2.5">
-                  <FiFileText className="text-marino-900" aria-hidden="true" />
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <strong className="truncate text-[13px]">{fileName}</strong>
-                    <span className="text-xs text-ink-500">{rows.length} filas</span>
-                  </span>
-                  <Button size="sm" variant="ghost" onClick={reset}>
-                    Cambiar
-                  </Button>
-                </div>
-              ) : (
-                <label
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    setDragging(true);
-                  }}
-                  onDragLeave={() => setDragging(false)}
-                  onDrop={onDrop}
-                  className={cn(
-                    "flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed px-4 py-8 text-center",
-                    dragging ? "border-guinda-700 bg-guinda-50" : "border-[#B9BCCB] bg-surface-2",
-                  )}
-                >
-                  <FiUploadCloud className="text-3xl text-guinda-700" aria-hidden="true" />
-                  <strong className="text-sm">Arrastra el archivo o haz clic</strong>
-                  <span className="text-xs text-ink-500">CSV o JSON</span>
-                  <input ref={input} type="file" accept=".csv,.json,application/json,text/csv" className="sr-only" onChange={(e) => e.target.files?.[0] && readFile(e.target.files[0])} />
-                </label>
-              )}
-            </Step>
-            <Step n={3} done={Boolean(result)} title="Revisa y confirma">
-              <span className="text-[13px] leading-6 text-ink-500">Las filas con errores se omiten. Puedes corregir el archivo y volver a subirlo.</span>
-            </Step>
-          </Card>
-
-          <Card className="flex flex-col overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line-soft px-5 py-4">
-              <h2 className="font-display text-lg font-bold text-marino-900">Vista previa</h2>
-              {rows.length > 0 && (
-                <div className="flex gap-2">
-                  <Badge tone="ok">{valid.length} válidas</Badge>
-                  {invalid.length > 0 && <Badge tone="danger">{invalid.length} con errores</Badge>}
-                </div>
-              )}
+      <main className="mx-auto flex w-full max-w-[1200px] flex-col gap-6 px-4 py-8 sm:px-8">
+        <div className="flex justify-center text-center"><PageHeader title="Importar archivos" description="Prepara tus datos, revisa el resultado y confirma la importación." /></div>
+        <nav aria-label="Tipo de importación" className="flex justify-center">
+          <div className="inline-flex max-w-full flex-wrap justify-center gap-1 rounded-2xl border border-line bg-white p-1.5 shadow-sm">
+            {OPTIONS.map((item) => <button key={item.value} type="button" aria-pressed={kind === item.value} disabled={busy} onClick={() => { setKind(item.value); reset(); }} className={`rounded-xl px-4 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${kind === item.value ? "bg-marino-900 text-white shadow-sm" : "text-ink-500 hover:bg-surface-2 hover:text-marino-900"}`}>
+              {{ docentes: "Docentes", monitores: "Monitores", supervisores: "Supervisores", disponibilidad: "Disponibilidad" }[item.value]}
+            </button>)}
+          </div>
+        </nav>
+        <ol aria-label="Pasos de importación" className="mx-auto flex w-full max-w-2xl items-center justify-center gap-3 text-xs sm:gap-8 sm:text-sm">
+          {["Preparar archivo", "Revisar datos", "Confirmar lote"].map((label, index) => {
+            const current = preview ? 1 : 0;
+            return <li key={label} aria-current={current === index ? "step" : undefined} className={`flex items-center gap-2 ${index <= current ? "text-marino-900" : "text-ink-500"}`}><span className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${index <= current ? "bg-marino-900 text-white" : "bg-surface-2"}`}>{index < current ? <FiCheck aria-hidden="true" /> : index + 1}</span><span>{label}</span></li>;
+          })}
+        </ol>
+        <Card className="mx-auto flex w-full max-w-[960px] flex-col gap-5 p-5 sm:p-8">
+          {!file && <div className="mx-auto max-w-2xl text-center"><h2 className="text-xl font-bold text-marino-900">{option.label}</h2><p className="mt-2 text-sm leading-relaxed text-ink-500">{option.description}</p></div>}
+          {!file && <details className="rounded-xl border border-line p-3">
+            <summary className="cursor-pointer text-sm font-semibold text-marino-900">Cabeceras y formato del archivo</summary>
+            <p className="my-3 text-xs text-ink-500">Usa los nombres de cabecera indicados. Conserva las columnas obligatorias; los valores opcionales pueden quedar vacíos. La plantilla Excel incluye esta guía, formatos y una fila de ejemplo.</p>
+            {schema.isPending && <p role="status" className="text-sm text-ink-500">Cargando cabeceras…</p>}
+            {schema.isError && <div className="flex items-center gap-3 text-sm text-danger-700">No se pudo cargar la guía.<Button variant="ghost" onClick={() => schema.refetch()}>Reintentar</Button></div>}
+            {schema.data && <div className="overflow-x-auto"><table className="w-full text-left text-sm">
+              <thead><tr>{["Cabecera exacta", "Valor", "Formato", "Ejemplo", "Descripción"].map((title) => <th key={title} className="border-b border-line bg-surface-2 px-3 py-2">{title}</th>)}</tr></thead>
+              <tbody>{schema.data.map((column) => <tr key={column.key}>
+                <td className="whitespace-nowrap border-b border-line-soft px-3 py-2">{column.label}{!column.headerRequired && <span className="block text-xs text-ink-500">Cabecera opcional</span>}</td>
+                <td className="border-b border-line-soft px-3 py-2">{column.required ? "Obligatorio" : "Opcional"}</td>
+                <td className="min-w-40 border-b border-line-soft px-3 py-2">{column.format}</td>
+                <td className="border-b border-line-soft px-3 py-2">{column.example}</td>
+                <td className="min-w-64 border-b border-line-soft px-3 py-2 text-ink-500">{column.description}</td>
+              </tr>)}</tbody>
+            </table></div>}
+          </details>}
+          <div className="flex flex-wrap justify-center gap-3">
+            <Button variant="secondary" icon={<FiDownload />} disabled={busy} onClick={download}>Descargar plantilla Excel</Button>
+            {!file && <Button icon={<FiUploadCloud />} disabled={busy} onClick={() => input.current?.click()}>Seleccionar archivo</Button>}
+            <input ref={input} type="file" className="hidden" accept=".xlsx,.csv,.json" disabled={busy} onChange={(event) => { chooseFiles(event.target.files); event.target.value = ""; }} />
+            {file && <Button variant="ghost" disabled={busy} onClick={() => validate(file)}>Volver a validar</Button>}
+          </div>
+          {!file ? <button
+            type="button"
+            disabled={busy}
+            aria-label="Arrastrar o seleccionar archivo para importar"
+            onClick={() => input.current?.click()}
+            onDragEnter={(event) => { event.preventDefault(); if (!busy) { dragDepth.current++; setDragging(true); } }}
+            onDragOver={(event) => { event.preventDefault(); event.dataTransfer.dropEffect = busy ? "none" : "copy"; }}
+            onDragLeave={(event) => { event.preventDefault(); dragDepth.current = Math.max(0, dragDepth.current - 1); if (!dragDepth.current) setDragging(false); }}
+            onDrop={(event) => { event.preventDefault(); dragDepth.current = 0; setDragging(false); chooseFiles(event.dataTransfer.files); }}
+            className={`flex min-h-44 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-5 py-7 text-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-marino-900 disabled:cursor-wait ${dragging ? "border-marino-900 bg-marino-900/10" : "border-line bg-surface-2 hover:border-marino-900"}`}
+          >
+            <FiUploadCloud className="size-9 text-marino-900" aria-hidden="true" />
+            <strong className="text-marino-900">{busy ? "Validando archivo…" : dragging ? "Suelta el archivo para previsualizarlo" : "Arrastra tu archivo aquí"}</strong>
+            <span className="text-sm text-ink-500">o haz clic para seleccionarlo · Excel, CSV o JSON</span>
+            <span className="text-xs text-ink-500">Se revisará antes de guardar. Todavía no se importará ningún registro.</span>
+          </button> : <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-line bg-surface-2 p-4">
+            <div className="min-w-0 flex-1"><p className="text-xs text-ink-500">{option.label} · {(file.size / 1024).toFixed(1)} KB</p><strong className="block break-all text-sm text-marino-900">{file.name}</strong><p role="status" className="mt-1 text-xs text-ink-500">{busy ? "Procesando archivo…" : result ? "Importación completada" : preview ? "Revisa las filas antes de confirmar" : "Revisa el archivo y vuelve a validarlo"}</p></div>
+            <Button variant="secondary" disabled={busy} onClick={() => input.current?.click()}>Cambiar archivo</Button>
+            <Button variant="ghost" disabled={busy} onClick={reset}>Cancelar</Button>
+          </div>}
+          {uploadError && <Alert tone="danger">{uploadError}</Alert>}
+          {!file && <p className="text-center text-xs text-ink-500">Excel (.xlsx), CSV o JSON · Máximo 10000 filas y 8 MB. La plantilla incluye cabeceras, formatos, guía, horarios, salones y cursos del proceso.</p>}
+          {busy && <p role="status" className="text-sm text-ink-500">Procesando el lote…</p>}
+        </Card>
+        {result && <Alert tone="info">{result}</Alert>}
+        {preview && <>
+          <Alert tone={preview.valid === preview.total ? "info" : "danger"}>
+            Proceso: <strong>{preview.schema}</strong> · {preview.valid} de {preview.total} filas válidas.
+            {preview.valid !== preview.total ? " Corrige los errores y vuelve a validar. No se guardará ninguna fila mientras haya errores." : " La confirmación aplicará el archivo completo. El servidor volverá a validar los datos."}
+          </Alert>
+          <Card className="overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-4">
+              <strong>Vista previa</strong>
+              <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={onlyErrors} onChange={(event) => { setOnlyErrors(event.target.checked); setPage(0); }} />Solo errores</label>
             </div>
-            {rows.length === 0 ? (
-              <p className="px-5 py-14 text-center text-sm text-ink-500">Sube un archivo para ver aquí cada fila validada.</p>
-            ) : (
-              <div className="max-h-[460px] overflow-auto">
-                <table className="w-full min-w-[640px] border-collapse text-[13px]">
-                  <thead className="sticky top-0">
-                    <tr>
-                      {["Fila", "DNI", "Nombre", "Correo", kind === "docentes" ? "Curso" : "Turno", "Estado"].map((h) => (
-                        <th key={h} className="border-b border-line bg-surface-2 px-3 py-2.5 text-left text-xs font-bold text-ink-500">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visible.map((row) => (
-                      <tr key={row.line} className={row.payload ? "" : "bg-[#FFF8F7]"}>
-                        <td className="border-b border-line-soft px-3 py-2.5">{row.line}</td>
-                        <td className="border-b border-line-soft px-3 py-2.5">{pick(row.values, "dni")}</td>
-                        <td className="border-b border-line-soft px-3 py-2.5">
-                          {pick(row.values, "apellidos", "lastName")}, {pick(row.values, "nombres", "firstName")}
-                        </td>
-                        <td className="border-b border-line-soft px-3 py-2.5">{pick(row.values, "correo", "email")}</td>
-                        <td className="border-b border-line-soft px-3 py-2.5">{pick(row.values, kind === "docentes" ? "curso" : "turno")}</td>
-                        <td className={cn("border-b border-line-soft px-3 py-2.5 font-semibold", row.payload ? "text-ok-700" : "text-danger-700")}>
-                          {row.payload ? "Lista" : row.errors.join(" · ")}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {rows.length > 0 && (
-              <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-line-soft bg-surface-2 px-5 py-4">
-                <Checkbox label="Mostrar solo filas con errores" checked={onlyErrors} onChange={(e) => setOnlyErrors(e.target.checked)} />
-                {result ? (
-                  <Badge tone="ok">
-                    <FiCheck /> {result}
-                  </Badge>
-                ) : (
-                  <div className="flex gap-2">
-                    <Button variant="ghost" onClick={reset} disabled={sending}>
-                      Cancelar
-                    </Button>
-                    <Button onClick={send} loading={sending} disabled={!valid.length}>
-                      {sending && kind === "supervisores" ? `${progress} / ${valid.length}` : `Importar ${valid.length} ${kind}`}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="overflow-x-auto"><table className="w-full border-collapse text-sm">
+              <thead><tr>{["Fila", ...columns, "Resultado"].map((column) => <th key={column} className="whitespace-nowrap border-b border-line bg-surface-2 px-3 py-3 text-left">{schema.data?.find((item) => item.key === column)?.label ?? column}</th>)}</tr></thead>
+              <tbody>{visible.map((row) => <tr key={row.line} className={row.errors.length ? "bg-red-50" : undefined}>
+                <td className="border-b border-line-soft px-3 py-2">{row.line}</td>
+                {columns.map((column) => <td key={column} className="max-w-72 border-b border-line-soft px-3 py-2">{row.values[column]}</td>)}
+                <td className={`min-w-56 border-b border-line-soft px-3 py-2 ${row.errors.length ? "text-danger-700" : "text-ok-700"}`}>{row.errors.join(". ") || "Válido"}</td>
+              </tr>)}</tbody>
+            </table></div>
+            <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <span className="text-xs text-ink-500">{rows.length ? `${page * 50 + 1}–${Math.min((page + 1) * 50, rows.length)} de ${rows.length} filas` : "Sin filas para mostrar"}</span>
+              <div className="flex gap-2"><Button variant="ghost" disabled={page === 0} onClick={() => setPage(page - 1)}>Anterior</Button><Button variant="ghost" disabled={(page + 1) * 50 >= rows.length} onClick={() => setPage(page + 1)}>Siguiente</Button></div>
+            </div>
           </Card>
-        </div>
+          <div className="flex justify-end gap-3"><Button variant="ghost" disabled={busy} onClick={reset}>Cancelar</Button><Button loading={busy} disabled={preview.valid !== preview.total || busy} onClick={apply}>Confirmar lote</Button></div>
+        </>}
       </main>
     </SimpleLayout>
-  );
-}
-
-function Step({ n, done, title, children }: { n: number; done: boolean; title: string; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-3">
-      <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-full text-[13px] font-bold text-white", done ? "bg-ok-600" : "bg-marino-900")}>
-        {done ? <FiCheck /> : n}
-      </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <strong className="text-[15px]">{title}</strong>
-        {children}
-      </div>
-    </div>
   );
 }
