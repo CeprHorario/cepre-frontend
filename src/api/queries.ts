@@ -242,6 +242,21 @@ export function useSaveTeacherAvailability(id: string) {
   });
 }
 
+export function useClearTeacherAvailability() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: SchedulesApi.clearAvailability,
+    onSuccess: async () => {
+      await client.cancelQueries({ queryKey: ["teachers", "availability"] });
+      await Promise.all([
+        client.invalidateQueries({ queryKey: ["teachers", "availability"] }),
+        client.invalidateQueries({ queryKey: ["teachers", "available"] }),
+        client.invalidateQueries({ queryKey: ["classes", "available"] }),
+      ]);
+    },
+  });
+}
+
 export function useAvailableTeachers(courseId: number | undefined, slots: Slot[]) {
   const params = { courseId, slots };
   return useQuery({
@@ -296,6 +311,14 @@ export function useAssignmentMutations() {
       client.invalidateQueries({ queryKey: ["classes"] }),
     ]);
   return {
+    assignMany: useMutation({
+      mutationFn: ({ teacherId, classroomIds }: { teacherId: string; classroomIds: string[] }) => SchedulesApi.assignTeacherMany(teacherId, classroomIds),
+      onSuccess: refresh,
+    }),
+    unassignMany: useMutation({
+      mutationFn: ({ teacherId, classroomIds }: { teacherId: string; classroomIds: string[] }) => SchedulesApi.unassignTeacherMany(teacherId, classroomIds),
+      onSuccess: refresh,
+    }),
     assign: useMutation({
       mutationFn: ({ teacherId, classId }: { teacherId: string; classId: string }) => SchedulesApi.assignTeacher(teacherId, classId),
       onSuccess: refresh,

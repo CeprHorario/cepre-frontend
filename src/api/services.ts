@@ -170,7 +170,12 @@ export const TeachersApi = {
 };
 
 export const SchedulesApi = {
+  assignTeacherMany: (teacherId: string, classroomIds: string[]) =>
+    patch<unknown>("/schedules/asignar/profesor", { teacherId, classroomIds }),
+  unassignTeacherMany: (teacherId: string, classroomIds: string[]) =>
+    patch<unknown>("/schedules/desasignar/profesor", { teacherId, classroomIds }),
   availability: (teacherId: string) => get<AvailabilityInterval[]>(`/schedules/teachers/${teacherId}/availability`),
+  clearAvailability: (teacherIds: string[]) => post<{ teachers: number; intervals: number }>("/schedules/teachers/availability/clear", { teacherIds }),
   saveAvailability: (teacherId: string, intervals: AvailabilityInterval[]) =>
     put<AvailabilityInterval[]>(`/schedules/teachers/${teacherId}/availability`, { intervals }),
   assignTeacher: (teacherId: string, classId: string) =>

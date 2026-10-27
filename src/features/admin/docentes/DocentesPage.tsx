@@ -4,7 +4,8 @@ import { toast } from "react-toastify";
 import { FiCalendar, FiDownload, FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import { apiErrorMessage } from "@/api/client";
 import { TeachersApi } from "@/api/services";
-import { useCourses, useTeacherMutations, useTeachers, useTeacherSearch } from "@/api/queries";
+import { useClearTeacherAvailability, useCourses, useTeacherMutations, useTeachers, useTeacherSearch } from "@/api/queries";
+import { ConfirmDialog } from "@/components/ui/Overlay";
 import type { TeacherSummary } from "@/api/types";
 import { Button } from "@/components/ui/Button";
 import { Badge, CourseBadge } from "@/components/ui/Badge";
@@ -42,6 +43,8 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
   const search = useTeacherSearch(debounced, page, limit);
   const courses = useCourses();
   const { deactivate } = useTeacherMutations();
+  const clearAvailability = useClearTeacherAvailability();
+  const [availabilityTargets, setAvailabilityTargets] = useState<TeacherSummary[]>([]);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<TeacherSummary | null>(null);
@@ -209,8 +212,9 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
           {!readOnly && <SelectionToggle active={selection.active} onStart={selection.start} onStop={selection.stop} />}
         </div>
 
-        {selection.active && (
+        {!readOnly && selection.active && (
           <SelectionBar count={selection.selectedRows.length} singular="docente" plural="docentes">
+            <Button size="sm" variant="secondary" disabled={clearAvailability.isPending} onClick={() => setAvailabilityTargets([...selection.selectedRows])}>Quitar disponibilidad</Button>
             <Button size="sm" variant="danger" icon={<FiTrash2 />} onClick={() => removal.request(selection.selectedRows)}>
               Eliminar
             </Button>
@@ -268,6 +272,21 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
       />
 
       {removal.dialog}
+      {!readOnly && <ConfirmDialog
+        open={availabilityTargets.length > 0}
+        title="Quitar disponibilidad"
+        message={`Se borrará toda la disponibilidad de ${availabilityTargets.length} docente(s) en este proceso. Los salones asignados y sus horas se conservan. Tendrás que registrar disponibilidad nuevamente para futuras asignaciones.`}
+        confirmText="Quitar disponibilidad"
+        loading={clearAvailability.isPending}
+        onCancel={() => { if (!clearAvailability.isPending) setAvailabilityTargets([]); }}
+        onConfirm={async () => {
+          try {
+            const result = await clearAvailability.mutateAsync(availabilityTargets.map(teacher => teacher.id));
+            toast.success(`Disponibilidad retirada de ${result.teachers} docentes`);
+            setAvailabilityTargets([]); selection.stop();
+          } catch (error) { toast.error(apiErrorMessage(error, "No se quitó la disponibilidad")); }
+        }}
+      />}
     </>
   );
 }

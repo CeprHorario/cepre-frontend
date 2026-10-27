@@ -12,6 +12,7 @@ import { Avatar, Card, CardHeader, ProgressBar } from "@/components/ui/Card";
 import { Alert, EmptyState } from "@/components/ui/EmptyState";
 import { Checkbox, Select } from "@/components/ui/Field";
 import { Segmented } from "@/components/ui/Segmented";
+import { SelectionBar, SelectionToggle, useSelectionMode } from "@/components/ui/Selection";
 import { LoadingScreen, Skeleton } from "@/components/ui/Spinner";
 import { formatPhone, fullName, initials, JOB_STATUS_LABEL, shortClassName } from "@/lib/format";
 import { layoutEntries, toHHMM, WEEKDAY_SHORT, WEEKDAYS, type ScheduleEntry } from "@/lib/schedule";
@@ -31,7 +32,10 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
   const { periods, isLoading: loadingPeriods } = usePeriods();
   const courses = useCourses();
   const areas = useAreas();
-  const { assign, unassign } = useAssignmentMutations();
+  const { assignMany, unassign, unassignMany } = useAssignmentMutations();
+  const removal = useSelectionMode(schedule.data ?? [], (cls) => cls.classId);
+  const [confirmRemoval, setConfirmRemoval] = useState(false);
+  const [confirmAll, setConfirmAll] = useState(false);
 
   // Sin estado de navegación (enlace directo) se busca el resumen con horas en la lista de su curso
   const sameCourse = useTeachers({ page: 1, limit: 500, courseId: detail.data?.courseId }, !fromList && Boolean(detail.data));
@@ -185,17 +189,21 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
   };
 
   const confirmAssign = async () => {
-    let ok = 0;
-    for (const cls of selectedClasses) {
-      try {
-        await assign.mutateAsync({ teacherId: id, classId: cls.id });
-        ok += 1;
-      } catch (error) {
-        toast.error(`${shortClassName(cls.name)}: ${apiErrorMessage(error, "no se pudo asignar")}`);
-      }
+    try {
+      await assignMany.mutateAsync({ teacherId: id, classroomIds: selectedClasses.map((cls) => cls.id) });
+      toast.success(`${selectedClasses.length} salones asignados`);
+      setSelected(new Set());
+    } catch (error) {
+      toast.error(apiErrorMessage(error, "No se asignó ningún salón"));
     }
-    if (ok) toast.success(ok === 1 ? "Salón asignado" : `${ok} salones asignados`);
-    setSelected(new Set());
+  };
+
+  const removeSelected = async () => {
+    try {
+      await unassignMany.mutateAsync({ teacherId: id, classroomIds: removal.selectedRows.map((cls) => cls.classId) });
+      toast.success(`${removal.selectedRows.length} salones desasignados`);
+      removal.stop(); setConfirmRemoval(false);
+    } catch (error) { toast.error(apiErrorMessage(error, "No se desasignó ningún salón")); }
   };
 
   const removeClass = async (classId: string) => {
@@ -207,6 +215,14 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
     } finally {
       setToRemove(null);
     }
+  };
+
+  const removeAll = async () => {
+    try {
+      await unassignMany.mutateAsync({ teacherId: id, classroomIds: (schedule.data ?? []).map(cls => cls.classId) });
+      toast.success('Todas las asignaciones del docente fueron retiradas');
+      setConfirmAll(false); removal.stop(); setConfirmRemoval(false);
+    } catch (error) { toast.error(apiErrorMessage(error, 'No se retiraron las asignaciones')); }
   };
 
   if (!teacher || loadingPeriods || availability.isPending) return <LoadingScreen />;
@@ -375,7 +391,7 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
                   <span className="text-ink-500">{selectedClasses.length} salones seleccionados</span>
                   <strong className="tabular">+{projected} h</strong>
                 </div>
-                <Button onClick={confirmAssign} loading={assign.isPending} disabled={conflicts.size > 0}>
+                <Button onClick={confirmAssign} loading={assignMany.isPending} disabled={conflicts.size > 0}>
                   Asignar {selectedClasses.length} {selectedClasses.length === 1 ? "salón" : "salones"}
                 </Button>
               </div>
@@ -383,9 +399,14 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
           </Card>
 
           <Card className="flex flex-col gap-2.5 p-5">
-            <CardHeader title="Salones asignados" description={`${schedule.data?.length ?? 0} salones · ${assignedHours} horas`} />
+            <CardHeader title="Salones asignados" description={`${schedule.data?.length ?? 0} salones · ${assignedHours} horas`} actions={<SelectionToggle active={removal.active} onStart={removal.start} onStop={() => { removal.stop(); setConfirmRemoval(false); }} />} />
+            {!!schedule.data?.length && <Button size="sm" variant="ghost" disabled={unassignMany.isPending} onClick={() => setConfirmAll(true)}>Quitar todas las asignaciones</Button>}
+            {confirmAll && <Alert tone="warn">Se quitarán todos los salones asignados a este docente en el proceso actual. Su disponibilidad se conserva.<div className="mt-2 flex gap-2"><Button size="sm" variant="danger-solid" loading={unassignMany.isPending} onClick={removeAll}>Confirmar quitar todo</Button><Button size="sm" variant="ghost" disabled={unassignMany.isPending} onClick={() => setConfirmAll(false)}>Cancelar</Button></div></Alert>}
+            {removal.active && <SelectionBar count={removal.selectedRows.length} singular="salón" plural="salones"><Button size="sm" onClick={() => setConfirmRemoval(true)}>Desasignar seleccionados</Button></SelectionBar>}
+            {confirmRemoval && removal.selectedRows.length > 0 && <Alert tone="warn">Se quitarán todos los bloques de estos {removal.selectedRows.length} salones. La disponibilidad se conserva.<div className="mt-2 flex gap-2"><Button size="sm" loading={unassignMany.isPending} onClick={removeSelected}>Confirmar desasignación</Button><Button size="sm" variant="ghost" disabled={unassignMany.isPending} onClick={() => setConfirmRemoval(false)}>Cancelar</Button></div></Alert>}
             {(schedule.data ?? []).map((cls) => (
               <div key={cls.classId} className="flex items-center justify-between gap-3 rounded-xl bg-surface-2 px-3.5 py-2.5">
+                {removal.tableSelection && <Checkbox aria-label={`Seleccionar ${cls.className}`} checked={removal.tableSelection.selected.has(cls.classId)} disabled={unassignMany.isPending} onChange={() => { const selection = new Set(removal.tableSelection!.selected); if (selection.has(cls.classId)) selection.delete(cls.classId); else selection.add(cls.classId); removal.tableSelection!.onChange(selection); setConfirmRemoval(false); }} />}
                 <div className="flex min-w-0 flex-col">
                   <strong className="text-sm">{shortClassName(cls.className)}</strong>
                   <span className="truncate text-xs text-ink-500">
