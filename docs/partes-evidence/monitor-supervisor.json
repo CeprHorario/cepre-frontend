@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "suite": "monitor-supervisor",
+  "results": [
+    "Borrador: selección, navegación y logout protegidos; descarte explícito",
+    "Registro explícito: horas de minuto, dictado, titular y efectivos, versión y cierre",
+    "GCS real: subida, asociación, imagen íntegra, zoom y foco anidado",
+    "Concurrencia:409 real, comparación y borrador conservado sin reintento",
+    "Cierre:entre subida/asociación, cerrado y bloque futuro",
+    "Monitor:emergencia PENDING, sin inferir ejecución",
+    "Mantenimiento real503:pausa y borrador recuperado",
+    "Responsive1440/1280/768/390/320 y teclado modal",
+    "Supervisor:revisión explícita incluso cerrado, versión histórica, alertas, acuse separado y cinco tamaños"
+  ],
+  "errors": [],
+  "requests": 101
+}

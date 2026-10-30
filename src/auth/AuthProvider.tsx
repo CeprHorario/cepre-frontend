@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useRef, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { MAINTENANCE_EVENT } from "@/api/client";
+import { BEFORE_LOGOUT_EVENT, MAINTENANCE_EVENT } from "@/api/client";
 import { toast } from 'react-toastify';
 import { AuthApi } from "@/api/services";
 import { keys, useMe, useSystemStatus } from "@/api/queries";
@@ -43,6 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loginError, setLoginError] = useState<string | null>(null);
   const me = useMe();
   const status = useSystemStatus();
+  const lastMaintenance = useRef(status.data?.maintenance);
+
+  useEffect(() => {
+    if (lastMaintenance.current && status.data?.maintenance === false) void client.invalidateQueries({ queryKey: keys.me });
+    lastMaintenance.current = status.data?.maintenance;
+  }, [client, status.data?.maintenance]);
 
   // El popup confirma la cookie de sesión sin entregar credenciales al JavaScript.
   useEffect(() => {
@@ -52,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoggingIn(false);
       if (data?.authenticated === true) {
         setLoginError(null);
-        client.removeQueries({ predicate: query => query.queryKey[0] !== 'me' && query.queryKey[0] !== 'system' });
+        client.removeQueries({ predicate: query => query.queryKey[0] !== 'me' && query.queryKey[0] !== 'system' && !(query.queryKey[0] === 'parts' && query.queryKey[3] === 'workspace') });
         client.invalidateQueries({ queryKey: keys.me });
       } else if (data?.error) {
         setLoginError("Tu cuenta no está registrada en el sistema o no tiene un rol asignado.");
@@ -94,6 +100,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
+    if (!window.dispatchEvent(new Event(BEFORE_LOGOUT_EVENT, { cancelable: true }))) {
+      toast.warn('Guarda o descarta los pendientes de partes antes de cerrar sesión.');
+      return;
+    }
     void AuthApi.logout().then(() => { client.clear(); window.location.href = '/'; })
       .catch(() => toast.error('No se pudo cerrar la sesión. Intenta nuevamente.'));
   }, [client]);

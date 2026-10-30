@@ -8,6 +8,8 @@
     "build": "tsc && vite build",
     "typecheck": "tsc",
     "test:availability": "node --experimental-strip-types --test tests/availability.test.mjs",
+    "test:partes": "node --experimental-strip-types --test tests/partes.test.mjs",
+    "test:partes:browser": "node tests/run-partes-browser.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

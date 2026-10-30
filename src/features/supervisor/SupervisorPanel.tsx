@@ -7,6 +7,7 @@ import { LinkButtons } from "@/components/schedule/LinkButtons";
 import { ScheduleView } from "@/components/schedule/ScheduleView";
 import { TeacherDirectory } from "@/components/schedule/TeacherDirectory";
 import { Card } from "@/components/ui/Card";
+import { ButtonLink } from "@/components/ui/Button";
 import { EmailLink, PhoneCopy } from "@/components/ui/Contact";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SearchInput } from "@/components/ui/Field";
@@ -41,6 +42,7 @@ export function SupervisorPanel() {
     return (
       <SimpleLayout greeting subtitle="Supervisor">
         <main className="mx-auto w-full max-w-[640px] px-4 py-10 sm:px-8">
+          <ButtonLink to="/supervisor/partes">Revisar partes</ButtonLink>
           <Card>
             <EmptyState
               title="Aún no tienes salones a cargo"
@@ -55,6 +57,7 @@ export function SupervisorPanel() {
   return (
     <SimpleLayout greeting subtitle="Supervisor">
       <main className="mx-auto flex w-full max-w-[1400px] flex-wrap items-start gap-5 px-4 py-6 sm:px-8">
+        <div className="w-full"><ButtonLink to="/supervisor/partes">Revisar partes</ButtonLink></div>
         <Card className="flex w-full flex-col gap-3 p-4 lg:w-[340px] lg:shrink-0">
           <div className="flex items-center justify-between">
             <h1 className="font-display text-lg font-extrabold text-marino-900">Mis salones</h1>

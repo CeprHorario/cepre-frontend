@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import { AuthProvider } from "@/auth/AuthProvider";
 import { router } from "@/app/router";
+import { PartsSessionProtection } from "@/features/partes/PartsSessionProtection";
 
 // Retira credenciales antiguas; la sesión actual vive en una cookie HttpOnly.
 try { localStorage.removeItem('token'); } catch { /* La sesión por cookie no depende de Web Storage. */ }
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <PartsSessionProtection />
         <RouterProvider router={router} />
         <ToastContainer position="bottom-right" newestOnTop theme="colored" />
         <Analytics />

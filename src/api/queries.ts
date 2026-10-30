@@ -69,6 +69,7 @@ export function useSystemStatus() {
     queryKey: keys.status,
     queryFn: SystemApi.status,
     staleTime: 30_000,
+    refetchInterval: query => query.state.data?.maintenance ? 15_000 : false,
     refetchOnWindowFocus: "always",
     retry: 2,
   });

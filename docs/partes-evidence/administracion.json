@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "suite": "administracion",
+  "results": [
+    "Corrección y captura extraordinarias motivadas sin alterar cierre",
+    "Habilitación válida, uso monitor y revocación sin reabrir cierre",
+    "Resolver y revocar cobertura separadas de ejecución y resultado titular",
+    "Reemplazos masivos y destinos congelados al conservar operación",
+    "Anulación/restauración sin abrir fila; lote parcial detiene sin reintentar, selección vieja descartada",
+    "Recuperación fechada en domingo con catálogos administrativos autorizados",
+    "Configuración operativa versionada, parámetros nulos y borrador protegido",
+    "Reportes y resumen del servidor, historial auditable y móvil"
+  ],
+  "errors": []
+}

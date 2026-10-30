@@ -23,6 +23,7 @@ import { SalonesPage } from "@/features/admin/salones/SalonesPage";
 import { DocentePanel } from "@/features/docente/DocentePanel";
 import { MonitorPanel } from "@/features/monitor/MonitorPanel";
 import { SupervisorPanel } from "@/features/supervisor/SupervisorPanel";
+import { PartsPage } from "@/features/partes/PartsPage";
 import { NotFoundPage } from "./NotFoundPage";
 import { RouteError } from "./RouteError";
 
@@ -107,6 +108,7 @@ export const router = createBrowserRouter([
           { path: "generar", element: <GenerarProcesoPage /> },
           { path: "importar", element: <ImportarPage /> },
           { path: "configuracion", element: <ConfiguracionPage /> },
+          { path: "partes", element: <PartsPage /> },
           {
             path: "gestionar",
             element: <GestionarLayout />,
@@ -134,12 +136,12 @@ export const router = createBrowserRouter([
       {
         path: "monitor",
         element: <RequireRole roles={["monitor"]} />,
-        children: [{ index: true, element: <MonitorPanel /> }],
+        children: [{ index: true, element: <MonitorPanel /> }, { path: "partes", element: <PartsPage /> }],
       },
       {
         path: "supervisor",
         element: <RequireRole roles={["supervisor"]} />,
-        children: [{ index: true, element: <SupervisorPanel /> }],
+        children: [{ index: true, element: <SupervisorPanel /> }, { path: "partes", element: <PartsPage /> }],
       },
       {
         path: "coordinador",

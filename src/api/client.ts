@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 
 export const MAINTENANCE_EVENT = "ceprunsa:maintenance-mode";
+export const BEFORE_LOGOUT_EVENT = "ceprunsa:before-logout";
 
 export const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BACK_URL}/api`,

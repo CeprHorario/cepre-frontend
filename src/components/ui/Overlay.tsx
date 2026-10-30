@@ -4,6 +4,9 @@ import { FiX } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 import { Button, IconButton } from "./Button";
 
+let openDialogs = 0;
+let overflowBeforeDialogs = "";
+
 function useEscape(open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return;
@@ -39,39 +42,55 @@ interface DialogProps {
 }
 
 export function Dialog({ open, onClose, title, description, children, footer, size = "md" }: DialogProps) {
-  useEscape(open, onClose);
-  const ref = useInitialFocus(open);
+  const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
+  const descriptionId = useId();
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!open || !dialog) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialog.showModal();
+    if (openDialogs++ === 0) overflowBeforeDialogs = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      dialog.close();
+      if (--openDialogs === 0) document.body.style.overflow = overflowBeforeDialogs;
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [open]);
   if (!open) return null;
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-marino-900/45 p-0 sm:items-center sm:p-4" onMouseDown={onClose}>
-      <div
-        ref={ref}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        tabIndex={-1}
-        onMouseDown={(event) => event.stopPropagation()}
-        className={cn(
-          "flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-pop outline-none sm:rounded-2xl",
-          size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-3xl" : "sm:max-w-xl",
-        )}
-      >
+    <dialog
+      ref={ref}
+      aria-labelledby={titleId}
+      aria-describedby={description ? descriptionId : undefined}
+      onCancel={(event) => { event.preventDefault(); onClose(); }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const bounds = event.currentTarget.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) onClose();
+      }}
+      className={cn(
+        "fixed inset-0 m-auto max-h-[92dvh] w-[calc(100%-1rem)] max-w-none overflow-hidden rounded-2xl border-0 bg-white p-0 text-ink-900 shadow-pop outline-none backdrop:bg-marino-900/45",
+        size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-3xl" : "sm:max-w-xl",
+      )}
+    >
+      <div className="flex max-h-[92dvh] min-w-0 flex-col">
         <div className="flex items-start justify-between gap-4 border-b border-line-soft px-6 py-5">
           <div className="flex flex-col gap-1">
             <h2 id={titleId} className="font-display text-lg font-bold text-marino-900">
               {title}
             </h2>
-            {description && <p className="text-sm text-ink-500">{description}</p>}
+            {description && <p id={descriptionId} className="text-sm text-ink-500">{description}</p>}
           </div>
           <IconButton label="Cerrar" size="sm" data-close onClick={onClose}>
             <FiX />
           </IconButton>
         </div>
-        {children && <div className="overflow-y-auto px-6 py-5">{children}</div>}
+        {children && <div className="min-h-0 overflow-y-auto px-6 py-5">{children}</div>}
         {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line-soft bg-surface-2 px-6 py-4">{footer}</div>}
       </div>
-    </div>,
+    </dialog>,
     document.body,
   );
 }

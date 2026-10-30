@@ -78,6 +78,7 @@ export function AdminHub() {
 
       <main className="relative mx-auto -mt-16 flex w-full max-w-[1280px] flex-col gap-6 px-4 pb-10 sm:px-10">
         <section aria-label="Módulos" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <ModuleTile to="/admin/partes" icon={<FiCalendar />} iconClass="bg-guinda-50 text-guinda-700" title="Partes diarios" description="Registro, seguimiento, reemplazos y reportes del proceso." footer={<TileLink>Administrar partes</TileLink>} />
           <ModuleTile
             to="/admin/generar"
             icon={<FiCalendar />}

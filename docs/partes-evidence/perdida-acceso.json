@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "suite": "perdida-acceso-plazo",
+  "results": [
+    "Cierre con borrador:Guardar deshabilitado y descarte disponible",
+    "Anulación concurrente404:descarte explícito de borrador y subida pendiente libera navegación sin borrar archivos",
+    "Fallo de red en logout tras descarte explícito:workspace continúa operable"
+  ]
+}

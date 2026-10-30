@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "suite": "aislamiento-sesion",
+  "results": [
+    "Proceso administrativo cambia sin renovar JWTcore; precondición409, mismosIDs aislados y borrador cuarentenado recuperable",
+    "Cambio de cuenta en otra pestaña: bloqueo409, autenticación actualizada, sin mezclar roles ni borradores",
+    "401 y revocación reales: login sin exponer datos; borrador de misma cuenta conservado en memoria"
+  ],
+  "errors": []
+}
