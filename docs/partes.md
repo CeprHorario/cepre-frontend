@@ -11,7 +11,9 @@ Integración real en `/monitor/partes`, `/supervisor/partes` y `/admin/partes`. 
 - `PartsPage.tsx`: composición/autorización de contexto; `PartsView.tsx` y `partes.css`: presentación por props. Los hooks no importan estilos ni renderizan componentes.
 - `usePartsSessionProtection.ts` y `PartsSessionProtection.tsx`: protección de salida fuera de las rutas. Sigue funcionando durante mantenimiento y pérdida de acceso. Logout con pendientes requiere descarte explícito; con operaciones en curso se bloquea.
 
-No se consulta el catálogo general de personas desde monitor/supervisor. `/class-session-records/:id/people` devuelve personas activas autorizadas; su selección no promete disponibilidad ni autoriza cobertura. Los catálogos generales de aulas/bloques se usan exclusivamente en administración para recuperaciones.
+No se consulta el catálogo general de personas desde monitor/supervisor. `/class-session-records/:id/people` devuelve personas activas autorizadas; su selección no promete disponibilidad ni autoriza cobertura. El catálogo general de aulas se usa exclusivamente en administración para el filtro de salón y recuperaciones; el de bloques, para recuperaciones.
+
+El monitor entra por un listado de jornadas con rango explícito (últimos 30 días por defecto), orden descendente de fecha y desempate por salón/turno. `GET /class-session-records/journals` agrupa por fecha/salón/turno antes de paginar y limita la lectura a su cuenta. No crea un identificador diario ni reconstruye días pasados. Abrir lee todas las páginas de bloques del grupo mediante la API existente; si la cantidad cambia durante la lectura, informa el error en vez de presentar una jornada truncada. Volver conserva rango/página y exige guardar o descartar pendientes. Administración y supervisión mantienen su entrada directa a la hoja.
 
 El contexto procede de `GET /class-session-records/context`; las precondiciones `X-Class-Session-Context` y `X-Class-Session-Account` solo comprueban que no cambió entre peticiones. Backend sigue escogiendo el proceso y verificando recurso/rol/reloj. No se envía `x-schema`.
 
@@ -57,7 +59,9 @@ npm --prefix frontend run test:partes
 npm --prefix frontend run test:partes:browser
 ```
 
-La última usa `playwright-cli` gestionada (sin instalar paquetes), genera un PNG sintético con stdlib Node, abre un perfil Chromium en memoria por suite, valida los resultados y cierra sus sesiones. Conserva solo screenshots y JSON de resultados, nunca estado de autenticación. Comprueba 25 recorridos de monitor/supervisor/admin, aislamiento de cuentas/procesos, sesión, mantenimiento, cierre, GCS, concurrencia y teclado/móvil. La prueba de carrera retiene la **respuesta** de una subida real después de su ejecución, no simula el servidor ni reenvía multipart. También comprueba que un fallo de red al cerrar sesión después del descarte explícito no inutiliza el workspace.
+La última usa `playwright-cli` gestionada (sin instalar paquetes), genera un PNG sintético con stdlib Node y abre un perfil Chromium en memoria por suite. **Sus 25 recorridos y capturas son históricos: contienen controles/permisos retirados y están pendientes de reconciliación durante Fase 1. No constituyen una validación vigente.** La prueba de carrera retiene la **respuesta** de una subida real después de su ejecución, no simula el servidor ni reenvía multipart.
+
+La nueva regresión incremental se ejecuta con `npm run test:modernizacion:browser`, usando el mismo harness reiniciado y frontend del apartado anterior. Su alcance y resultados están en [modernización](modernizacion/MIGRATION_PROGRESS.md). No sustituye por sí sola los recorridos pendientes ni la línea base H2.
 
 El runner escribe los JSON después de cerrar todos sus navegadores: escribirlos entre suites bajo `vite dev` provoca recargas de archivos vigilados que invalidan los borradores y el resultado del propio recorrido. Una salida vacía de la CLI nunca se considera éxito; solo se acepta el resultado explícito `ok:true`, sin repetir mutaciones.
 

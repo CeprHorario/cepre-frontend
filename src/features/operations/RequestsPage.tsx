@@ -11,6 +11,11 @@ import { limaDate,limaTime } from '@/features/partes/model';
 import { useOperations,type Page,type RequestRow,type WorkBlock } from './useOperations';
 const states:Record<string,string>={PENDING:'Pendiente',APPROVED:'Aprobada',REJECTED:'Rechazada',CANCELLED:'Cancelada'};
 export function RequestsPage(){
+ const op=useOperations();const {user}=useAuth();
+ if(!op.context)return <SimpleLayout crumbs={[{label:'Panel',to:user?ROLE_HOME[user.role]:'/'},{label:'Solicitudes y reemplazos'}]}><main className="mx-auto max-w-6xl p-6">{op.error?<p role="alert">{apiErrorMessage(op.error)}</p>:<p role="status">Verificando cuenta y proceso autorizado…</p>}</main></SimpleLayout>;
+ return <RequestsWorkspace key={op.scope.join(':')}/>;
+}
+function RequestsWorkspace(){
  const {user}=useAuth();const op=useOperations();const cache=useQueryClient();const [page,setPage]=useState(1),[status,setStatus]=useState(''),[creating,setCreating]=useState(false),[decision,setDecision]=useState<RequestRow|null>(null),[reason,setReason]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const list=useQuery({queryKey:[...op.scope,'requests',page,status],queryFn:({signal})=>op.read<Page<RequestRow>>('requests',{page,limit:20,status},signal),enabled:!!op.context});
  async function decide(state:string){if(!decision)return;setBusy(true);setError('');try{await api.patch(`/operations/requests/${decision.id}`,{expectedVersion:decision.version,status:state,reason},{headers:op.headers});setDecision(null);await cache.invalidateQueries({queryKey:op.scope});await cache.invalidateQueries({queryKey:['parts']});}catch(e){setError(apiErrorMessage(e));}finally{setBusy(false);}}

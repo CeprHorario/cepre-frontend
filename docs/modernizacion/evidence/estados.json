@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "suite": "modernizacion-estados",
+  "date": "2026-11-03T06:49:42.649Z",
+  "results": [
+    "D-03: supervisor distingue error de vacío y recupera con Reintentar (HTTP inyectado, no integración)",
+    "D-03: fallo inicial no deja carga infinita; reintento carga configuración real del harness",
+    "D-04: selección del supervisor sin enlaces dentro de botón; destinos Meet/Classroom conservados (datos UI sintéticos)",
+    "D-04: tarjetas salón y módulos del hub sin enlaces anidados, destinos conservados y foco de teclado (catálogos UI parciales)"
+  ],
+  "errors": [],
+  "limits": [
+    "Fallos/parte de los catálogos inyectados; no es una validación integral de esas pantallas",
+    "Sin auditoría visual H2 ni lector de pantalla"
+  ]
+}

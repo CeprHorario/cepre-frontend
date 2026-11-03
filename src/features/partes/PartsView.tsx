@@ -86,8 +86,9 @@ function Filters({ p }: { p: PartsViewProps }) {
   const change = (patch: Partial<PartFilters>) => p.onFilters({ ...p.filters, ...patch, page: 1 });
   const choices = (key: "classId" | "teacherId" | "monitorId" | "courseId" | "shiftId") => {
     const entries = new Map<string, string>();
+    if (key === "classId" && p.role === "administrador") p.classrooms.forEach(room => entries.set(room.id, room.name));
     p.rows.forEach(row => {
-      if (key === "classId") entries.set(row.classId, row.snapshot.className);
+      if (key === "classId" && !entries.has(row.classId)) entries.set(row.classId, row.snapshot.className);
       if (key === "courseId") entries.set(String(row.courseId), row.snapshot.course || `Curso ${row.courseId}`);
       if (key === "shiftId") entries.set(String(row.shiftId), row.snapshot.shift || `Turno ${row.shiftId}`);
       if (key === "teacherId") {
@@ -103,17 +104,18 @@ function Filters({ p }: { p: PartsViewProps }) {
   return <details className="parts-section parts-filters">
     <summary>Filtros de la jornada</summary>
     <fieldset disabled={p.busy || p.loading} className="parts-grid">
-      <Control label="Desde">{id => <Input id={id} type="date" value={p.filters.from} onChange={e => change({ from: e.target.value })} />}</Control>
-      <Control label="Hasta">{id => <Input id={id} type="date" value={p.filters.to} onChange={e => change({ to: e.target.value })} />}</Control>
+      <Control label="Desde">{id => <Input id={id} type="date" disabled={p.role === 'monitor'} value={p.filters.from} onChange={e => change({ from: e.target.value })} />}</Control>
+      <Control label="Hasta">{id => <Input id={id} type="date" disabled={p.role === 'monitor'} value={p.filters.to} onChange={e => change({ to: e.target.value })} />}</Control>
       {([['classId', 'Aula'], ['teacherId', 'Docente'], ['monitorId', 'Monitor'], ['courseId', 'Curso'], ['shiftId', 'Turno']] as const).map(([key, label]) =>
-        <Control key={key} label={label}>{id => <Select id={id} value={p.filters[key] ?? ""} onChange={e => change({ [key]: e.target.value ? (key === "courseId" || key === "shiftId" ? Number(e.target.value) : e.target.value) : undefined })}>
+        <Control key={key} label={label}>{id => <Select id={id} disabled={p.role === 'monitor' && (key === 'classId' || key === 'shiftId')} value={p.filters[key] ?? ""} onChange={e => change({ [key]: e.target.value ? (key === "courseId" || key === "shiftId" ? Number(e.target.value) : e.target.value) : undefined })}>
           <option value="">Todos</option>{choices(key)}
         </Select>}</Control>)}
-      <Control label="Filas por página">{id => <Select id={id} value={p.filters.limit} onChange={e => change({ limit: Number(e.target.value) })}>{[25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}</Select>}</Control>
+      {p.role !== 'monitor' && <Control label="Filas por página">{id => <Select id={id} value={p.filters.limit} onChange={e => change({ limit: Number(e.target.value) })}>{[25, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}</Select>}</Control>}
       <Checkbox label="Solo pendientes de revisión" checked={p.filters.pendingReview ?? false} onChange={e => change({ pendingReview: e.target.checked })} />
       {p.role === "administrador" && <Checkbox label="Incluir anulados" checked={p.filters.includeDeleted ?? false} onChange={e => change({ includeDeleted: e.target.checked })} />}
     </fieldset>
-    <p className="parts-help">Las opciones de aula, personas, curso y turno corresponden a los registros de esta página; no son el catálogo completo.</p>
+    <p className="parts-help">{p.role === "administrador" ? "Aula usa el catálogo administrativo completo. Las opciones de personas, curso y turno corresponden a los registros de esta página." : "Las opciones de aula, personas, curso y turno corresponden a los registros de esta página; no son el catálogo completo."}</p>
+    {p.role === 'monitor' && <p className="parts-help">La fecha, el aula y el turno corresponden a la jornada elegida. Vuelve al listado para cambiar de jornada. Se muestran todos sus bloques; puedes filtrar personas, curso y revisión.</p>}
   </details>;
 }
 
@@ -532,7 +534,7 @@ export function PartsView(props: PartsViewProps) {
     <p>Cambia el rango o actualiza la jornada.</p>
   </>}
 </div>}
-      <div className="parts-sheet-footer"><span>Horas de Lima. Las horas programadas no se copian automáticamente.</span><Pagination label="Partes diarios" page={p.filters.page} hasNext={p.filters.page * p.filters.limit < p.total} disabled={p.busy || p.loading} onPage={page => p.onFilters({ ...p.filters, page })} /></div>
+      <div className="parts-sheet-footer"><span>Horas de Lima. Las horas programadas no se copian automáticamente.</span>{p.role !== 'monitor' && <Pagination label="Partes diarios" page={p.filters.page} hasNext={p.filters.page * p.filters.limit < p.total} disabled={p.busy || p.loading} onPage={page => p.onFilters({ ...p.filters, page })} />}</div>
     </div>
     {selected && <section className="parts-selection" aria-label="Parte seleccionado"><div><strong>Parte #{selected.id} · versión {selected.version}</strong><span>{p.writeLimit || (editable ? "Seleccionado para edición" : "Solo lectura")}{p.dirty ? " · cambios sin guardar" : ""}{p.reviewDirty ? " · revisión pendiente" : ""}</span></div><div className="parts-actions"><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => setPanel("detail")}>Detalle{p.role === "supervisor" ? " y revisión" : ""}</Button><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => setPanel("evidence")}>Evidencias</Button>{p.role === "administrador" && <Button size="sm" variant="secondary" disabled={p.busy} onClick={() => { p.onHistory(1); setPanel("history"); }}>Historial</Button>}<Button size="sm" variant="ghost" disabled={p.busy} onClick={() => p.onSelect(null)}>Cerrar selección</Button></div></section>}
     {p.role !== "monitor" && <Alerts p={p} />}

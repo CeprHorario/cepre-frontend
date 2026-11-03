@@ -226,7 +226,7 @@ function RoomCard({ classroom, to }: { classroom: Classroom; to?: string }) {
   const content = (
     <>
       <div className="flex items-center justify-between gap-2">
-        <strong className="font-display text-[17px] text-marino-900">{shortClassName(classroom.name)}</strong>
+        <strong className="font-display text-[17px] text-marino-900">{to ? <Link to={to}>{shortClassName(classroom.name)}</Link> : shortClassName(classroom.name)}</strong>
         <AreaBadge name={classroom.area?.name} />
       </div>
       <div className="flex items-center justify-between gap-2">
@@ -240,13 +240,7 @@ function RoomCard({ classroom, to }: { classroom: Classroom; to?: string }) {
     </>
   );
   const className = "flex flex-col gap-2.5 rounded-[14px] border border-line bg-white p-3.5 text-ink-900";
-  return to ? (
-    <Link to={to} className={`${className} transition hover:border-marino-900 hover:shadow-[0_8px_24px_rgba(28,33,64,0.08)]`}>
-      {content}
-    </Link>
-  ) : (
-    <div className={className}>{content}</div>
-  );
+  return <div className={to ? `${className} transition hover:border-marino-900 hover:shadow-[0_8px_24px_rgba(28,33,64,0.08)]` : className}>{content}</div>;
 }
 
 function CreateClassDialog({ onClose }: { onClose: () => void }) {

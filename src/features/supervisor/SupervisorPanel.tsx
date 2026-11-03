@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { useOwnMonitors } from "@/api/queries";
+import { apiErrorMessage } from "@/api/client";
 import type { SupervisorOwnMonitor } from "@/api/types";
 import { SimpleLayout } from "@/components/layout/ModuleLayout";
 import { LinkButtons } from "@/components/schedule/LinkButtons";
 import { ScheduleView } from "@/components/schedule/ScheduleView";
 import { TeacherDirectory } from "@/components/schedule/TeacherDirectory";
 import { Card } from "@/components/ui/Card";
-import { ButtonLink } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { EmailLink, PhoneCopy } from "@/components/ui/Contact";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { Alert, EmptyState } from "@/components/ui/EmptyState";
 import { SearchInput } from "@/components/ui/Field";
 import { Segmented } from "@/components/ui/Segmented";
 import { Skeleton } from "@/components/ui/Spinner";
@@ -44,10 +45,10 @@ export function SupervisorPanel() {
         <main className="mx-auto w-full max-w-[640px] px-4 py-10 sm:px-8">
           <div className="flex flex-wrap gap-3"><ButtonLink variant="secondary" to="/supervisor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/supervisor/partes">Revisar partes</ButtonLink><ButtonLink variant="secondary" to="/supervisor/incidencias">Incidencias de monitores</ButtonLink></div>
           <Card>
-            <EmptyState
+            {monitors.isError ? <Alert tone="danger" title="No se pudieron cargar tus salones" action={<Button variant="secondary" disabled={monitors.isFetching} onClick={() => void monitors.refetch()}>Reintentar</Button>}>{apiErrorMessage(monitors.error)}</Alert> : <EmptyState
               title="Aún no tienes salones a cargo"
               description="Tus salones aparecen cuando la administración te asigna monitores (Gestionar datos → Supervisores → Asignar monitores). Si ya te los asignaron, recarga la página."
-            />
+            />}
           </Card>
         </main>
       </SimpleLayout>
@@ -81,6 +82,7 @@ export function SupervisorPanel() {
             <ul className="flex max-h-[70vh] flex-col gap-1 overflow-y-auto">
               {list.map((m) => (
                 <li key={m.user_id}>
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
                   <button
                     type="button"
                     aria-pressed={m.user_id === selectedId}
@@ -91,9 +93,10 @@ export function SupervisorPanel() {
                     )}
                   >
                     <strong className="text-[15px]">{shortClassName(m.classes?.name ?? "Sin salón")}</strong>
-                    <LinkButtons meet={m.classes?.urlMeet} classroom={m.classes?.urlClassroom} size="sm" />
                     <span className="col-span-2 truncate text-xs text-ink-500">{fullName(m.profile) || "Monitor sin datos"}</span>
                   </button>
+                  <LinkButtons meet={m.classes?.urlMeet} classroom={m.classes?.urlClassroom} size="sm" />
+                  </div>
                 </li>
               ))}
             </ul>

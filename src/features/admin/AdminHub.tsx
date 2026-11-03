@@ -221,17 +221,18 @@ function ModuleTile({ to, icon, iconClass, title, description, footer }: {
   footer: ReactNode;
 }) {
   return (
-    <Link
-      to={to}
+    <div
       className="group flex flex-col gap-3.5 rounded-[20px] border border-line bg-white p-6 text-ink-900 shadow-[0_1px_2px_rgba(26,28,43,0.04)] transition hover:border-guinda-700 hover:shadow-[0_14px_34px_rgba(102,17,36,0.12)]"
     >
+      <Link to={to} className="flex flex-col gap-3.5">
       <span className={cn("flex size-14 items-center justify-center rounded-2xl text-[26px]", iconClass)}>{icon}</span>
       <span className="flex flex-col gap-1.5">
         <strong className="font-display text-lg text-marino-900">{title}</strong>
         <span className="text-sm leading-6 text-ink-500">{description}</span>
       </span>
-      <span className="mt-auto">{footer}</span>
-    </Link>
+      </Link>
+      <div className="mt-auto">{footer}</div>
+    </div>
   );
 }
 

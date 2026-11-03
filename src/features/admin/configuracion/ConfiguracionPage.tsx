@@ -42,6 +42,7 @@ export function ConfiguracionPage() {
     if (config.data) reset(config.data);
   }, [config.data]);
 
+  if (config.isError && !form) return <SimpleLayout crumbs={[{ label: "Menú principal", to: "/admin" }, { label: "Configurar sistema" }]}><main className="mx-auto w-full max-w-[1200px] px-4 py-7 sm:px-10"><Alert tone="danger" title="No se pudo cargar la configuración" action={<Button variant="secondary" disabled={config.isFetching} onClick={() => void config.refetch()}>Reintentar</Button>}>{apiErrorMessage(config.error)}</Alert></main></SimpleLayout>;
   if (config.isLoading || !form) return <SimpleLayout crumbs={[{ label: "Menú principal", to: "/admin" }, { label: "Configurar sistema" }]}><LoadingScreen /></SimpleLayout>;
 
   const label = (schema: string) => {

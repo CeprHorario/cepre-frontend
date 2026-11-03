@@ -7,11 +7,13 @@ import { apiErrorMessage } from "@/api/client";
 import { readPartContext } from "./service";
 import { useParts } from "./useParts";
 import { PartsView } from "./PartsView";
+import { MonitorJournals } from './MonitorJournals';
 import type { PartContext, PartRole } from "./types";
 
 function Workspace({ context, role, onContextChanged }: { context: PartContext; role: PartRole; onContextChanged: () => void }) {
   const props = useParts(context, role, onContextChanged);
-  return <PartsView {...props} />;
+  if (role === 'monitor' && !props.journal) return <MonitorJournals {...props} />;
+  return <>{role === 'monitor' && <Button variant="secondary" disabled={props.busy} onClick={props.onCloseJournal}>Volver al listado de jornadas</Button>}<PartsView {...props} /></>;
 }
 
 export function PartsPage() {

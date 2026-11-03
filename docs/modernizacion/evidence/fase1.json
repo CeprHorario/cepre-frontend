@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "suite": "modernizacion-fase1",
+  "date": "2026-11-03T06:49:35.538Z",
+  "results": [
+    "R-N01: caché fría de monitor/docente/supervisor/admin sin sesión admin previa, HTTP y avisos exclusivos",
+    "R-N01: rechazo de resolver aviso ajeno, resolución persistida y cambio de proceso en la misma página",
+    "R-P02: catálogo autorizado incluye salón sin filas, filtro HTTP servidor, vacío conserva selección y Todos recupera datos",
+    "R-P01: seis bloques actuales y 105 históricos íntegros (dos páginas HTTP), sin reconstrucción; retorno conserva rango y respeta borrador",
+    "R-I01 parcial: docente/alumno/aula persistidos, solo docente crea antecedente DNI; resolver/reabrir e historial reales",
+    "R-I01 parcial: retirada de observación preserva antecedente inmutable"
+  ],
+  "errors": [],
+  "limits": [
+    "R-I01 aún no cubre su matriz completa",
+    "No verifica lector de pantalla, Firefox ni WebKit",
+    "No es línea base visual H2"
+  ]
+}

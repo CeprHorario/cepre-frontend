@@ -6,6 +6,11 @@ import {Dialog} from '@/components/ui/Overlay';
 import {useOperations} from './useOperations';
 type Preview={valid:boolean;intervals:unknown[];rows:{row:number;start:string;end:string;values:string[];errors:string[]}[]};
 export function AvailabilityWorkbookPanel({teacherId='me'}:{teacherId?:string}){
+ const op=useOperations();
+ if(!op.context)return <><Button variant="secondary" disabled>Disponibilidad en Excel</Button>{op.error&&<p role="alert">{apiErrorMessage(op.error)}</p>}</>;
+ return <WorkbookEditor key={[...op.scope,teacherId].join(':')} teacherId={teacherId}/>;
+}
+function WorkbookEditor({teacherId}:{teacherId:string}){
  const op=useOperations();const cache=useQueryClient();const [open,setOpen]=useState(false),[preview,setPreview]=useState<Preview|null>(null),[file,setFile]=useState<File|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  async function template(){setError('');try{const {data}=await api.get<Blob>(`/operations/availability/${teacherId}/template`,{headers:op.headers,responseType:'blob'});const url=URL.createObjectURL(data),a=document.createElement('a');a.href=url;a.download='Disponibilidad-docente.xlsx';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);}catch(e){setError(apiErrorMessage(e));}}
  async function upload(f:File){setFile(f);setPreview(null);setBusy(true);setError('');try{const form=new FormData();form.append('file',f);setPreview((await api.post<Preview>(`/operations/availability/${teacherId}/preview`,form,{headers:{...op.headers,'Content-Type':'multipart/form-data'}})).data);}catch(e){setError(apiErrorMessage(e));}finally{setBusy(false);}}

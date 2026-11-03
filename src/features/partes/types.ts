@@ -45,6 +45,16 @@ export interface OperationalConfig {
 }
 export interface PartContext { accountId: string; process: string; serverNow: string }
 export interface PartFilters { from: string; to: string; page: number; limit: number; classId?: string; teacherId?: string; monitorId?: string; courseId?: number; shiftId?: number; pendingReview?: boolean; includeDeleted?: boolean }
+export type JournalFilters = Pick<PartFilters, 'from' | 'to' | 'page' | 'limit'>;
+export interface PartJournal {
+  date: string; classId: string; shiftId: number; className: string | null; shift: string | null;
+  scheduledStart: string; scheduledEnd: string; blocks: number;
+}
+export interface MonitorJournalsProps {
+  journal: PartJournal | null; journals: Paginated<PartJournal> | null; journalFilters: JournalFilters;
+  journalsLoading: boolean; onJournalFilters: (filters: JournalFilters) => void;
+  onOpenJournal: (journal: PartJournal) => void; onCloseJournal: () => void;
+}
 export interface RecordDraft {
   structuredObservations: PartObservation[];
   classState: ClassState | '';

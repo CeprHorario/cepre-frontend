@@ -7,10 +7,11 @@ import { CatalogApi, ClassesApi } from "@/api/services";
 import { useAuth } from "@/auth/AuthProvider";
 import { academicDate, configPayload, editStartsAt, limaDate, operationDraft, ordinaryWritable, requireReason, toDraft, updatePayload, validateRange } from "./model";
 import { createPartsApi } from "./service";
-import type { AuditEvent, OperationDraft, PartAlert, PartContext, PartFilters, PartRecord, PartRole, PartsViewProps, RecordDraft, ReviewDraft, Slot, UploadedCapture } from "./types";
+import type { AuditEvent, JournalFilters, MonitorJournalsProps, OperationDraft, PartAlert, PartContext, PartFilters, PartJournal, PartRecord, PartRole, PartsViewProps, RecordDraft, ReviewDraft, Slot, UploadedCapture } from "./types";
 
 const blankReview = (): ReviewDraft => ({ result: "CONFORMING", comments: "", confirmed: false });
 export interface Workspace {
+  journal: PartJournal | null; journalFilters: JournalFilters;
   inFlight: boolean;
   filters: PartFilters; id: number | null; base: PartRecord | null; draft: RecordDraft | null;
   review: ReviewDraft; reviewDirty: boolean; pendingFiles: Partial<Record<Slot, UploadedCapture>>;
@@ -19,11 +20,12 @@ export interface Workspace {
 }
 function freshWorkspace(): Workspace {
   const date = limaDate();
-  return { inFlight: false, filters: { from: date, to: date, page: 1, limit: 25 }, id: null, base: null, draft: null, review: blankReview(), reviewDirty: false, pendingFiles: {}, conflict: false, operation: null, operationBase: null, configVersion: null, targets: [], operationTargets: [] };
+  const from = new Date(`${date}T12:00:00Z`); from.setUTCDate(from.getUTCDate() - 30);
+  return { journal: null, journalFilters: { from: from.toISOString().slice(0, 10), to: date, page: 1, limit: 25 }, inFlight: false, filters: { from: date, to: date, page: 1, limit: 25 }, id: null, base: null, draft: null, review: blankReview(), reviewDirty: false, pendingFiles: {}, conflict: false, operation: null, operationBase: null, configVersion: null, targets: [], operationTargets: [] };
 }
 
 /** Estado de trabajo separado de la caché del servidor. Solo memoria, nunca Web Storage. */
-export function useParts(context: PartContext, role: PartRole, onContextChanged: () => void): PartsViewProps {
+export function useParts(context: PartContext, role: PartRole, onContextChanged: () => void): PartsViewProps & MonitorJournalsProps {
   const client = useQueryClient();
   const { status } = useAuth();
   const scope = useMemo(() => ["parts", context.accountId, context.process] as const, [context.accountId, context.process]);
@@ -85,17 +87,22 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   }, [client, scope]);
 
   const queryOptions = { retry: false as const, staleTime: 0, enabled };
-  const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], queryFn: async ({ signal }) => {
+  const journals = useQuery({ ...queryOptions, queryKey: [...scope, "journals", state.journalFilters], enabled: enabled && role === 'monitor' && !state.journal, queryFn: async ({ signal }) => {
+    const today = limaDate();
+    if (state.journalFilters.from <= today && state.journalFilters.to >= today) await service.agenda(today, signal);
+    return service.journals(state.journalFilters, signal);
+  } });
+  const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], enabled: enabled && (role !== 'monitor' || !!state.journal), queryFn: async ({ signal }) => {
     // La agenda completa todos los bloques programados de hoy; el listado aplica filtros y paginación.
     if (state.filters.from === limaDate() && state.filters.to === state.filters.from) await service.agenda(state.filters.from, signal);
-    return service.list(state.filters, signal);
+    return role === 'monitor' ? service.journal(state.filters, signal) : service.list(state.filters, signal);
   } });
   const detail = useQuery({ ...queryOptions, queryKey: [...scope, "detail", state.id], queryFn: ({ signal }) => service.detail(state.id!, signal), enabled: enabled && state.id !== null, refetchOnWindowFocus: true, refetchInterval: 30_000 });
   const config = useQuery({ ...queryOptions, queryKey: [...scope, "config"], queryFn: ({ signal }) => service.configuration(signal), enabled: enabled && role === "administrador" });
   const people = useQuery({ ...queryOptions, queryKey: [...scope, "people", state.id, peopleParams], queryFn: ({ signal }) => service.people(state.id!, peopleParams.kind, peopleParams.search, peopleParams.page, signal), enabled: enabled && state.id !== null && (role === 'administrador' || state.operation?.action === 'replacement') });
   const history = useQuery({ ...queryOptions, queryKey: [...scope, "history", state.id, historyPage], queryFn: ({ signal }) => service.history(state.id!, historyPage, signal), enabled: enabled && role === "administrador" && state.id !== null && showHistory });
   const alerts = useQuery({ ...queryOptions, queryKey: [...scope, "alerts", alertsPage], queryFn: ({ signal }) => service.alerts(alertsPage, signal), enabled: enabled && role !== "monitor" && showAlerts });
-  const classrooms = useQuery({ ...queryOptions, queryKey: [...scope, "classes"], queryFn: ClassesApi.list, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
+  const classrooms = useQuery({ ...queryOptions, queryKey: [...scope, "classes"], queryFn: ClassesApi.list, enabled: enabled && role === "administrador" });
   const periods = useQuery({ ...queryOptions, queryKey: [...scope, "periods"], queryFn: CatalogApi.hourSessions, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
   const report = useQuery({ ...queryOptions, queryKey: [...scope, "report", state.filters, reportPage], queryFn: ({ signal }) => service.report({ ...state.filters, page: reportPage }, signal), enabled: enabled && role === "administrador" && reportOpen });
   const summary = useQuery({ ...queryOptions, queryKey: [...scope, "summary", state.filters], queryFn: ({ signal }) => service.summary(state.filters, signal), enabled: enabled && role === "administrador" && reportOpen });
@@ -118,7 +125,8 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     });
   }, [detail.data, state.id, busy, setState]);
 
-  const failures = [list.error, detail.error, config.error, people.error, history.error, alerts.error, classrooms.error, periods.error, report.error, summary.error];
+  const failures = [journals.error, list.error, detail.error, config.error, people.error, history.error, alerts.error, classrooms.error, periods.error, report.error, summary.error];
+  const failure = failures.find(Boolean);
   const contextFailure = failures.find(e => axios.isAxiosError(e) && e.response?.data?.code === "CLASS_SESSION_CONTEXT_CHANGED");
   useEffect(() => { if (contextFailure) onContextChanged(); }, [contextFailure, onContextChanged]);
 
@@ -176,10 +184,23 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   }, [selected?.id, selected?.initialFileId, selected?.finalFileId, enabled]);
 
   return {
+    journal: state.journal, journals: journals.data ?? null, journalFilters: state.journalFilters, journalsLoading: journals.isFetching,
+    onJournalFilters: filters => {
+      if (!canLeave()) return;
+      try { validateRange(filters.from, filters.to); setState(s => ({ ...s, journalFilters: filters })); }
+      catch (cause) { setError((cause as Error).message); }
+    },
+    onOpenJournal: journal => {
+      if (!canLeave()) return;
+      setState(s => ({ ...s, journal, filters: { from: journal.date, to: journal.date, classId: journal.classId, shiftId: journal.shiftId, page: 1, limit: 100 }, id: null, base: null, draft: null }));
+    },
+    onCloseJournal: () => {
+      if (canLeave()) setState(s => ({ ...s, journal: null, id: null, base: null, draft: null }));
+    },
     role, process: context.process, filters: state.filters, rows: list.data?.data ?? [], total: list.data?.total ?? 0,
     editableRecordIds: (list.data?.data ?? []).filter(row => enabled && !row.deletedAt && (role === 'administrador' || (role === 'monitor' && ordinaryWritable(row, context.accountId, now)))).map(row => row.id),
     incompleteRecordIds: (list.data?.data ?? []).filter(row => !row.deletedAt && row.completeness === 'INCOMPLETE' && now >= Date.parse(row.scheduledEnd)).map(row => row.id),
-    loading: list.isFetching || (state.id !== null && detail.isLoading), busy, error: error || (failures.find(Boolean) ? apiErrorMessage(failures.find(Boolean)) : ""), notice,
+    loading: list.isFetching || (state.id !== null && detail.isLoading), busy, error: error || (failure ? apiErrorMessage(failure, failure instanceof Error ? failure.message : undefined) : ""), notice,
     selected, base: state.base, draft: state.draft, dirty, conflict: state.conflict, unavailable, writable,
     writeLimit: selected ? selected.deletedAt ? "Parte anulado; restaura antes de corregir evidencias." : role === "supervisor" ? "Solo revisión; no modifica el registro, aunque esté cerrado." : role === "administrador" ? "Corrección extraordinaria con motivo; conserva el cierre original." : now < editStartsAt(selected) ? "Edición aún no habilitada. El primer bloque abre 5 minutos antes del turno; los siguientes, al comenzar." : writable ? `Edición disponible. Cierre original: ${new Date(selected.editDeadline).toLocaleString("es-PE", { timeZone: "America/Lima" })} (Lima).` : "Edición cerrada: solo administración puede corregir el parte con un motivo. El cierre es 90 minutos después del último bloque del turno." : "",
     review: state.review, reviewDirty: state.reviewDirty, pendingFiles: state.pendingFiles, images,

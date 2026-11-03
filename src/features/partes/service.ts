@@ -1,6 +1,6 @@
 import { api, qs } from "@/api/client";
 import type { Paginated } from "@/api/types";
-import type { AuditEvent, OperationalConfig, PartAlert, PartContext, PartFilters, PartRecord, Person, PersonKind, ReportRow, ReportSummary, Slot, UploadedCapture } from "./types";
+import type { AuditEvent, JournalFilters, OperationalConfig, PartAlert, PartContext, PartFilters, PartJournal, PartRecord, Person, PersonKind, ReportRow, ReportSummary, Slot, UploadedCapture } from "./types";
 
 const records = "/class-session-records";
 const files = "/class-session-files";
@@ -11,6 +11,18 @@ export function createPartsApi(process: string, accountId: string) {
  return {
   agenda: (date: string, signal?: AbortSignal) => read<Paginated<PartRecord>>(`${records}/agenda${qs({ date })}`, signal),
   list: (filters: PartFilters, signal?: AbortSignal) => read<Paginated<PartRecord>>(`${records}${qs({ ...filters })}`, signal),
+  journals: (filters: JournalFilters, signal?: AbortSignal) => read<Paginated<PartJournal>>(`${records}/journals${qs(filters)}`, signal),
+  journal: async (filters: PartFilters, signal?: AbortSignal) => {
+    const first = await read<Paginated<PartRecord>>(`${records}${qs({ ...filters, page: 1, limit: 100 })}`, signal);
+    const data = [...first.data];
+    for (let page = 2; data.length < first.total; page++) {
+      const next = await read<Paginated<PartRecord>>(`${records}${qs({ ...filters, page, limit: 100 })}`, signal);
+      if (next.total !== first.total || !next.data.length) throw new Error('La jornada cambió durante la lectura. Actualiza para cargar todos sus bloques.');
+      data.push(...next.data);
+    }
+    if (data.length !== first.total || new Set(data.map(row => row.id)).size !== first.total) throw new Error('La jornada cambió durante la lectura. Actualiza para cargar todos sus bloques.');
+    return { ...first, data };
+  },
   detail: (id: number, signal?: AbortSignal) => read<PartRecord>(`${records}/${id}`, signal),
   people: (id: number, kind: PersonKind, search: string, page: number, signal?: AbortSignal) => read<Paginated<Person>>(`${records}/${id}/people${qs({ kind, search, page, limit: 25 })}`, signal),
   history: (id: number, page: number, signal?: AbortSignal) => read<AuditEvent[]>(`${records}/${id}/history${qs({ page })}`, signal),

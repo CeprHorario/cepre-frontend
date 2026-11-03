@@ -2,6 +2,8 @@
 
 Los componentes de `features/operations` son compartidos. `useOperations` obtiene del servidor la cuenta, el rol y el proceso vigentes; las claves de caché incluyen los tres. Los encabezados de contexto son precondiciones, no seleccionan el esquema. La identidad nunca se envía en el formulario.
 
+El contexto no depende de admisión ni de una consulta administrativa: funciona con caché vacía para todos sus roles. Se revalida periódicamente y al detectar cambio de contexto; el scope anterior se cancela y retira. SSE invalida la lectura autorizada en lugar de insertar un payload sin precondiciones en la caché; los eventos tardíos de una conexión cerrada se ignoran. El sondeo conserva el mismo scope de cuenta/rol/proceso.
+
 ## Diseño
 
 Se usan los componentes existentes Button, Field, Dialog y SimpleLayout. Guinda identifica acciones principales; marino, cabeceras de documento; ámbar, avisos pendientes; verde, disponibilidad confirmada. Rojo indica errores o bloques terminados incompletos. Las tablas separan columnas con bordes, permiten desplazamiento horizontal y mantienen las etiquetas legibles. Los modales distinguen Cancelar de Confirmar; previsualizar no persiste.
