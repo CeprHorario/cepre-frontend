@@ -28,7 +28,8 @@ const OPERATIONS: Record<Operation, string> = {
 const LABELS: Record<string, string> = {
   id: "ID", version: "Versión", date: "Fecha", action: "Acción", reason: "Motivo", actor: "Responsable",
   actualStart: "Inicio real", actualEnd: "Fin real", teachingStatus: "Dictado", titularOutcome: "Condición del titular",
-  effectiveTeacherId: "Docente efectivo", effectiveMonitorId: "Monitor efectivo", incidents: "Observaciones", structuredObservations: "Observaciones clasificadas",
+   effectiveTeacherId: "Docente efectivo", effectiveMonitorId: "Monitor efectivo", incidents: "Observaciones", structuredObservations: "Observaciones clasificadas", classState: "Estado del parte",
+   target: "Tipo", description: "Observación", firstName: "Nombres", lastName: "Apellidos",
   initialFileId: "Captura inicial", finalFileId: "Captura final", initialAssociatedAt: "Asociación inicial", finalAssociatedAt: "Asociación final",
   createdAt: "Creado", updatedAt: "Actualizado", deletedAt: "Anulado", deletionReason: "Motivo de anulación",
   scheduledStart: "Inicio programado", scheduledEnd: "Fin programado", editDeadline: "Cierre de edición",
@@ -55,7 +56,7 @@ const LABELS: Record<string, string> = {
   incident_records: "Partes con observaciones", incomplete_records: "Partes incompletos", pending_reviews: "Revisiones pendientes",
 };
 const VALUES: Record<string, string> = {
-  ...TEACHING, ...TITULAR, ...COVERAGE, ...REVIEW, REGULAR: "Regular", RECOVERY: "Recuperación",
+  ...TEACHING, ...TITULAR, ...COVERAGE, ...REVIEW, ...CLASS_STATES, STUDENT: "Alumno", CLASSROOM: "Aula", REGULAR: "Regular", RECOVERY: "Recuperación",
   COMPLETE: "Completo", INCOMPLETE: "Incompleto", ARRIVAL: "Llegada", RESUMPTION: "Reanudación",
   LATE: "Tardía", ON_TIME: "A tiempo", PLANNED: "Previsto", EMERGENCY: "Emergencia", TEACHER: "Docente", MONITOR: "Monitor",
   MATERIALIZED: "Parte generado", UPDATE: "Registro actualizado", ADMIN_CORRECTION: "Corrección administrativa",
@@ -171,7 +172,7 @@ function ReadValue({ value, name }: { value: unknown; name?: string }) {
 function Conflict({ p }: { p: PartsViewProps }) {
   const titleId = useId();
   if (!p.conflict) return null;
-  const fields: (keyof RecordDraft)[] = ["actualStart", "actualEnd", "teachingStatus", "titularOutcome", "effectiveTeacherId", "effectiveMonitorId", "incidents", "reason"];
+  const fields: (keyof RecordDraft)[] = ["actualStart", "actualEnd", "classState", "teachingStatus", "titularOutcome", "effectiveTeacherId", "effectiveMonitorId", "structuredObservations", "incidents", "reason"];
   const base = p.base ? toDraft(p.base) : null;
   const server = p.selected ? toDraft(p.selected) : null;
   return <section className="parts-conflict" aria-labelledby={titleId}>

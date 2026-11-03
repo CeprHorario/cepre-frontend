@@ -31,8 +31,9 @@ actual. Este documento enlaza, no sustituye, [operaciones](../OPERACIONES.md),
 | D-02 auditoría | Actualizar pruebas/documentos desfasados sin restaurar reglas retiradas | Expectativas de cierre/controles y contratos especializados reconciliados |
 | D-03 auditoría | Error distinto de vacío/carga indefinida | SupervisorPanel y ConfiguracionPage con fallo inicial y reintento |
 | D-04 auditoría | Semántica interactiva válida preservando destinos | Sin enlaces anidados ni enlaces en botones; teclado y destinos conservados |
+| D-05 regresión actual | Mostrar classState y structuredObservations conservados en conflicto de partes | 409 real muestra estado legible y observación del borrador; volver al listado no descarta pendientes; sin cambio de payload/política de resolución |
 
-## Riesgo pendiente, no cambio aprobado
+## Riesgo caracterizado, no cambio aprobado
 
 **K-01:** sustitución docente en salón ejecuta desasignación/asignación separadas.
 Fallo intermedio reproducido en PostgreSQL por `test/availability.e2e-spec.ts`:
@@ -56,5 +57,7 @@ de disponibilidad y registro directo de incidencias; no se recuperó un cuarto
 tipo general. OPERACIONES.md explica observaciones y contexto operativo; partes.md
 describe el listado nuevo y separa evidencia histórica de verificación actual.
 La documentación backend corrige la materialización de todos los bloques de hoy
-(no únicamente futuros) y documenta journals. Los recorridos históricos aún
-requieren reconciliación: consultar MIGRATION_PROGRESS, no asumir conformidad total.
+(no únicamente futuros) y documenta journals. Los cinco scripts históricos están
+reconciliados y sus 25 recorridos completos pasan sin restaurar reglas retiradas.
+[FUNCTIONAL_BASELINE.md](FUNCTIONAL_BASELINE.md) fija métodos/payloads/omisiones,
+estados, evidencias y límites posteriores a Fase 1; no equivale a H2.

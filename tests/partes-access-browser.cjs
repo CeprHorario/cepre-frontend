@@ -1,20 +1,19 @@
-async page => {
+async (page, h) => {
   const api='http://127.0.0.1:3000',origin='http://127.0.0.1:5174';
   const headers={Origin:origin,'X-Requested-With':'ceprunsa'};
   const f=await(await page.request.get(api+'/__test/fixtures')).json();
   const check=(value,message)=>{if(!value)throw Error(message);};
   const row=id=>page.locator('[data-record="'+id+'"]');
   const select=async id=>{await row(id).getByRole('button',{name:'Curso ficticio',exact:true}).click();await page.locator('.parts-selection').filter({hasText:'Parte #'+id+' ·'}).waitFor();};
-  await page.request.get(api+'/__test/session?role=monitor');await page.goto(origin+'/monitor/partes');await row(5).waitFor();await select(5);
-  await row(5).locator('textarea').fill('Borrador conservado al cerrar edición');
+  await h.route('monitor');await select(5);
+  await h.observations(5,'Borrador conservado al cerrar edición');
   await page.request.post(api+'/__test/close?process=a&recordId=5',{headers});
   await page.getByRole('button',{name:'Actualizar',exact:true}).click();
-  await row(5).getByRole('button',{name:'Guardar cambios',exact:true}).waitFor();
   await page.locator('.parts-selection').filter({hasText:'Edición cerrada'}).waitFor();
-  check(await row(5).getByRole('button',{name:'Guardar cambios',exact:true}).isDisabled(),'Guardar bloqueado tras cierre');
+  check(await row(5).getByRole('button',{name:'Guardar cambios',exact:true}).count()===0,'Guardar no se ofrece tras cierre');
   check(await row(5).getByRole('button',{name:'Descartar cambios',exact:true}).isEnabled(),'Descarte disponible tras cierre');
   await row(5).getByRole('button',{name:'Descartar cambios',exact:true}).click();
-  await select(4);await row(4).locator('textarea').fill('Borrador de parte que será anulado');
+  await select(4);await h.observations(4,'Borrador de parte que será anulado');
   await row(4).getByRole('button',{name:'Más opciones',exact:true}).click();
   await page.getByRole('dialog').getByRole('button',{name:'Evidencias',exact:true}).click();
   const uploaded=page.waitForResponse(r=>r.url().endsWith('/class-session-files/records/4') && r.request().method()==='POST');
@@ -36,14 +35,14 @@ async page => {
     await d.waitFor({state:'hidden'});
     await select(2);
   }finally{await admin.close();}
-  await row(2).locator('textarea').fill('Borrador descartado antes de logout que fallará');
+  await h.observations(2,'Borrador descartado antes de logout que fallará');
   await page.route('**/api/auth/logout',route=>route.abort('failed'));
   await page.locator('header button[aria-haspopup="menu"]').click();await page.getByRole('menuitem',{name:'Cerrar sesión'}).click();
   await page.getByRole('dialog').getByRole('button',{name:'Descartar pendientes y cerrar sesión'}).click();
   await page.getByText('No se pudo cerrar la sesión. Intenta nuevamente.',{exact:true}).waitFor();
   await page.unroute('**/api/auth/logout');
-  await row(2).locator('textarea').fill('Edición válida después del fallo de logout');
+  await h.observations(2,'Edición válida después del fallo de logout');
   check(await row(2).getByRole('button',{name:'Guardar cambios',exact:true}).isEnabled(),'Workspace sigue operable tras fallo de logout');
   await row(2).getByRole('button',{name:'Descartar cambios',exact:true}).click();
-  return {ok:true,suite:'perdida-acceso-plazo',results:['Cierre con borrador:Guardar deshabilitado y descarte disponible','Anulación concurrente404:descarte explícito de borrador y subida pendiente libera navegación sin borrar archivos','Fallo de red en logout tras descarte explícito:workspace continúa operable']};
+  return {ok:true,suite:'perdida-acceso-plazo',results:['Cierre con borrador:Guardar ausente y descarte disponible','Anulación concurrente404:descarte explícito de borrador y subida pendiente libera navegación sin borrar archivos','Fallo de red en logout tras descarte explícito:workspace continúa operable']};
 }

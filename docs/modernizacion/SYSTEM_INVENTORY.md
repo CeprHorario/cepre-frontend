@@ -59,12 +59,21 @@ actual de SessionGate. No crear páginas adicionales por inventariarlos.
   Abrir muestra todos los bloques (6 actuales y 105 históricos comprobados).
   Fecha/aula/turno quedan fijados al grupo; se mantienen filtros de personas,
   curso y revisión, operaciones/detalle/evidencias y retorno protegido por pendientes.
-  Ver `evidence/fase1.json`; faltan estados para declarar toda la pantalla verificada.
+  Ver `evidence/fase1.json` y los 25 recorridos reconciliados de partes; retorno con
+  conflicto/subida pendiente también probado. No equivale a todos los estados H2.
 - **UI-04:** selector de salón administrativo usa catálogo completo, conserva valor
   con resultado vacío y «Todos». No cambia catálogo de otros roles.
 - **UI-26 / UI-10:** error inicial distinto de vacío/carga y Reintentar comprobados.
 - **UI-03 / UI-18 / UI-26:** semántica corregida en tarjetas y selector; destinos
   conservados. Ver `evidence/estados.json`, con catálogos/fallos UI identificados.
+- **UI-05/22/25/28 + campana/Excel/acción rápida:** contexto frío, SSE real,
+  respaldo por sondeo y cambios de identidad/proceso/respuestas tardías probados
+  en `evidence/transportes.json`. No se declara cada formulario completo migrado.
+- **UI-06/29 + personal/importación:** matriz H1 de incidencias en `fase1.json`
+  e `incidencias.json`: DNI, efectivo/reemplazante, alcance/fecha, versiones/historia,
+  avisos y protección de borrador. Controladores reales locales, sin aplicar lote.
+- [Línea base funcional H1](FUNCTIONAL_BASELINE.md): contratos de red, campos,
+  omisiones y persistencia del área intervenida; base para H2, no sustituto global.
 - La columna de línea base sigue pendiente: estas comprobaciones parciales no
   equivalen a fichas completas por ruta, rol, resolución y estado.
 

@@ -1,4 +1,4 @@
-async page => {
+async (page, h) => {
   const origin = 'http://127.0.0.1:5174';
   const api = 'http://127.0.0.1:3000';
   const out = '/home/joel/git/cepr/frontend/docs/partes-evidence';
@@ -12,10 +12,8 @@ async page => {
   const fixture = await (await page.request.get(api + '/__test/fixtures')).json();
   const headers = { Origin: origin, 'X-Requested-With': 'ceprunsa' };
   const control = async path => { const r = await page.request.post(api + '/__test/' + path, { headers }); check(r.ok(), 'Control falló: ' + path); };
-  const login = async role => { const r = await page.request.get(api + '/__test/session?role=' + role); check(r.ok(), 'Sesión fixture'); };
   const route = async role => {
-    await login(role); await page.goto(origin + '/' + (role === 'admin' ? 'admin' : role) + '/partes');
-    await page.locator('[data-record="1"]').waitFor();
+    await h.route(role);
   };
   const row = id => page.locator('[data-record="' + id + '"]');
   const select = async id => {
@@ -30,7 +28,6 @@ async page => {
     check(r.ok(), 'Lectura ' + id + ': ' + r.status()); return r.json();
   };
   const screenshot = async name => { await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.parts-scroll').forEach(el=>el.scrollLeft=0);}); await page.screenshot({ path: out + '/' + name + '.png', fullPage: false }); };
-  const time = iso => new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Lima', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(iso));
   const waitWrite = async (path, action, method = 'POST', expected = 201) => {
     const response = page.waitForResponse(r => r.url().split('?')[0] === api + '/api/' + path && r.request().method() === method);
     await action(); const r = await response;
@@ -46,9 +43,9 @@ async page => {
   check(await row(1).locator('input[type=time]').first().inputValue() === '', 'No copiar hora programada');
   check(await row(1).locator('input[type=time]').last().inputValue() === '', 'No copiar fin programado');
   const initial = await record(1);
-  await row(1).getByRole('textbox', { name: 'Observaciones del parte #1' }).fill('Borrador protegido de integración');
+  await h.observations(1, 'Borrador protegido de integración');
   await row(2).getByRole('button', {name:'Editar',exact:true}).click();
-  check(await row(1).locator('textarea').inputValue() === 'Borrador protegido de integración', 'Borrador sobrevive selección bloqueada');
+  check(await h.draftText(1) === 'Borrador protegido de integración', 'Borrador sobrevive selección bloqueada');
   await page.getByRole('link', {name:'Volver al panel'}).click();
   check(page.url().endsWith('/monitor/partes'), 'Navegación con borrador bloqueada');
   await page.locator('header button[aria-haspopup="menu"]').click();
@@ -60,15 +57,15 @@ async page => {
   results.push('Borrador: selección, navegación y logout protegidos; descarte explícito');
 
   await details(1);
-  await dialog().getByLabel('Inicio real (Lima)', {exact:true}).fill(time(initial.scheduledStart));
-  await dialog().getByLabel('Fin real (Lima)', {exact:true}).fill(time(initial.scheduledEnd));
-  await dialog().getByLabel('Dictado', {exact:true}).selectOption('TAUGHT');
-  await dialog().getByLabel('Condición del titular', {exact:true}).selectOption('PRESENT');
-  await dialog().getByLabel('Docente efectivo', {exact:true}).selectOption(fixture.ids.teacher);
-  await dialog().getByLabel('Monitor efectivo', {exact:true}).selectOption(fixture.ids.monitor);
-  await dialog().getByLabel('Observaciones', {exact:true}).fill('Clase registrada explícitamente en prueba real');
+  // Hechos sintéticos del día académico, no copia del horario (que puede cruzar medianoche).
+  await dialog().getByLabel('Inicio real (Lima)', {exact:true}).fill('00:00');
+  await dialog().getByLabel('Fin real (Lima)', {exact:true}).fill('00:00');
+  await dialog().getByLabel('Estado del parte #1', {exact:true}).selectOption('N');
+  check(await dialog().getByLabel('Docente efectivo', {exact:true}).count() === 0, 'Monitor no cambia efectivos');
+  await h.observations(1, 'Clase registrada explícitamente en prueba real', true);
   const saved = await waitWrite('class-session-records/1', () => dialog().getByRole('button',{name:'Guardar cambios',exact:true}).click(), 'PATCH', 200);
   check(saved.version === initial.version + 1 && saved.teachingStatus === 'TAUGHT', 'Guardado real y expectedVersion');
+  check(saved.titularOutcome === 'PRESENT' && saved.effectiveTeacherId === fixture.ids.teacher && saved.effectiveMonitorId === fixture.ids.monitor, 'Estado N y efectivos validados por servidor, no editados por monitor');
   check(saved.editDeadline === initial.editDeadline, 'Cierre original preservado');
   results.push('Registro explícito: horas de minuto, dictado, titular y efectivos, versión y cierre');
 
@@ -78,6 +75,11 @@ async page => {
   check((await record(1)).initialFileId === null, 'Subida no asocia');
   await dialog().getByText('Subida, sin asociar', {exact:true}).waitFor();
   await screenshot('subida-sin-asociar');
+  await close();
+  await page.getByRole('button', {name:'Volver al listado de jornadas',exact:true}).click();
+  check(await page.getByRole('heading',{name:'Partes por fecha',exact:true}).count()===0,'Subida pendiente protege retorno al listado');
+  await page.getByRole('button',{name:'Evidencias',exact:true}).click();
+  await dialog().getByText('Subida, sin asociar',{exact:true}).waitFor();
   const associated = await waitWrite('class-session-files/records/1/captures/initial', () => dialog().getByRole('button',{name:'Asociar captura',exact:true}).click());
   check(associated.initialFileId === uploaded.id && associated.version === saved.version + 1, 'Asociación separada');
   check(Date.parse(associated.initialAssociatedAt) >= Date.parse(uploaded.uploadedAt), 'Instantes distintos');
@@ -90,13 +92,16 @@ async page => {
   await close();
   results.push('GCS real: subida, asociación, imagen íntegra, zoom y foco anidado');
 
-  await row(1).getByRole('textbox',{name:'Observaciones del parte #1'}).fill('BORRADOR CONCURRENTE CONSERVADO');
+  await h.observations(1, 'BORRADOR CONCURRENTE CONSERVADO');
   const beforeConflict = await record(1); await control('concurrent?process=a&recordId=1');
   const conflictResponse = page.waitForResponse(r => r.request().method() === 'PATCH' && r.url().endsWith('/class-session-records/1'));
   await row(1).getByRole('button',{name:'Guardar cambios',exact:true}).click();
   check((await conflictResponse).status() === 409, 'Conflicto409');
   await page.getByRole('heading',{name:'El parte cambió en el servidor'}).waitFor();
-  check(await page.locator('.parts-conflict').getByText('BORRADOR CONCURRENTE CONSERVADO',{exact:true}).count() > 0, 'Borrador preservado409');
+  check((await page.locator('.parts-conflict').innerText()).includes('BORRADOR CONCURRENTE CONSERVADO'), 'Borrador preservado409');
+  check((await page.locator('.parts-conflict').innerText()).includes('Estado del parte') && (await page.locator('.parts-conflict').innerText()).includes('N · Normal'), 'Conflicto incluye estado clasificado legible');
+  await page.getByRole('button',{name:'Volver al listado de jornadas',exact:true}).click();
+  check((await page.locator('.parts-conflict').innerText()).includes('BORRADOR CONCURRENTE CONSERVADO'),'Conflicto protege retorno al listado');
   check((await record(1)).version === beforeConflict.version + 1, 'No reintento automático');
   await screenshot('conflicto-real');
   await page.getByRole('button',{name:'Cargar servidor y descartar borrador',exact:true}).first().click();
@@ -115,25 +120,22 @@ async page => {
   await select(6); check(await row(6).locator('input[type=time]').count() === 0, 'Futuro no editable');
   results.push('Cierre:entre subida/asociación, cerrado y bloque futuro');
 
-  await select(4); await details(4); await dialog().getByText('Coberturas y habilitaciones',{exact:true}).click();
-  await dialog().getByRole('button',{name:'Solicitar reemplazo de emergencia'}).click();
-  await dialog().getByLabel('Tipo de persona').selectOption('MONITOR');
-  await dialog().getByLabel('Persona reemplazante',{exact:true}).selectOption(fixture.ids.otherMonitor);
-  await dialog().getByLabel('Motivo de la operación').fill('Solicitud explícita de emergencia local');
-  const coverage = await waitWrite('class-session-records/replacements', () => dialog().getByRole('button',{name:'Enviar solicitud',exact:true}).click());
-  check(coverage.data[0].status === 'PENDING', 'Monitor solo solicita pendiente');
-  check((await record(4)).effectiveTeacherId === null, 'Solicitud no es ejecución');
+  await select(4); await details(4);
+  check(await dialog().getByRole('link',{name:'Solicitudes y reemplazos',exact:true}).getAttribute('href') === '/monitor/solicitudes', 'Solicitud conserva su módulo autorizado');
+  const denied = await page.request.post(api + '/api/class-session-records/replacements', {headers:{...headers,'X-Class-Session-Context':fixture.processes.a.process,'X-Class-Session-Account':fixture.accounts.monitor.accountId},data:{targets:[{recordId:4,expectedVersion:(await record(4)).version}],kind:'MONITOR',personId:fixture.ids.otherMonitor,mode:'EMERGENCY',reason:'No recuperar la ruta retirada'}});
+  check([401,403].includes(denied.status()), 'Ruta directa retirada rechazada');
+  check((await record(4)).effectiveTeacherId === null, 'Consultar o intentar solicitud no es ejecución');
   await close();
-  results.push('Monitor:emergencia PENDING, sin inferir ejecución');
+  results.push('Monitor:enlace al módulo de solicitudes y rechazo de cobertura directa retirada, sin inferir ejecución');
 
-  await select(5); await row(5).locator('textarea').fill('BORRADOR MANTENIMIENTO');
+  await select(5); await h.observations(5, 'BORRADOR MANTENIMIENTO');
   await control('maintenance?enabled=true'); await page.getByRole('button',{name:'Actualizar',exact:true}).click();
   await page.getByRole('heading',{name:'Estamos mejorando el sistema'}).waitFor();
   await screenshot('mantenimiento');
   await control('maintenance?enabled=false');
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await page.locator('[data-record="5"] textarea').waitFor({timeout:70000});
-  check(await row(5).locator('textarea').inputValue() === 'BORRADOR MANTENIMIENTO', 'Borrador tras mantenimiento');
+  await page.locator('.parts-selection').filter({hasText:'Parte #5'}).waitFor({timeout:70000});
+  check(await h.draftText(5) === 'BORRADOR MANTENIMIENTO', 'Borrador tras mantenimiento');
   await row(5).getByRole('button',{name:'Descartar cambios',exact:true}).click();
   results.push('Mantenimiento real503:pausa y borrador recuperado');
 

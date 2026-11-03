@@ -12,6 +12,8 @@
     "test:partes:browser": "node tests/run-partes-browser.mjs",
     "test:modernizacion:browser": "node tests/run-modernizacion-browser.mjs",
     "test:modernizacion:states": "node tests/run-modernizacion-browser.mjs states",
+    "test:modernizacion:incidencias": "node tests/run-modernizacion-browser.mjs incidencias",
+    "test:modernizacion:transportes": "node tests/run-modernizacion-browser.mjs transportes",
     "lint": "eslint .",
     "preview": "vite preview"
   },

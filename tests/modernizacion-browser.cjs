@@ -71,15 +71,21 @@ async page => {
     stage = 'R-P02: catálogo de salones independiente de filas y filtro servidor';
     await goto('admin', 'partes'); await row(1).waitFor();
     await page.locator('details.parts-filters summary').click();
+    const adminFrom = await page.locator('details.parts-filters').getByLabel('Desde', { exact: true }).inputValue();
+    await page.locator('details.parts-filters').getByLabel('Desde', { exact: true }).fill(fixture.processes.a.historical.date);
+    await page.getByRole('navigation', { name: 'Partes diarios', exact: true }).getByRole('button', { name: 'Siguiente', exact: true }).click();
+    await page.getByRole('navigation', { name: 'Partes diarios', exact: true }).getByText('Página 2', { exact: true }).waitFor();
     const classroom = page.locator('details.parts-filters').getByLabel('Aula', { exact: true });
     await classroom.locator(`option[value="${fixture.ids.emptyClass}"]`).waitFor({ state: 'attached' });
     const filteredResponse = page.waitForResponse(r => r.url().includes('/class-session-records?') && r.url().includes('classId=' + fixture.ids.emptyClass));
     await classroom.selectOption(fixture.ids.emptyClass);
-    check((await filteredResponse).ok(), 'Filtrado en servidor');
+    const filtered = await filteredResponse;
+    check(filtered.ok() && /[?&]page=1(?:&|$)/.test(filtered.url()), 'Filtrado en servidor reinicia página 1');
     await page.getByText('No hay partes para estos filtros.', { exact: true }).waitFor();
     check(await classroom.inputValue() === fixture.ids.emptyClass, 'Vacío conserva selección');
-    await classroom.selectOption(''); await row(1).waitFor();
-    results.push('R-P02: catálogo autorizado incluye salón sin filas, filtro HTTP servidor, vacío conserva selección y Todos recupera datos');
+    await classroom.selectOption(''); await page.locator('[data-record]').first().waitFor();
+    await page.locator('details.parts-filters').getByLabel('Desde', { exact: true }).fill(adminFrom); await row(1).waitFor();
+    results.push('R-P02: catálogo autorizado incluye salón sin filas, filtro HTTP desde página 2 reinicia en 1, vacío conserva selección y Todos recupera datos');
 
     stage = 'R-P01: listado fechado, hoja completa y retorno';
     await goto('monitor', 'partes');
@@ -162,7 +168,7 @@ async page => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.screenshot({ path: 'docs/modernizacion/evidence/monitor-jornadas-1920.png' });
     check(errors.length === 0, errors.join('\n'));
-    const result = { ok: true, suite: 'modernizacion-fase1', date: new Date().toISOString(), results, errors, limits: ['R-I01 aún no cubre su matriz completa', 'No verifica lector de pantalla, Firefox ni WebKit', 'No es línea base visual H2'] };
+    const result = { ok: true, suite: 'modernizacion-fase1', date: new Date().toISOString(), results, errors, limits: ['Suite parcial de R-I01 complementada por modernizacion-incidencias', 'No verifica lector de pantalla, Firefox ni WebKit', 'No es línea base visual H2'] };
     await page.evaluate(result => { window.__modernizacionResult = result; sessionStorage.setItem('__modernizacionResult', JSON.stringify(result)); }, result);
     return result;
   } catch (error) {

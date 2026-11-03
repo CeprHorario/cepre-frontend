@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "suite": "modernizacion-incidencias",
+  "date": "2026-11-03T12:32:11.876Z",
+  "results": [
+    "R-I01: reemplazante autorizado sin DNI conserva observación, muestra aviso y no crea antecedente del titular",
+    "R-I01: antecedente por DNI del efectivo reemplazante, sin duplicar ni reescribir original; edición en historial",
+    "R-I01: supervisor registra solo sus monitores/hoy Lima, rechaza día anterior y recursos ajenos; sin antecedentes propios ni historial administrativo",
+    "R-I01: conflicto 409 real conserva motivo, no reaplica la resolución ni cambia el texto original",
+    "R-I01: historia DNI A/B y avisos reales en listado de personal y preview CSV, sin aplicar lote ni bloquear confirmación",
+    "R-I01: borrador de incidencia bloquea navegación SPA, unload/logout; conservar restaura intención sin escritura"
+  ],
+  "errors": [],
+  "limits": [
+    "Harness local con controladores/servicios reales y PostgreSQL; no OAuth productivo",
+    "Negativos de API ejecutados desde Chromium; no todos son acciones visibles",
+    "No sustituye línea base H2 ni lector de pantalla"
+  ]
+}

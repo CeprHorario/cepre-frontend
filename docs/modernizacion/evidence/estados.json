@@ -1,7 +1,7 @@
 {
   "ok": true,
   "suite": "modernizacion-estados",
-  "date": "2026-11-03T06:49:42.649Z",
+  "date": "2026-11-03T12:32:00.934Z",
   "results": [
     "D-03: supervisor distingue error de vacío y recupera con Reintentar (HTTP inyectado, no integración)",
     "D-03: fallo inicial no deja carga infinita; reintento carga configuración real del harness",

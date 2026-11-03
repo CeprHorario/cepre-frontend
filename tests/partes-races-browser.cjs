@@ -1,11 +1,11 @@
-async page => {
+async (page, h) => {
   const api='http://127.0.0.1:3000', origin='http://127.0.0.1:5174', out='/home/joel/git/cepr/frontend/docs/partes-evidence';
   const results=[],errors=[]; page.on('pageerror',e=>errors.push(e.message)); page.on('dialog',d=>{void d.accept().catch(()=>{});});
   const check=(value,message)=>{if(!value)throw Error(message);};
   const headers={Origin:origin,'X-Requested-With':'ceprunsa'};
   const control=async path=>check((await page.request.post(api+'/__test/'+path,{headers})).ok(),path);
   const login=async role=>{await page.request.get(api+'/__test/session?role='+role);};
-  const route=async role=>{await login(role);await page.goto(origin+'/'+role+'/partes');await page.locator('[data-record="5"]').waitFor();};
+  const route=h.route;
   const row=id=>page.locator('[data-record="'+id+'"]'); const dialog=()=>page.getByRole('dialog').last();
   const refocus=()=>page.evaluate(()=>{
     Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});window.dispatchEvent(new Event('visibilitychange'));

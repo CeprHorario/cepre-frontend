@@ -7,11 +7,11 @@
     "GCS real: subida, asociación, imagen íntegra, zoom y foco anidado",
     "Concurrencia:409 real, comparación y borrador conservado sin reintento",
     "Cierre:entre subida/asociación, cerrado y bloque futuro",
-    "Monitor:emergencia PENDING, sin inferir ejecución",
+    "Monitor:enlace al módulo de solicitudes y rechazo de cobertura directa retirada, sin inferir ejecución",
     "Mantenimiento real503:pausa y borrador recuperado",
     "Responsive1440/1280/768/390/320 y teclado modal",
     "Supervisor:revisión explícita incluso cerrado, versión histórica, alertas, acuse separado y cinco tamaños"
   ],
   "errors": [],
-  "requests": 101
+  "requests": 77
 }

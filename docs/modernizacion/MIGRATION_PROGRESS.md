@@ -16,9 +16,9 @@ Actualizado: 2026-11-03. No interpretar autorización total como verificación t
 
 | Hito | Estado | Evidencia / límite |
 |---|---|---|
-| H0 | En ejecución | Seis contratos versionados en `e5632ad`; rutas contrastadas; faltan fichas exhaustivas por pantalla |
-| H1 | En ejecución | Primer lote funcional en frontend `db16f2e` + backend `f9e4f95`; aceptación integral pendiente |
-| H2 | Bloqueado | Depende H1, no hay línea base visual integral vigente |
+| H0 | Verificado | Preparación: contratos, mapa de rutas/propietarios, caracterización y fixtures. Fichas exhaustivas/capturas se completan en H2 antes de estética |
+| H1 | Verificado | Matriz F1.0–F1.5 cerrada; contratos reconciliados y línea base funcional posterior en FUNCTIONAL_BASELINE.md |
+| H2 | Preparado | Inventario detallado y capturas de todas las pantallas pendientes; no hay línea base visual integral vigente |
 | H3 | Bloqueado | Depende H2; pilotos no realizados |
 | H4–H10 | Bloqueado | Secuencia contractual, no iniciada |
 
@@ -26,13 +26,14 @@ Actualizado: 2026-11-03. No interpretar autorización total como verificación t
 
 | ID | Origen → requisito / contrato | Implementación | Prueba y evidencia | Estado |
 |---|---|---|---|---|
-| R-N01 / D-01 | Usuario/auditoría → contexto/avisos / CF-02/03/09 | Contexto directo autorizado, revalidación/cancelación, SSE invalida GET con precondiciones; formularios ligados al scope | Caché fría M/D/S/A, avisos exclusivos, resolución ajena rechazada, resolución propia persistida y cambio de proceso/formulario probados en `evidence/fase1.json`; falta prueba explícita de respaldo sin SSE/cambio de cuenta en la misma vista | Implementado sin verificar |
+| R-N01 / D-01 | Usuario/auditoría → contexto/avisos / CF-02/03/09 | Contexto directo autorizado; SSE invalida GET con precondiciones; formularios por scope | fase1.json + transportes.json: caché fría M/D/S/A, destinatarios, SSE nativo, caída SSE/sondeo 60s HTTP real, cuenta en misma vista, respuestas/eventos tardíos, Excel/incidencia rápida; sin decidir/reintentar escrituras | Verificado |
 | R-P02 | Usuario → filtro salón completo / CF-01/07 | Catálogo solo admin, reutiliza filtro de servidor y reinicio de página existentes | Salón sin filas en catálogo, GET con classId, vacío conserva selección y Todos recupera datos; recorrido en `evidence/fase1.json` | Verificado |
-| R-P01 | Usuario → jornadas monitor / CF-07/11 | GET journals agrupado antes de paginar; apertura recupera todas las páginas; estado/listado aislados en memoria | PostgreSQL: 105 bloques, total/páginas vacías/alcance/rangos. Navegador: 6 actuales + 105 históricos (2 GET), retorno/rango/borrador y nueve anchos. Falta regresión vigente de conflictos/subidas al volver | Implementado sin verificar |
-| R-I01 | Usuario → navegador incidencias / CF-10/11 | Sin reconstruir módulo | Navegador real: docente/alumno/aula, persistencia, solo docente genera antecedente DNI, resolver/reabrir/historial y retirada sin borrar. Falta resto de matriz F1.4 | En ejecución |
-| D-02 | Auditoría → contratos/pruebas vigentes | ROLES/OPERACIONES/partes y docs backend reconciliados en los aspectos intervenidos; smoke actualizado | Suite histórica frontend aún falla por entrada antigua y contiene textarea/habilitaciones/permisos obsoletos; no se han eliminado ni maquillado sus recorridos | En ejecución |
+| R-P01 | Usuario → jornadas monitor / CF-07/11 | GET journals agrupado antes de paginar; apertura completa; estado/listado aislados | PostgreSQL: 105 bloques, total/páginas vacías/alcance/rangos. Navegador: 6 actuales + 105 históricos (2 GET), retorno/rango/borrador; volver con conflicto/subida pendiente conserva ambos; teclado/móvil | Verificado |
+| R-I01 | Usuario → navegador incidencias / CF-10/11 | Módulo conservado; harness con controladores reales adicionales | fase1.json + incidencias.json: docente/alumno/aula, efectivo/reemplazante/sin DNI, eventos sin borrar original, S/hoy Lima/ajenos/propios, historia A/B, resolver/reabrir/409, avisos personal/importación y protección salida/logout | Verificado |
+| D-02 | Auditoría → contratos/pruebas vigentes | Cinco scripts/runner reconciliados y helper compartido; documentación vigente | test:partes:browser completo: 25/25, sin restaurar textarea libre, efectivos editables M, cobertura retirada ni ampliación del cierre | Verificado |
 | D-03 | Auditoría → error/carga/vacío separados | Alert y Reintentar en Supervisor/Configuración | `evidence/estados.json`: fallo inicial inyectado, error ≠ vacío y recuperación; configuración vuelve a endpoint real | Verificado |
 | D-04 | Auditoría → semántica sin destinos perdidos | Enlaces separados en ModuleTile, RoomCard y selector de supervisor | DOM sin interactividad anidada en superficies afectadas, destinos y foco; catálogos UI parcialmente inyectados, límites explícitos en `evidence/estados.json` | Verificado |
+| D-05 | Regresión vigente → conflicto clasificado visible / CF-07/11 | Conflict incluye classState/structuredObservations y etiquetas legibles | 409 real muestra observación y N · Normal; retorno protegido. Antes conservaba datos pero solo mostraba incidents legado; sin cambio API | Verificado |
 | K-01 | Riesgo → fallo intermedio de sustitución / CF-05 | CourseRow mantiene dos operaciones independientes; no se ha autorizado convertirlas en una transacción nueva | `test/availability.e2e-spec.ts`: retirar, fallar por disponibilidad, verificar curso sin docente/carga 0 y reasignar explícitamente. Riesgo confirmado de resultado parcial, no atomización silenciosa | Verificado |
 
 ## Caracterización ejecutada antes de cambios funcionales
@@ -56,10 +57,18 @@ WebKit ni lector de pantalla.
 
 Capturas/resultados solo sintéticos, sin cookies/tokens/credenciales/PII.
 Por recorrido: ID/ruta/rol/estado/resolución/versión/comando/resultado persistido.
-Conservar fallos reales; nunca convertir salida vacía en éxito. Evidencia histórica
-en `docs/partes-evidence/` no prueba esta ejecución; registrar nueva vigencia.
+Conservar fallos reales; nunca convertir salida vacía en éxito. Solo las capturas/
+JSON regenerados e indexados acreditan vigencia; los archivos antiguos no usados
+siguen siendo históricos.
 
-## Verificación del lote `db16f2e` / `f9e4f95`
+## Verificación vigente de cierre funcional H1
+
+Base anterior: frontend `db16f2e` + backend `f9e4f95`; continuación añade D-05,
+reconciliación de cinco suites, dos suites nuevas y ampliación local del harness.
+Los commits de continuación se registran en AGENT_HANDOFF.md.
+La verificación backend incluye los tres cambios ajenos iniciales del árbol de
+trabajo (65 adiciones/2 eliminaciones), preservados fuera de los commits: no se
+afirma que un checkout aislado del hash sea exactamente ese árbol probado.
 
 | Verificación | Resultado |
 |---|---|
@@ -70,18 +79,20 @@ en `docs/partes-evidence/` no prueba esta ejecución; registrar nueva vigencia.
 | Harness smoke separado, opt-in y DB/GCS reales aislados | 3/3; cookie, CSRF/CORS, versiones, cierre, GCS y retención de respuesta |
 | test:modernizacion:browser | 6 recorridos; integración real con harness, alcance parcial de Fase 1 |
 | test:modernizacion:states | 4 recorridos; fallos/catálogos UI inyectados donde se indica |
-| Ambas suites nuevas sobre compilado de producción | Pasan; build con `VITE_API_BACK_URL=http://127.0.0.1:3000`, preview en 5174 |
-| test:partes:browser histórico | **Falla** al esperar `[data-record="1"]` directamente en `/monitor/partes`; ahora la entrada es el listado. También requiere reconciliar reglas retiradas antes de considerarlo vigente |
+| test:modernizacion:incidencias | 6 recorridos, HTTP/PostgreSQL reales; negativos API desde Chromium identificados |
+| test:modernizacion:transportes | 5 recorridos, SSE nativo/HTTP/Excel reales; caída de transporte y retención de respuestas inyectadas explícitamente |
+| Todas las suites de navegador sobre compilado | Pasan; build con API aislada explícita y preview en 5174 |
+| test:partes:browser reconciliado | 25/25: monitor/supervisor 9, administración 8, aislamiento 3, carreras 2, pérdida de acceso 3 |
 
-Los diez recorridos nuevos no equivalen a diez pantallas completas ni sustituyen
-los 25 recorridos históricos. `evidence/fase1.json` y `evidence/estados.json`
-contienen los resultados del compilado, sin errores JavaScript. Captura actual
+Los 46 recorridos no equivalen a 46 pantallas completas: 25 de partes y 21 de
+modernización. Los cuatro JSON de `evidence/` y los cinco de `../partes-evidence/`
+contienen resultados vigentes sin errores JavaScript. Captura actual
 del listado a 1920×1080 revisada en `evidence/monitor-jornadas-1920.png`; no es H2.
 El listado se comprobó sin overflow a 1920/1440/1366/2560/3440/1024/768/390/320.
 No se declara todavía zoom, lector de pantalla, Firefox o WebKit verificados.
 
-Build de este lote de prueba: CSS 78.17 kB (gzip 14.94); principal 787.90 kB
-(gzip 236.20), Requests 10.69 kB (gzip 3.80). Sin dependencias nuevas. No se ha
+Build vigente: CSS 78.17 kB (gzip 14.94); principal 788.09 kB
+(gzip 236.24), Requests 10.69 kB (gzip 3.80). Sin dependencias nuevas. No se ha
 fijado presupuesto H2 ni realizado migración visual.
 
 ## Hallazgos operativos y decisiones
@@ -105,21 +116,19 @@ fijado presupuesto H2 ni realizado migración visual.
   turno se eligen desde el listado. El tamaño 25/50/100 pagina jornadas, no trunca
   bloques. El resto de roles mantiene su hoja y paginación anteriores.
 
-## Pendientes que mantienen cerrada la puerta H1
+## Cierre de H1 y siguiente puerta
 
-1. Reconciliar los cinco scripts históricos de partes y su runner, conservando su
-   cobertura válida. No restaurar textarea libre, cambio de efectivos por monitor,
-   emergencias directas retiradas ni ampliaciones del plazo.
-2. Completar F1.1: SSE/sondeo explícitos, respuestas tardías y cambio de cuenta en
-   la misma vista; probar Excel y formulario de incidencia tras cambio de contexto.
-3. Completar F1.3 con borradores en conflicto/subida y retorno al listado.
-4. Completar navegador R-I01: sin DNI/reemplazante correcto, supervisor/hoy Lima/
-   recursos ajenos/propios, DNI entre procesos, conflicto de versión, avisos en
-   personal/importación y navegación/logout con borradores.
-5. Completar fichas de inventario, discrepancias relevantes y línea base funcional.
-   K-01 queda clasificado como riesgo de resultado parcial con recuperación
-   explícita; decidir cualquier corrección adicional en lote funcional separado.
+F1.0–F1.5 tienen evidencia vigente y [línea base funcional](FUNCTIONAL_BASELINE.md).
+K-01 está caracterizado, no convertido en una transacción nueva. D-05 se descubrió
+al restaurar cobertura útil: se corrigió la comparación compartida, no la prueba
+para ocultar datos. Backend solo amplía el harness; no cambia APIs productivas en
+esta continuación. El control local de DNI acepta solo el reemplazante/procesos
+del fixture, con valores fijos y validación smoke.
 
-**Fase 2 no iniciada.** Continúan pendientes línea base integral, pilotos, todos
-los hitos visuales y entrega final. La autorización del usuario sigue vigente;
-este checkpoint no es una solicitud de nueva aprobación ni cierre integral.
+H2 debe completar las fichas exhaustivas del inventario y capturas funcionales/
+visuales por ruta, rol, variante y estado de **todas** las pantallas. La línea base
+H1 no lo sustituye. Después, H3 valida los tres pilotos antes de extender estilos.
+Faltan accesibilidad integral, zoom/reflow completo, presupuestos medidos y los
+hitos visuales H3–H10. No se ha iniciado reconstrucción visual ni desplegado nada.
+La autorización integral sigue vigente; este checkpoint no es una solicitud de
+nueva aprobación ni la entrega final del plan.

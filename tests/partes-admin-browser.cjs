@@ -1,4 +1,4 @@
-async page => {
+async (page, h) => {
   const origin = 'http://127.0.0.1:5174', api = 'http://127.0.0.1:3000';
   const out = '/home/joel/git/cepr/frontend/docs/partes-evidence';
   const results = [], errors = [];
@@ -8,7 +8,7 @@ async page => {
   const fixture = await (await page.request.get(api + '/__test/fixtures')).json();
   const headers = { Origin: origin, 'X-Requested-With': 'ceprunsa' };
   const control = async path => check((await page.request.post(api + '/__test/' + path, {headers})).ok(), 'Control ' + path);
-  const route = async role => { await page.request.get(api + '/__test/session?role=' + role); await page.goto(origin + '/' + (role === 'admin' ? 'admin' : role) + '/partes'); await page.locator('[data-record="1"]').waitFor(); };
+  const route = h.route;
   const row = id => page.locator('[data-record="' + id + '"]');
   const dialog = () => page.getByRole('dialog').last();
   const select = async id => { await row(id).getByRole('button',{name:'Curso ficticio',exact:true}).click(); await page.locator('.parts-selection').filter({hasText:'Parte #' + id + ' ·'}).waitFor(); };
@@ -32,7 +32,7 @@ async page => {
   await control('maintenance?enabled=false'); await control('process?process=a&audience=both');
   await route('admin'); await page.setViewportSize({width:1440,height:1000});
   await select(1); const original = await read(1);
-  await details(1); await dialog().getByLabel('Observaciones',{exact:true}).fill('Corrección administrativa extraordinaria comprobada');
+  await details(1); await h.observations(1, 'Corrección administrativa extraordinaria comprobada', true);
   await dialog().getByLabel('Motivo de la corrección administrativa').fill('Corregir registro cerrado con trazabilidad');
   const corrected = await write('1/corrections', () => dialog().getByRole('button',{name:'Guardar cambios',exact:true}).click());
   check(corrected.editDeadline === original.editDeadline && corrected.version === original.version + 1, 'Corrección no reabre');
@@ -50,19 +50,12 @@ async page => {
   results.push('Corrección y captura extraordinarias motivadas sin alterar cierre');
 
   await select(3); const beforeGrant = await read(3);
-  await operation('Habilitar edición temporal');
-  const expiry = new Date(Date.now() + 30*60000).toLocaleString('sv-SE',{timeZone:'America/Lima'}).slice(0,16).replace(' ','T');
-  await dialog().getByLabel('Vencimiento (hora de Lima)').fill(expiry); await reason('Habilitación temporal específica del parte cerrado');
-  const grant = await write('3/grants',confirm); check(grant.accountId === fixture.accounts.monitor.accountId,'Cuenta fija habilitada');
-  check((await read(3)).version === beforeGrant.version && (await read(3)).editDeadline === beforeGrant.editDeadline,'Habilitación no cambia versión ni cierre');
-  await shot('administracion-habilitacion');
-  await route('monitor'); await select(3); await row(3).locator('textarea').fill('Registro mediante habilitación válida');
-  await write('3',()=>row(3).getByRole('button',{name:'Guardar cambios',exact:true}).click(),200,'PATCH');
-  await route('admin'); await select(3); await operation('Revocar habilitación');
-  await dialog().getByLabel('Habilitación a revocar').selectOption(String(grant.id)); await reason('Revocar permiso extraordinario ya utilizado');
-  await write('grants/' + grant.id + '/revoke',confirm);
-  await route('monitor'); await select(3); check(await row(3).locator('textarea').count() === 0,'Revocación cierra edición ordinaria');
-  await route('admin'); results.push('Habilitación válida, uso monitor y revocación sin reabrir cierre');
+  const deniedGrant = await page.request.post(api + '/api/class-session-records/3/grants', {headers:{...headers,'X-Class-Session-Context':fixture.processes.a.process,'X-Class-Session-Account':fixture.accounts.admin.accountId},data:{expectedVersion:beforeGrant.version,accountId:fixture.accounts.monitor.accountId,expiresAt:new Date(Date.now()+30*60000).toISOString(),reason:'No extender el cierre original'}});
+  check(deniedGrant.status()===400,'Habilitación no puede extender el plazo');
+  check((await read(3)).version===beforeGrant.version && (await read(3)).editDeadline===beforeGrant.editDeadline,'Rechazo conserva versión y cierre');
+  await route('monitor'); await select(3);
+  check(await row(3).getByRole('button',{name:'Guardar cambios',exact:true}).count()===0,'Cerrado no ofrece Guardar');
+  await route('admin'); results.push('Habilitación posterior al cierre rechazada; monitor conserva consulta sin Guardar');
 
   await select(4); const pendingCoverage = (await read(4)).coverages.find(c=>c.kind==='TEACHER' && c.status==='PENDING');
   await operation('Resolver cobertura'); await dialog().getByLabel('Cobertura a resolver').selectOption(String(pendingCoverage.id));
@@ -70,7 +63,8 @@ async page => {
   await write('replacements/' + pendingCoverage.id + '/resolve',confirm);
   check((await read(4)).effectiveTeacherId === null,'Autorizar no asigna efectivo');
   await details(4); await dialog().getByLabel('Docente efectivo',{exact:true}).selectOption(fixture.ids.replacementTeacher);
-  await dialog().getByLabel('Condición del titular',{exact:true}).selectOption('ABSENT');
+  await dialog().getByLabel('Inicio real (Lima)',{exact:true}).fill('00:00');
+  await dialog().getByLabel('Estado del parte #4',{exact:true}).selectOption('RE');
   await dialog().getByLabel('Motivo de la corrección administrativa').fill('Declarar persona efectiva y ausencia independientemente');
   await write('4/corrections',()=>dialog().getByRole('button',{name:'Guardar cambios',exact:true}).click()); await close();
   await operation('Resolver cobertura'); await dialog().getByLabel('Cobertura a resolver').selectOption(String(pendingCoverage.id));
@@ -79,7 +73,7 @@ async page => {
   const revoked = await read(4); check(revoked.effectiveTeacherId === fixture.ids.replacementTeacher && revoked.titularOutcome === 'ABSENT','Revocación conserva ejecución y ausencia');
   results.push('Resolver y revocar cobertura separadas de ejecución y resultado titular');
 
-  await choose(3); await choose(6); await operation('Registrar reemplazo');
+  await choose(3); await choose(6); await operation('Registrar reemplazo / emergencia');
   await dialog().getByLabel('Persona reemplazante',{exact:true}).selectOption(fixture.ids.replacementTeacher);
   await dialog().getByLabel('Modalidad').selectOption('PLANNED'); await reason('Cobertura masiva para dos bloques explícitos');
   await dialog().getByRole('button',{name:'Cerrar y conservar borrador'}).click();
@@ -114,10 +108,10 @@ async page => {
   check(recovery.origin==='RECOVERY' && recovery.originalRecordId===1 && recovery.date.startsWith(sunday.toISOString().slice(0,10)),'Recuperación domingo sin horario semanal');
   results.push('Recuperación fechada en domingo con catálogos administrativos autorizados');
 
-  await details(1); await dialog().getByLabel('Observaciones',{exact:true}).fill('BORRADOR NO DEBE PERDERSE CON CONFIGURACIÓN'); await close();
+  await details(1); await h.observations(1, 'BORRADOR NO DEBE PERDERSE CON CONFIGURACIÓN', true); await close();
   const section = await ops(); await section.getByRole('button',{name:'Configuración operativa',exact:true}).click();
   check(await page.getByRole('alert').filter({hasText:'Guarda o descarta'}).count()>0,'Configuración no descarta borrador');
-  check(await row(1).locator('textarea').inputValue()==='BORRADOR NO DEBE PERDERSE CON CONFIGURACIÓN','Borrador intacto');
+  check(await h.draftText(1)==='BORRADOR NO DEBE PERDERSE CON CONFIGURACIÓN','Borrador intacto');
   await row(1).getByRole('button',{name:'Descartar cambios',exact:true}).click();
   await operation('Configuración operativa');
   await dialog().getByLabel('Tolerancia de tardanza (minutos)').fill('');
@@ -138,7 +132,7 @@ async page => {
   await page.getByRole('button',{name:'Historial',exact:true}).click();
   await dialog().locator('.parts-history li').first().waitFor(); await shot('administracion-historial'); await close();
   for (const width of [1440,1280,768,390,320]) { await page.setViewportSize({width,height:900}); check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Overflow admin'+width); }
-  await page.setViewportSize({width:390,height:844}); await operation('Habilitar edición temporal'); await shot('administracion-movil'); await dialog().getByRole('button',{name:'Descartar operación'}).click();
+  await page.setViewportSize({width:390,height:844}); await operation('Configuración operativa'); await shot('administracion-movil'); await dialog().getByRole('button',{name:'Descartar operación'}).click();
   results.push('Reportes y resumen del servidor, historial auditable y móvil');
   check(errors.length===0,errors.join('\n'));
   return {ok:true,suite:'administracion',results,errors};

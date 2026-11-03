@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "suite": "modernizacion-transportes",
+  "date": "2026-11-03T12:25:19.566Z",
+  "results": [
+    "R-N01: EventSource nativo recibe SSE real; cambio persistido invalida GET con precondiciones antes del sondeo, sin decisión de solicitud",
+    "R-N01: cambio de cookie/cuenta en la misma vista cierra SSE antiguo y aísla formulario; respuesta HTTP real retenida y evento tardío no contaminan la nueva cuenta",
+    "R-N01: fallo de transporte SSE inyectado; sondeo de 60s recupera estado persistido mediante GET real, sin payload simulado",
+    "R-N01: plantilla y preview Excel reales; cambio A→B remonta editor y no traslada archivo/respuesta tardía ni ejecuta PUT",
+    "R-N01: formulario de incidencia rápida se reinicia por proceso y no registra ni reintenta intención anterior"
+  ],
+  "errors": [],
+  "limits": [
+    "SSE/HTTP/Excel reales del harness aislado; fallo SSE y retención de respuestas inyectados explícitamente",
+    "El cambio de cuenta usa cookie local sintética, no OAuth externo",
+    "No línea base visual H2"
+  ]
+}

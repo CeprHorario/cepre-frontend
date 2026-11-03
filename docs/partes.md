@@ -59,9 +59,9 @@ npm --prefix frontend run test:partes
 npm --prefix frontend run test:partes:browser
 ```
 
-La última usa `playwright-cli` gestionada (sin instalar paquetes), genera un PNG sintético con stdlib Node y abre un perfil Chromium en memoria por suite. **Sus 25 recorridos y capturas son históricos: contienen controles/permisos retirados y están pendientes de reconciliación durante Fase 1. No constituyen una validación vigente.** La prueba de carrera retiene la **respuesta** de una subida real después de su ejecución, no simula el servidor ni reenvía multipart.
+La última usa `playwright-cli` gestionada (sin instalar paquetes), genera un PNG sintético con stdlib Node y abre un perfil Chromium en memoria por suite. **Los cinco scripts se reconciliaron con jornadas/editor clasificado; sus 25 recorridos completos pasan en el checkpoint del 2026-11-03.** No se restauraron efectivos editables por monitor, cobertura directa retirada ni ampliaciones del cierre. La carrera retiene solo la **respuesta** de una subida real, no simula servidor ni reenvía multipart. Volver al listado conserva conflictos/subidas pendientes; el conflicto muestra estado y observaciones clasificados (D-05).
 
-La nueva regresión incremental se ejecuta con `npm run test:modernizacion:browser`, usando el mismo harness reiniciado y frontend del apartado anterior. Su alcance y resultados están en [modernización](modernizacion/MIGRATION_PROGRESS.md). No sustituye por sí sola los recorridos pendientes ni la línea base H2.
+La regresión incremental incluye `test:modernizacion:browser`, `test:modernizacion:states`, `test:modernizacion:incidencias` y `test:modernizacion:transportes`. Sus 21 recorridos adicionales incluyen SSE/sondeo, cuenta/proceso/respuestas tardías, Excel e incidencias. Reiniciar fixtures entre grupos según la [línea base funcional](modernizacion/FUNCTIONAL_BASELINE.md). No equivalen a la línea base integral H2.
 
 El runner escribe los JSON después de cerrar todos sus navegadores: escribirlos entre suites bajo `vite dev` provoca recargas de archivos vigilados que invalidan los borradores y el resultado del propio recorrido. Una salida vacía de la CLI nunca se considera éxito; solo se acepta el resultado explícito `ok:true`, sin repetir mutaciones.
 
