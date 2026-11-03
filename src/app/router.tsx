@@ -24,6 +24,7 @@ import { DocentePanel } from "@/features/docente/DocentePanel";
 import { MonitorPanel } from "@/features/monitor/MonitorPanel";
 import { SupervisorPanel } from "@/features/supervisor/SupervisorPanel";
 import { PartsPage } from "@/features/partes/PartsPage";
+import { IncidencesPage } from '@/features/incidencias/IncidencesPage';
 import { NotFoundPage } from "./NotFoundPage";
 import { RouteError } from "./RouteError";
 
@@ -108,7 +109,8 @@ export const router = createBrowserRouter([
           { path: "generar", element: <GenerarProcesoPage /> },
           { path: "importar", element: <ImportarPage /> },
           { path: "configuracion", element: <ConfiguracionPage /> },
-          { path: "partes", element: <PartsPage /> },
+          { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> },
+          { path: "reportes", lazy: async()=>({Component:(await import('@/features/operations/ReportsPage')).ReportsPage}) }, { path: "incidencias", element: <IncidencesPage /> },
           {
             path: "gestionar",
             element: <GestionarLayout />,
@@ -131,17 +133,17 @@ export const router = createBrowserRouter([
       {
         path: "docente",
         element: <RequireRole roles={["profesor", "docente"]} />,
-        children: [{ index: true, element: <DocentePanel /> }],
+        children: [{ index: true, element: <DocentePanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }],
       },
       {
         path: "monitor",
         element: <RequireRole roles={["monitor"]} />,
-        children: [{ index: true, element: <MonitorPanel /> }, { path: "partes", element: <PartsPage /> }],
+        children: [{ index: true, element: <MonitorPanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }],
       },
       {
         path: "supervisor",
         element: <RequireRole roles={["supervisor"]} />,
-        children: [{ index: true, element: <SupervisorPanel /> }, { path: "partes", element: <PartsPage /> }],
+        children: [{ index: true, element: <SupervisorPanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }, { path: "incidencias", element: <IncidencesPage /> }],
       },
       {
         path: "coordinador",

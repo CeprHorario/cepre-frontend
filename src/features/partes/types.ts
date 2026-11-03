@@ -1,7 +1,9 @@
+import type { PartObservation } from './ObservationsEditor';
 import type { Paginated, Role, Classroom, HourSession } from "@/api/types";
 
 export type PartRole = Extract<Role, "administrador" | "monitor" | "supervisor">;
 export type Slot = "initial" | "final";
+export type ClassState = 'N' | 'T' | 'SD' | 'RN' | 'RE';
 export type PersonKind = "TEACHER" | "MONITOR";
 export interface Person { id: string; name: string; email: string }
 export interface Actor { id: string; origin: string; email: string; role: string; schema: string }
@@ -15,6 +17,9 @@ export interface Coverage {
 export interface Review { id: number; recordId: number; recordVersion: number; result: "CONFORMING" | "OBSERVED"; comments: string | null; createdAt: string; actor: Actor; files: { id: string; generation: string; checksum: string }[] }
 export interface Grant { id: number; recordId: number; accountId: string; expiresAt: string; reason: string; revokedAt: string | null; createdAt: string; grantedBy: Actor }
 export interface PartRecord {
+  editOpensAt?: string | null;
+  classState?: ClassState | null;
+  observationWarning?: string;
   id: number; version: number; date: string; classId: string; hourSessionId: number; shiftId: number; courseId: number; areaId: number; period: number;
   pedagogicalMinutes: number; origin: "REGULAR" | "RECOVERY"; originalRecordId: number | null;
   snapshot: Snapshot; effectiveSnapshot: Partial<Record<PersonKind, Person | null>>;
@@ -24,6 +29,7 @@ export interface PartRecord {
   actualStart: string | null; actualEnd: string | null;
   teachingStatus: "UNCONFIRMED" | "TAUGHT" | "NOT_TAUGHT" | "INTERRUPTED";
   titularOutcome: "UNKNOWN" | "PRESENT" | "ABSENT" | "PLANNED_REPLACEMENT";
+  structuredObservations?: PartObservation[];
   incidents: string | null; initialFileId: string | null; finalFileId: string | null;
   initialAssociatedAt: string | null; finalAssociatedAt: string | null;
   deletedAt: string | null; deletionReason: string | null; createdAt: string; updatedAt: string;
@@ -40,6 +46,8 @@ export interface OperationalConfig {
 export interface PartContext { accountId: string; process: string; serverNow: string }
 export interface PartFilters { from: string; to: string; page: number; limit: number; classId?: string; teacherId?: string; monitorId?: string; courseId?: number; shiftId?: number; pendingReview?: boolean; includeDeleted?: boolean }
 export interface RecordDraft {
+  structuredObservations: PartObservation[];
+  classState: ClassState | '';
   actualStart: string; actualEnd: string; teachingStatus: PartRecord["teachingStatus"];
   titularOutcome: PartRecord["titularOutcome"]; effectiveTeacherId: string; effectiveMonitorId: string; incidents: string; reason: string;
 }
@@ -58,6 +66,8 @@ export type ReportSummary = Record<string, number | null>;
 export interface PartsViewProps {
   role: PartRole; process: string; filters: PartFilters; rows: PartRecord[]; total: number; loading: boolean;
   busy: boolean; error: string; notice: string; selected: PartRecord | null; base: PartRecord | null;
+  editableRecordIds: number[];
+  incompleteRecordIds: number[];
   draft: RecordDraft | null; dirty: boolean; conflict: boolean; unavailable: boolean; writable: boolean; writeLimit: string;
   review: ReviewDraft; reviewDirty: boolean; pendingFiles: Partial<Record<Slot, UploadedCapture>>;
   images: Record<string, string>; history: AuditEvent[]; historyPage: number; historyLoading: boolean;

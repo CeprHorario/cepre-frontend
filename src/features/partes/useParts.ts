@@ -5,7 +5,7 @@ import axios from "axios";
 import { apiErrorMessage } from "@/api/client";
 import { CatalogApi, ClassesApi } from "@/api/services";
 import { useAuth } from "@/auth/AuthProvider";
-import { academicDate, configPayload, limaDate, operationDraft, ordinaryWritable, requireReason, toDraft, updatePayload, validateRange } from "./model";
+import { academicDate, configPayload, editStartsAt, limaDate, operationDraft, ordinaryWritable, requireReason, toDraft, updatePayload, validateRange } from "./model";
 import { createPartsApi } from "./service";
 import type { AuditEvent, OperationDraft, PartAlert, PartContext, PartFilters, PartRecord, PartRole, PartsViewProps, RecordDraft, ReviewDraft, Slot, UploadedCapture } from "./types";
 
@@ -62,7 +62,8 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   const serverClock = useRef({ server: Date.parse(context.serverNow), local: Date.now() });
   const enabled = !status?.maintenance || role === "administrador";
   const dirty = Boolean(state.base && state.draft && JSON.stringify(toDraft(state.base)) !== JSON.stringify(state.draft));
-  const pending = dirty || state.reviewDirty || Boolean(state.operation) || Object.keys(state.pendingFiles).length > 0;
+  const incidenceDraft = useQuery<{ dirty: boolean; busy: boolean }>({ queryKey: ['incidences', 'draft', context.accountId, context.process], queryFn: async () => ({ dirty: false, busy: false }), enabled: false });
+  const pending = dirty || state.reviewDirty || Boolean(state.operation) || Object.keys(state.pendingFiles).length > 0 || Boolean(incidenceDraft.data?.dirty || incidenceDraft.data?.busy);
   const blocker = useBlocker(pending || busy);
 
   useEffect(() => { client.setQueryDefaults(workspaceKey, { gcTime: Infinity }); if (!client.getQueryData(workspaceKey)) client.setQueryData(workspaceKey, initialWorkspace.current); }, [client, workspaceKey]);
@@ -85,14 +86,14 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
 
   const queryOptions = { retry: false as const, staleTime: 0, enabled };
   const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], queryFn: async ({ signal }) => {
-    // La agenda prepara solo bloques futuros del día; el listado aporta paginación y filtros.
+    // La agenda completa todos los bloques programados de hoy; el listado aplica filtros y paginación.
     if (state.filters.from === limaDate() && state.filters.to === state.filters.from) await service.agenda(state.filters.from, signal);
     return service.list(state.filters, signal);
   } });
   const detail = useQuery({ ...queryOptions, queryKey: [...scope, "detail", state.id], queryFn: ({ signal }) => service.detail(state.id!, signal), enabled: enabled && state.id !== null, refetchOnWindowFocus: true, refetchInterval: 30_000 });
   const config = useQuery({ ...queryOptions, queryKey: [...scope, "config"], queryFn: ({ signal }) => service.configuration(signal), enabled: enabled && role === "administrador" });
-  const people = useQuery({ ...queryOptions, queryKey: [...scope, "people", state.id, peopleParams], queryFn: ({ signal }) => service.people(state.id!, peopleParams.kind, peopleParams.search, peopleParams.page, signal), enabled: enabled && state.id !== null });
-  const history = useQuery({ ...queryOptions, queryKey: [...scope, "history", state.id, historyPage], queryFn: ({ signal }) => service.history(state.id!, historyPage, signal), enabled: enabled && state.id !== null && showHistory });
+  const people = useQuery({ ...queryOptions, queryKey: [...scope, "people", state.id, peopleParams], queryFn: ({ signal }) => service.people(state.id!, peopleParams.kind, peopleParams.search, peopleParams.page, signal), enabled: enabled && state.id !== null && (role === 'administrador' || state.operation?.action === 'replacement') });
+  const history = useQuery({ ...queryOptions, queryKey: [...scope, "history", state.id, historyPage], queryFn: ({ signal }) => service.history(state.id!, historyPage, signal), enabled: enabled && role === "administrador" && state.id !== null && showHistory });
   const alerts = useQuery({ ...queryOptions, queryKey: [...scope, "alerts", alertsPage], queryFn: ({ signal }) => service.alerts(alertsPage, signal), enabled: enabled && role !== "monitor" && showAlerts });
   const classrooms = useQuery({ ...queryOptions, queryKey: [...scope, "classes"], queryFn: ClassesApi.list, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
   const periods = useQuery({ ...queryOptions, queryKey: [...scope, "periods"], queryFn: CatalogApi.hourSessions, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
@@ -100,7 +101,8 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   const summary = useQuery({ ...queryOptions, queryKey: [...scope, "summary", state.filters], queryFn: ({ signal }) => service.summary(state.filters, signal), enabled: enabled && role === "administrador" && reportOpen });
 
   const selected = detail.data ?? (state.base?.id === state.id ? state.base : null);
-  const now = serverClock.current.server + clock - serverClock.current.local;
+  // Un reloj de render anterior a la última sincronización no debe retroceder la hora del servidor.
+  const now = serverClock.current.server + Math.max(0, clock - serverClock.current.local);
   const unavailable = axios.isAxiosError(detail.error) && [403, 404].includes(detail.error.response?.status ?? 0);
   const writable = enabled && !unavailable && Boolean(selected && !selected.deletedAt && (role === "administrador" || ordinaryWritable(selected, context.accountId, now))) && !state.conflict;
 
@@ -175,9 +177,11 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
 
   return {
     role, process: context.process, filters: state.filters, rows: list.data?.data ?? [], total: list.data?.total ?? 0,
+    editableRecordIds: (list.data?.data ?? []).filter(row => enabled && !row.deletedAt && (role === 'administrador' || (role === 'monitor' && ordinaryWritable(row, context.accountId, now)))).map(row => row.id),
+    incompleteRecordIds: (list.data?.data ?? []).filter(row => !row.deletedAt && row.completeness === 'INCOMPLETE' && now >= Date.parse(row.scheduledEnd)).map(row => row.id),
     loading: list.isFetching || (state.id !== null && detail.isLoading), busy, error: error || (failures.find(Boolean) ? apiErrorMessage(failures.find(Boolean)) : ""), notice,
     selected, base: state.base, draft: state.draft, dirty, conflict: state.conflict, unavailable, writable,
-    writeLimit: selected ? selected.deletedAt ? "Parte anulado; restaura antes de corregir evidencias." : role === "supervisor" ? "Solo revisión; no modifica el registro, aunque esté cerrado." : role === "administrador" ? "Corrección extraordinaria con motivo; conserva el cierre original." : now < Date.parse(selected.scheduledStart) ? "El bloque todavía no comienza." : writable ? `Edición disponible. Cierre original: ${new Date(selected.editDeadline).toLocaleString("es-PE", { timeZone: "America/Lima" })} (Lima).` : "Edición cerrada. Una subida previa no habilita su asociación; requiere habilitación o corrección administrativa." : "",
+    writeLimit: selected ? selected.deletedAt ? "Parte anulado; restaura antes de corregir evidencias." : role === "supervisor" ? "Solo revisión; no modifica el registro, aunque esté cerrado." : role === "administrador" ? "Corrección extraordinaria con motivo; conserva el cierre original." : now < editStartsAt(selected) ? "Edición aún no habilitada. El primer bloque abre 5 minutos antes del turno; los siguientes, al comenzar." : writable ? `Edición disponible. Cierre original: ${new Date(selected.editDeadline).toLocaleString("es-PE", { timeZone: "America/Lima" })} (Lima).` : "Edición cerrada: solo administración puede corregir el parte con un motivo. El cierre es 90 minutos después del último bloque del turno." : "",
     review: state.review, reviewDirty: state.reviewDirty, pendingFiles: state.pendingFiles, images,
     history: (history.data ?? []) as AuditEvent[], historyPage, historyLoading: history.isFetching,
     alerts: (alerts.data ?? []) as PartAlert[], alertsPage, config: config.data ?? null,
@@ -192,11 +196,11 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     },
     onRefresh: () => { void refresh(); },
     onSelect: id => { if (id === state.id || !canLeave()) return; setState(s => ({ ...s, id, base: null, draft: null, conflict: false, review: blankReview(), reviewDirty: false })); setShowHistory(true); setHistoryPage(1); },
-    onDraft: patch => { if (!busy && writable && !state.operation) setState(s => ({ ...s, draft: s.draft ? { ...s.draft, ...patch } : null })); },
+    onDraft: patch => { if (!busy && writable && !state.operation) setState(s => ({ ...s, draft: s.draft ? { ...s.draft, ...patch, ...(patch.classState === "SD" ? {actualStart:"",actualEnd:""} : {}) } : null })); },
     onSave: () => void run(async () => {
       const base = requireRecord(); if (!state.draft || !writable || state.operation) throw new Error("El registro no admite edición o tiene una operación pendiente.");
-      await service.update(base.id, updatePayload(base, state.draft, role === "administrador"), role === "administrador");
-      await acceptRecord(true); setNotice("Cambios guardados. La revisión corresponde a la nueva versión.");
+      const saved = await service.update(base.id, updatePayload(base, state.draft, role === "administrador"), role === "administrador");
+      await acceptRecord(true); setNotice(saved.observationWarning ?? "Cambios guardados.");
     }),
     onDiscard: () => void run(async () => {
       let unavailable = false;
@@ -239,13 +243,14 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     }),
     onDiscardUpload: slot => { if (!busy) setState(s => { const pendingFiles = { ...s.pendingFiles }; delete pendingFiles[slot]; return { ...s, pendingFiles }; }); },
     onLoadImage: loadImage,
-    onHistory: page => { setShowHistory(true); setHistoryPage(page); void history.refetch(); },
+    onHistory: page => { if(role!=="administrador") return; setShowHistory(true); setHistoryPage(page); void history.refetch(); },
     onAlerts: page => { setShowAlerts(true); setAlertsPage(page); if (showAlerts && alertsPage === page) void alerts.refetch(); },
     onAcknowledge: id => void run(async () => { await service.operation(`alerts/${id}/acknowledge`, {}); await alerts.refetch(); setNotice("Acuse registrado. La alerta no se considera resuelta por este acuse."); }),
     onPeople: (kind, search, page) => { if (search.length <= 100) setPeopleParams({ kind, search, page }); },
     onToggleTarget: id => { if (busy || state.operation) { setError("Los destinos están fijados en el borrador de la operación. Descártalo para cambiar la selección."); return; } const row = list.data?.data.find(r => r.id === id); if (row) setState(s => ({ ...s, targets: s.targets.some(r => r.id === id) ? s.targets.filter(r => r.id !== id) : s.targets.length < 200 ? [...s.targets, row] : s.targets })); },
     onOperation: action => {
       if (busy || state.conflict) return;
+      if (role !== "administrador" && !(role === "supervisor" && action === "replacement")) return;
       if (state.operation) { if (state.operation.action === action) setOperationOpen(true); else setError("Continúa o descarta la operación pendiente antes de iniciar otra."); return; }
       if (dirty) { setError("Guarda o descarta los cambios del registro antes de iniciar una operación."); return; }
       if (action !== "configuration" && !state.base && !((action === "cancel" || action === "restore") && state.targets.length)) { setError("Selecciona primero un parte."); return; }
@@ -276,7 +281,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
         if (!base) throw new Error("Selecciona primero un parte.");
         if (op.action === "replacement") {
           if (!op.personId) throw new Error("Selecciona la persona reemplazante.");
-          await service.operation("replacements", { targets: state.operationTargets.map(r => ({ recordId: r.id, expectedVersion: r.version })), kind: op.kind, personId: op.personId, mode: role === "monitor" ? "EMERGENCY" : op.mode, reason });
+          await service.operation("replacements", { targets: state.operationTargets.map(r => ({ recordId: r.id, expectedVersion: r.version })), kind: op.kind, personId: op.personId, mode: role === "supervisor" ? "EMERGENCY" : op.mode, reason });
         } else if (op.action === "resolve") await service.operation(`replacements/${Number(op.coverageId)}/resolve`, { expectedVersion, status: op.status, reason });
         else if (op.action === "grant") {
           if (!base.monitorAccountId || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(op.expiresAt)) throw new Error("Define un vencimiento válido en Lima.");

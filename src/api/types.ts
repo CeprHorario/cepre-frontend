@@ -168,6 +168,7 @@ export interface TeacherOwnClass {
 }
 
 export interface MonitorSummary {
+  dni: string | null;
   id: string;
   firstName: string;
   lastName: string;

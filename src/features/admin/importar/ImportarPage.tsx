@@ -1,3 +1,4 @@
+import { useDniIncidenceCounts } from '@/features/incidencias/useDniIncidenceCounts';
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -9,12 +10,12 @@ import { Button } from "@/components/ui/Button";
 import { Card, PageHeader } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/EmptyState";
 import { downloadBlob } from "@/lib/format";
+import { DniIncidenceWarning } from "@/features/incidencias/DniIncidenceWarning";
 
 const OPTIONS: { value: ImportKind; label: string; description: string }[] = [
   { value: "docentes", label: "Registrar docentes", description: "Registra docentes nuevos con su curso, datos personales y horas máximas." },
   { value: "monitores", label: "Datos de monitores por salón", description: "Completa los datos personales del monitor identificando su salón y turno. Conserva el correo y la cuenta creados con el salón." },
   { value: "supervisores", label: "Supervisores y sus salones", description: "Registra o actualiza supervisores por correo y los vincula a los monitores de los salones indicados. Repite los mismos datos para varios salones del mismo turno." },
-  { value: "disponibilidad", label: "Agregar disponibilidad docente", description: "Por docente y día, elige Rango con horas, Turno completo o Todo el día. Los alcances completos usan los horarios del proceso seleccionado. Conserva la disponibilidad anterior y no asigna salones." },
 ];
 
 export function ImportarPage() {
@@ -34,6 +35,7 @@ export function ImportarPage() {
   const schema = useQuery({ queryKey: ["imports", "columns", kind], queryFn: () => ImportsApi.columns(kind), staleTime: 5 * 60_000 });
   const rows = preview?.rows.filter((row) => !onlyErrors || row.errors.length > 0) ?? [];
   const visible = rows.slice(page * 50, page * 50 + 50);
+  const incidenceSummary = useDniIncidenceCounts(visible.map(row => row.values.dni), kind === 'monitores' && Boolean(preview));
   const columns = Object.keys(preview?.rows[0]?.values ?? {});
 
   const reset = () => {
@@ -165,11 +167,12 @@ export function ImportarPage() {
               <strong>Vista previa</strong>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={onlyErrors} onChange={(event) => { setOnlyErrors(event.target.checked); setPage(0); }} />Solo errores</label>
             </div>
-            <div className="overflow-x-auto"><table className="w-full border-collapse text-sm">
+              {kind === 'monitores' && <div className="px-4 py-2 text-sm">{incidenceSummary.error ? <p role="alert">No se pudo verificar el historial: {apiErrorMessage(incidenceSummary.error)}</p> : incidenceSummary.loading ? <p role="status">Consultando antecedentes de los DNI…</p> : <p>Los avisos junto al DNI incluyen incidencias de todos los procesos y permiten continuar con la importación.</p>}</div>}
+              <div className="overflow-x-auto"><table className="w-full border-collapse text-sm">
               <thead><tr>{["Fila", ...columns, "Resultado"].map((column) => <th key={column} className="whitespace-nowrap border-b border-line bg-surface-2 px-3 py-3 text-left">{schema.data?.find((item) => item.key === column)?.label ?? column}</th>)}</tr></thead>
               <tbody>{visible.map((row) => <tr key={row.line} className={row.errors.length ? "bg-red-50" : undefined}>
                 <td className="border-b border-line-soft px-3 py-2">{row.line}</td>
-                {columns.map((column) => <td key={column} className="max-w-72 border-b border-line-soft px-3 py-2">{row.values[column]}</td>)}
+                  {columns.map((column) => <td key={column} className="max-w-72 border-b border-line-soft px-3 py-2">{kind === 'monitores' && column === 'dni' ? <DniIncidenceWarning key={row.values[column]} dni={row.values[column] ?? ''} count={incidenceSummary.counts.get(row.values[column] ?? '')} context={incidenceSummary.context} /> : row.values[column]}</td>)}
                 <td className={`min-w-56 border-b border-line-soft px-3 py-2 ${row.errors.length ? "text-danger-700" : "text-ok-700"}`}>{row.errors.join(". ") || "Válido"}</td>
               </tr>)}</tbody>
             </table></div>

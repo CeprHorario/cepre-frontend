@@ -30,6 +30,8 @@ interface Draft {
   createSchedules: boolean;
   sessionMinutes: number;
   breakMinutes: number;
+  earlyEditMinutes: number;
+  editGraceMinutes: number;
   shifts: { start: string; classes: Record<string, number> }[];
 }
 
@@ -43,6 +45,8 @@ const initialDraft: Draft = {
   createSchedules: true,
   sessionMinutes: 40,
   breakMinutes: 5,
+  earlyEditMinutes: 5,
+  editGraceMinutes: 90,
   shifts: [{ start: "07:00", classes: {} }],
 };
 
@@ -135,6 +139,8 @@ export function GenerarProcesoPage() {
         createSchedules: draft.createSchedules,
         sessionMinutes: draft.sessionMinutes,
         breakMinutes: draft.breakMinutes,
+        earlyEditMinutes: draft.earlyEditMinutes,
+        editGraceMinutes: draft.editGraceMinutes,
         shifts: shifts.map((s) => ({
           name: s.name,
           startTime: s.start,
@@ -264,6 +270,9 @@ export function GenerarProcesoPage() {
               <Card className="grid gap-4 p-5 sm:grid-cols-2">
                 <Field label="Hora pedagógica (minutos)" hint="Duración de cada bloque de clase.">{(p) => <Input {...p} type="number" min={1} max={180} step={1} value={draft.sessionMinutes} onChange={(e) => set("sessionMinutes", Number(e.target.value))} />}</Field>
                 <Field label="Descanso entre bloques (minutos)" hint="No se agrega descanso después del último bloque.">{(p) => <Input {...p} type="number" min={0} max={120} step={1} value={draft.breakMinutes} onChange={(e) => set("breakMinutes", Number(e.target.value))} />}</Field>
+                <Field label="Apertura anticipada del primer bloque (minutos)" hint="Los bloques posteriores se abren al comenzar su horario.">{p=><Input {...p} type="number" min={0} max={60} step={1} value={draft.earlyEditMinutes} onChange={e=>set("earlyEditMinutes",Number(e.target.value))}/>}</Field>
+                <Field label="Plazo de edición al terminar el turno (minutos)" hint="Se conserva como límite original de cada parte.">{p=><Input {...p} type="number" min={0} max={720} step={1} value={draft.editGraceMinutes} onChange={e=>set("editGraceMinutes",Number(e.target.value))}/>}</Field>
+
               </Card>
               <p className="text-sm leading-6 text-ink-500">
                 Indica la hora de inicio. El fin se calcula con {hours} bloques de {draft.sessionMinutes} minutos y descansos de {draft.breakMinutes} minutos.

@@ -1,3 +1,5 @@
+import { AvailabilityWorkbookPanel } from '@/features/operations/AvailabilityWorkbookPanel';
+import { ButtonLink } from '@/components/ui/Button';
 import { useMemo } from "react";
 import { useOwnClasses, usePeriods } from "@/api/queries";
 import { SimpleLayout } from "@/components/layout/ModuleLayout";
@@ -58,6 +60,7 @@ export function DocentePanel() {
       </section>
 
       <main className="mx-auto flex w-full max-w-[1100px] flex-col gap-4 px-4 py-5 sm:px-10">
+        <div className="flex flex-wrap gap-3"><AvailabilityWorkbookPanel/><ButtonLink to="/docente/solicitudes" variant="secondary">Solicitar reemplazo</ButtonLink></div>
         <ScheduleView
           tone="navy"
           entries={merged}

@@ -1,3 +1,5 @@
+import { IncidenceAction } from '@/features/incidencias/IncidenceAction';
+import { useDniIncidenceCounts } from '@/features/incidencias/useDniIncidenceCounts';
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,6 +19,7 @@ import { toHHMM } from "@/lib/schedule";
 import { splitPhones } from "@/lib/validators";
 import { emptyPerson, PersonForm } from "./PersonForm";
 import { useRemoval } from "./useRemoval";
+import { DniIncidenceNotice, DniIncidenceWarning } from "@/features/incidencias/DniIncidenceWarning";
 
 export function MonitoresPage() {
   const [params, setParams] = useSearchParams();
@@ -59,6 +62,7 @@ export function MonitoresPage() {
     if (!q) return data;
     return data.filter((m) => [m.firstName, m.lastName, m.email, m.className].some((v) => v?.toLowerCase().includes(q)));
   }, [monitors.data, query]);
+  const incidenceSummary = useDniIncidenceCounts(rows.map(m => m.dni));
 
   const selection = useSelectionMode(rows, (m) => m.id);
   const removal = useRemoval<MonitorSummary>({
@@ -73,6 +77,8 @@ export function MonitoresPage() {
   });
 
   const columns: Column<MonitorSummary>[] = [
+    {key:"incidence-action",header:"Incidencia",cell:p=><IncidenceAction email={p.email} role="monitor"/>},
+    { key: "dni", header: "DNI", cell: m => <DniIncidenceWarning key={m.dni} dni={m.dni ?? ''} count={incidenceSummary.counts.get(m.dni ?? '')} context={incidenceSummary.context} /> },
     { key: "class", header: "Salón", cell: (m) => <strong>{shortClassName(m.className)}</strong> },
     {
       key: "name",
@@ -156,6 +162,8 @@ export function MonitoresPage() {
             </Button>
           </SelectionBar>
         )}
+        {incidenceSummary.error && <Alert tone="danger">No se pudo consultar el historial de incidencias. {apiErrorMessage(incidenceSummary.error)}</Alert>}
+        {incidenceSummary.loading && <p role="status" className="px-4 text-xs text-ink-500">Consultando antecedentes de los DNI…</p>}
         <DataTable columns={columns} rows={rows} rowKey={(m) => m.id} loading={monitors.isLoading} selection={selection.tableSelection} />
         {monitors.data && (
           <Pagination
@@ -195,6 +203,7 @@ export function MonitoresPage() {
         <PersonForm
           open
           title="Agregar monitor"
+          dniNotice={dni => <DniIncidenceNotice dni={dni} />}
           initial={emptyPerson}
           fields={["email", "dni", "firstName", "lastName", "personalEmail", "phone", "phonesAdditional"]}
           required={["firstName", "lastName"]}

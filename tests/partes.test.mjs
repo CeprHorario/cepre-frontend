@@ -16,28 +16,28 @@ test("borrador nunca copia horario programado, no infiere falta y no muta servid
   const server = record(); const draft = toDraft(server);
   assert.equal(draft.actualStart, ""); assert.equal(draft.actualEnd, "");
   assert.equal(draft.titularOutcome, "UNKNOWN"); assert.equal(draft.effectiveTeacherId, "");
-  draft.incidents = "Observación";
+  draft.structuredObservations = [{id:'00000000-0000-4000-8000-000000000001',target:'CLASSROOM',description:'Observación de aula'}];
   assert.equal(server.incidents, null);
-  assert.deepEqual(updatePayload(server, draft, false), { expectedVersion: 3, incidents: "Observación" });
+  assert.deepEqual(updatePayload(server, draft, false), { expectedVersion: 3, structuredObservations: draft.structuredObservations });
 });
 test("actualización envía solo cambios y conserva expectedVersion original", () => {
   const base = record(); const draft = { ...toDraft(base), actualStart: "07:03", effectiveTeacherId: "uuid" };
-  assert.deepEqual(updatePayload(base, draft, false), { expectedVersion: 3, actualStart: "2026-10-29T07:03:00-05:00", effectiveTeacherId: "uuid" });
+  assert.deepEqual(updatePayload(base, draft, false), { expectedVersion: 3, actualStart: "2026-10-29T07:03:00-05:00" });
   const modified = record({ actualStart: "2026-10-29T12:03:00Z", effectiveTeacherId: "uuid" });
-  assert.deepEqual(updatePayload(modified, { ...toDraft(modified), actualStart: "", effectiveTeacherId: "" }, false), { expectedVersion: 3, actualStart: null, effectiveTeacherId: null });
+  assert.deepEqual(updatePayload(modified, { ...toDraft(modified), actualStart: "", effectiveTeacherId: "" }, false), { expectedVersion: 3, actualStart: null });
 });
 test("corrección administrativa exige motivo sin reabrir el cierre", () => {
   const base = record(); assert.throws(() => updatePayload(base, toDraft(base), true));
   assert.equal(updatePayload(base, { ...toDraft(base), reason: " Motivo válido " }, true).reason, "Motivo válido");
   assert.equal(base.editDeadline, "2026-10-29T19:30:00Z"); assert.throws(() => requireReason("  "));
 });
-test("cierre exclusivo; habilitación solo de cuenta y parte, vigente y no revocada", () => {
+test("cierre exclusivo del monitor: ninguna habilitación histórica lo extiende", () => {
   const end = Date.parse(record().editDeadline);
   assert.equal(ordinaryWritable(record(), "account", Date.parse(record().scheduledStart) - 1), false);
   assert.equal(ordinaryWritable(record(), "account", end - 1), true);
   assert.equal(ordinaryWritable(record(), "account", end), false);
   const grant = { accountId: "account", revokedAt: null, expiresAt: "2026-10-29T20:00:00Z" };
-  assert.equal(ordinaryWritable(record({ grants: [grant] }), "account", end), true);
+  assert.equal(ordinaryWritable(record({ grants: [grant] }), "account", end), false);
   assert.equal(ordinaryWritable(record({ grants: [grant] }), "other", end), false);
   assert.equal(ordinaryWritable(record({ grants: [{ ...grant, revokedAt: "2026-10-29T19:00:00Z" }] }), "account", end), false);
   assert.equal(ordinaryWritable(record({ grants: [grant] }), "account", Date.parse(grant.expiresAt)), false);
@@ -66,4 +66,14 @@ test("capa visual sin servicios, persistencia ni lógica de autorización", () =
   assert.doesNotMatch(service, /from ["']react|sessionStorage|localStorage/);
   assert.match(service, /form\.append\("file"/);
   assert.match(service, /X-Class-Session-Account/); assert.match(service, /X-Class-Session-Context/);
+});
+
+test("primer bloque abre exactamente cinco minutos antes; los siguientes no se anticipan", () => {
+  const start = Date.parse(record().scheduledStart);
+  assert.equal(ordinaryWritable(record({period:1}), "account", start-300001), false);
+  assert.equal(ordinaryWritable(record({period:1}), "account", start-300000), true);
+  assert.equal(ordinaryWritable(record({period:1}), "otro", start-300000), false);
+  assert.equal(ordinaryWritable(record({period:2}), "account", start-1), false);
+  assert.equal(ordinaryWritable(record({period:2}), "account", start), true);
+  assert.equal(ordinaryWritable(record({period:1}), "account", Date.parse(record().editDeadline)), false);
 });

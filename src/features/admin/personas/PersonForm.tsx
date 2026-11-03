@@ -40,12 +40,13 @@ interface Props {
   /** Campos propios de cada rol; `submitted` permite mostrar sus errores igual que los comunes */
   extra?: (values: PersonValues, submitted: boolean) => ReactNode;
   extraValid?: boolean;
+  dniNotice?: (dni: string) => ReactNode;
   onClose: () => void;
   onSubmit: (values: PersonValues) => void;
 }
 
 /** Formulario de datos personales compartido por supervisores, coordinadores y monitores */
-export function PersonForm({ open, title, description, initial, fields, required, saving, submitLabel, extra, extraValid = true, onClose, onSubmit }: Props) {
+export function PersonForm({ open, title, description, initial, fields, required, saving, submitLabel, extra, extraValid = true, dniNotice, onClose, onSubmit }: Props) {
   const [values, setValues] = useState(initial);
   const [submitted, setSubmitted] = useState(false);
   const set = (key: FieldName, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
@@ -104,6 +105,7 @@ export function PersonForm({ open, title, description, initial, fields, required
             {(p) => <Input {...p} invalid={p.invalid} inputMode="numeric" value={values.dni} onChange={(e) => set("dni", onlyDigits(e.target.value, 8))} />}
           </Field>
         )}
+        {has("dni") && dniNotice?.(values.dni)}
         <div className="grid gap-4 sm:grid-cols-2">
           {has("firstName") && (
             <Field label="Nombres" required={req("firstName")} error={show("firstName")}>

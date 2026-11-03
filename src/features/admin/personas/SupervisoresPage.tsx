@@ -1,3 +1,4 @@
+import { IncidenceAction } from '@/features/incidencias/IncidenceAction';
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -50,6 +51,7 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
   };
 
   const columns: Column<SupervisorSummary>[] = [
+    {key:"incidence-action",header:"Incidencia",cell:p=><IncidenceAction email={p.email} role="supervisor"/>},
     {
       key: "name",
       header: "Supervisor",

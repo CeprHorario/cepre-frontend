@@ -1,3 +1,4 @@
+import { IncidenceAction } from '@/features/incidencias/IncidenceAction';
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -80,6 +81,7 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
   const schedule = (teacher: TeacherSummary) => navigate(`${basePath}/${teacher.id}/horario`, { state: { teacher } });
 
   const columns: Column<TeacherSummary>[] = [
+    {key:"incidence-action",header:"Incidencia",cell:p=>!readOnly && <IncidenceAction email={p.email} role="profesor"/>},
     {
       key: "name",
       header: "Docente",

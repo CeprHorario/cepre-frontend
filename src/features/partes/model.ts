@@ -9,14 +9,19 @@ export function limaInstant(date: string, time: string) {
   return `${academicDate(date)}T${time}:00-05:00`;
 }
 export function toDraft(record: PartRecord): RecordDraft {
-  return { actualStart: limaTime(record.actualStart), actualEnd: limaTime(record.actualEnd), teachingStatus: record.teachingStatus,
+  return { structuredObservations: record.structuredObservations ?? [], classState: record.classState ?? '', actualStart: limaTime(record.actualStart), actualEnd: limaTime(record.actualEnd), teachingStatus: record.teachingStatus,
     titularOutcome: record.titularOutcome, effectiveTeacherId: record.effectiveTeacherId ?? "", effectiveMonitorId: record.effectiveMonitorId ?? "", incidents: record.incidents ?? "", reason: "" };
 }
 export function updatePayload(base: PartRecord, draft: RecordDraft, admin: boolean) {
   const original = toDraft(base);
-  const changed = Object.keys(original).filter(key => key !== "reason" && original[key as keyof RecordDraft] !== draft[key as keyof RecordDraft]);
-  const body: Record<string, string | number | null> = { expectedVersion: base.version };
+  const changed = Object.keys(original).filter(key => key !== "reason" && JSON.stringify(original[key as keyof RecordDraft]) !== JSON.stringify(draft[key as keyof RecordDraft]));
+  const body: Record<string, unknown> = { expectedVersion: base.version };
   for (const key of changed as (keyof RecordDraft)[]) {
+    if (key === 'structuredObservations') { body.structuredObservations = draft.structuredObservations; continue; }
+    if (key === 'incidents' && !admin) continue;
+    if (key === 'teachingStatus' || key === 'titularOutcome') continue;
+    if (key === 'classState') { body.classState = draft.classState || null; if (draft.classState === 'SD') { body.actualStart = null; body.actualEnd = null; } continue; }
+    if (!admin && key.startsWith('effective')) continue;
     body[key] = key === "actualStart" || key === "actualEnd" ? limaInstant(base.date, draft[key]) : key.startsWith("effective") ? draft[key] || null : draft[key];
   }
   if (admin) { requireReason(draft.reason); body.reason = draft.reason.trim(); }
@@ -25,8 +30,11 @@ export function updatePayload(base: PartRecord, draft: RecordDraft, admin: boole
 export function requireReason(reason: string) {
   if (reason.trim().length < 3 || reason.length > 2000) throw new Error("El motivo debe tener entre 3 y 2000 caracteres.");
 }
+export function editStartsAt(record: PartRecord) {
+  return record.editOpensAt ? Date.parse(record.editOpensAt) : Date.parse(record.scheduledStart) - (record.period === 1 ? 5 * 60_000 : 0);
+}
 export function ordinaryWritable(record: PartRecord, accountId: string, now: number) {
-  return !record.deletedAt && now >= Date.parse(record.scheduledStart) && (now < Date.parse(record.editDeadline) || (record.grants ?? []).some(g => g.accountId === accountId && !g.revokedAt && Date.parse(g.expiresAt) > now));
+  return record.monitorAccountId === accountId && !record.deletedAt && now >= editStartsAt(record) && now < Date.parse(record.editDeadline);
 }
 export function validateRange(from: string, to: string) {
   const span = Date.parse(to) - Date.parse(from);

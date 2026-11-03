@@ -1,3 +1,4 @@
+import { AvailabilityWorkbookPanel } from '@/features/operations/AvailabilityWorkbookPanel';
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -260,7 +261,7 @@ function AsignarSalones({ id, basePath }: { id: string; basePath: string }) {
               {assignedHours + projected} de {maxHours ?? "—"} h
             </strong>
           </div>
-          <ProgressBar value={assignedHours} max={maxHours ?? Math.max(assignedHours + projected, 1)} projected={projected} label="Horas del docente" />
+          <AvailabilityWorkbookPanel teacherId={id}/><ProgressBar value={assignedHours} max={maxHours ?? Math.max(assignedHours + projected, 1)} projected={projected} label="Horas del docente" />
           {maxHours !== null && (
             <span className={`text-xs ${exceeds ? "font-semibold text-danger-700" : "text-ink-500"}`}>
               {exceeds ? `Supera el máximo por ${assignedHours + projected - maxHours} h` : `Quedarían ${maxHours - assignedHours - projected} h libres`}

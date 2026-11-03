@@ -1,3 +1,4 @@
+import { NotificationBell } from '@/features/operations/NotificationBell';
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronDown, FiLogOut, FiMenu } from "react-icons/fi";
@@ -75,6 +76,7 @@ export function AppHeader({ crumbs, greeting, subtitle, onOpenMenu, right }: App
             {admission.data.description || admission.data.name}
           </span>
         )}
+        <NotificationBell />
         <UserMenu />
       </div>
     </header>

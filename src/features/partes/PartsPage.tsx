@@ -10,7 +10,8 @@ import { PartsView } from "./PartsView";
 import type { PartContext, PartRole } from "./types";
 
 function Workspace({ context, role, onContextChanged }: { context: PartContext; role: PartRole; onContextChanged: () => void }) {
-  return <PartsView {...useParts(context, role, onContextChanged)} />;
+  const props = useParts(context, role, onContextChanged);
+  return <PartsView {...props} />;
 }
 
 export function PartsPage() {

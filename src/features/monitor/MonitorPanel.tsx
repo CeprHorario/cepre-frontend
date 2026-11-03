@@ -41,7 +41,7 @@ export function MonitorPanel() {
       </section>
 
       <main className="mx-auto flex w-full max-w-[1100px] flex-col gap-4 px-4 py-5 sm:px-10">
-        <div><ButtonLink to="/monitor/partes">Registrar parte diario</ButtonLink></div>
+        <div className="flex flex-wrap gap-3"><ButtonLink variant="secondary" to="/monitor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/monitor/partes">Registrar parte diario</ButtonLink></div>
         {info.data && (!info.data.urlMeet || !info.data.urlClassroom) && (
           <Alert
             tone="warn"

@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { FiChevronDown, FiChevronRight, FiChevronsLeft, FiChevronsRight, FiX } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 import { AppHeader, type Crumb } from "./AppHeader";
+import { OperationsNotice } from '@/features/operations/OperationsNotice';
 
 export interface NavItem {
   to: string;
@@ -192,6 +193,7 @@ export function SimpleLayout({ crumbs, greeting, subtitle, children }: {
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader crumbs={crumbs} greeting={greeting} subtitle={subtitle} />
+      {greeting && <OperationsNotice />}
       {children ?? <Outlet />}
     </div>
   );

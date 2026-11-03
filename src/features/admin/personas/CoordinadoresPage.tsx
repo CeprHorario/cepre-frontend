@@ -1,3 +1,4 @@
+import { IncidenceAction } from '@/features/incidencias/IncidenceAction';
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -50,6 +51,7 @@ export function CoordinadoresPage() {
   };
 
   const columns: Column<Coordinator>[] = [
+    {key:"incidence-action",header:"Incidencia",cell:p=><IncidenceAction email={p.email} role="coordinador"/>},
     {
       key: "name",
       header: "Coordinador",

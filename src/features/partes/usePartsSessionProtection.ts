@@ -14,7 +14,8 @@ export function usePartsSessionProtection() {
   useEffect(() => {
     const pending = () => client.getQueriesData<Workspace>({ queryKey: ["parts"], predicate: query => query.queryKey[3] === "workspace" })
       .map(([, data]) => data).filter((data): data is Workspace => Boolean(data))
-      .filter(s => s.inFlight || s.reviewDirty || s.operation || Object.keys(s.pendingFiles).length || (s.base && s.draft && JSON.stringify(toDraft(s.base)) !== JSON.stringify(s.draft)));
+      .filter(s => s.inFlight || s.reviewDirty || s.operation || Object.keys(s.pendingFiles).length || (s.base && s.draft && JSON.stringify(toDraft(s.base)) !== JSON.stringify(s.draft)))
+      .map(s => ({ inFlight: s.inFlight })).concat(client.getQueriesData<{ dirty: boolean; busy: boolean }>({ queryKey: ['incidences', 'draft'] }).filter(([, s]) => s?.dirty || s?.busy).map(([, s]) => ({ inFlight: Boolean(s?.busy) })));
     const beforeUnload = (event: BeforeUnloadEvent) => { if (pending().length) { event.preventDefault(); event.returnValue = ""; } };
     const beforeLogout = (event: Event) => {
       const workspaces = pending();
@@ -31,7 +32,7 @@ export function usePartsSessionProtection() {
     confirmExit,
     keepDrafts: () => setConfirmExit(false),
     discardAndLogout: () => {
-      const running = client.getQueriesData<Workspace>({ queryKey: ["parts"], predicate: query => query.queryKey[3] === "workspace" }).some(([, s]) => s?.inFlight);
+      const running = client.getQueriesData<Workspace>({ queryKey: ["parts"], predicate: query => query.queryKey[3] === "workspace" }).some(([, s]) => s?.inFlight) || client.getQueriesData<{ busy: boolean }>({ queryKey: ['incidences', 'draft'] }).some(([, s]) => s?.busy);
       if (running) { toast.warn("Espera a que termine la operación de partes antes de cerrar sesión."); return; }
       // Conservar entradas válidas hasta confirmar logout: si la red falla, la vista sigue operable.
       for (const [key, workspace] of client.getQueriesData<Workspace>({ queryKey: ["parts"], predicate: query => query.queryKey[3] === "workspace" })) {
@@ -40,6 +41,8 @@ export function usePartsSessionProtection() {
           review: { result: "CONFORMING", comments: "", confirmed: false }, reviewDirty: false, pendingFiles: {},
           operation: null, operationBase: null, operationTargets: [], targets: [], conflict: false });
       }
+      window.dispatchEvent(new Event('cepre:discard-incidence-draft'));
+      for (const [key] of client.getQueriesData({ queryKey: ['incidences', 'draft'] })) client.setQueryData(key, { dirty: false, busy: false });
       setConfirmExit(false); logout();
     },
   };

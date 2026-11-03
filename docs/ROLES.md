@@ -1,3 +1,7 @@
+# Contrato vigente de operaciones
+
+Para partes, observaciones, disponibilidad, incidencias, solicitudes, notificaciones y reportes, consultar [OPERACIONES.md](OPERACIONES.md). Sustituye las descripciones anteriores de registro libre de incidencias por monitores y coberturas directas desde supervisión. Los propietarios son `features/partes` para la jornada, `features/operations` para solicitudes/avisos/Excel/reportes y `features/incidencias` para antecedentes por DNI.
+
 # Mapa de lógica compartida entre roles
 
 Este documento existe para que una misma cosa (un horario, un contacto, un formulario de persona) se comporte igual en todos los roles. **Antes de tocar una pantalla de rol, busca aquí si esa lógica ya tiene dueño.** Si la tiene, cambia el componente compartido, no la pantalla.
@@ -13,6 +17,14 @@ Retirar disponibilidad por Excel también está retirado. Importar solo ofrece D
 Corrección del importador de monitores: el archivo no lleva Correo de acceso. Salón + Turno resuelven la cuenta existente; solo se actualiza user_profiles (DNI, nombres, apellidos y contactos). No modifica users, correo, monitor ni salón. Archivos antiguos con Correo solo se aceptan si coincide con el de la cuenta del salón; se rechaza un intento de cambiarlo. Supervisores conservan su correo propio para registro/vinculación.
 
 ## Roles y pantallas
+
+Partes: la agenda del día actual completa todos los bloques programados del salón, incluidos los que ya comenzaron al habilitar el proceso. Los registros nacen por confirmar y con horas reales vacías. No se reescriben partes existentes ni se reconstruyen días anteriores; se conservan los permisos y plazos de edición. Esta regla se aplica a monitor, supervisor y administración desde el servicio compartido del backend.
+
+El monitor solo edita sus partes desde el inicio del bloque hasta antes de los 90 minutos posteriores al último bloque configurado del turno (21:10 → 22:40). No se amplía con habilitaciones históricas. Monitor y supervisor conservan lectura de partes anteriores de sus recursos; las correcciones posteriores son administrativas, con motivo. Las coberturas distinguen `PLANNED` (R) y `EMERGENCY` (RE), conservando por separado su autorización y ejecución.
+
+`useParts.editableRecordIds` calcula qué filas admiten edición con el reloj sincronizado del servidor. Las demás ofrecen **Ver parte**; no muestran Guardar cuando el plazo está cerrado, aunque se conserve un borrador para descartarlo. El reloj visual no puede retroceder respecto de su última sincronización. `PartsView` conserva la separación entre lógica y presentación; la vista sigue la hoja Excel del usuario, con cabecera de proceso/aula/turno/monitor y columnas agrupadas de horas programadas, control de horas, control del profesor y capturas. No hay tarjetas de resumen ni contadores. `incompleteRecordIds` señala en rojo únicamente registros incompletos cuyo bloque ya terminó; no marca ausencias ni exige observaciones opcionales. En móvil conserva la lectura por bloque y los mismos permisos.
+
+Incidencias: `features/incidencias/IncidencesPanel` comparte registro e historial entre roles; `service.ts` conserva las precondiciones de cuenta/proceso. El monitor selecciona un parte editable y confirma el reporte del docente con sus observaciones y una hora dentro del bloque. El supervisor reporta docentes o monitores de sus aulas; administración también reporta supervisores. El DNI se obtiene del perfil registrado y es obligatorio. Las tablas públicas conservan el historial entre procesos aunque cambien los UUID; el texto original es inmutable y las resoluciones administrativas exigen motivo y versión. Administración consulta todos los procesos y recibe avisos de pendientes; el monitor no consulta listados ni antecedentes: solo registra reportes del docente desde el parte. El supervisor consulta exclusivamente incidencias sobre sus monitores activos en el proceso actual, por DNI vinculado a sus recursos, nunca las propias (aunque antes tuviera otro rol). Se retiró `mine`; enviar ese parámetro se rechaza. Solo administración consulta historial entre procesos y antecedentes de supervisores. Los borradores se aíslan en memoria por cuenta/proceso y participan de las protecciones de navegación y cierre de sesión.
 
 | Rol | Ruta de inicio | Pantallas | Acceso |
 |---|---|---|---|
@@ -47,6 +59,10 @@ El coordinador reutiliza las páginas del admin con `readOnly` (`HorarioDocenteP
 - `AsignarSalonesPage` usa `WeekGrid` directamente porque la grilla es **editable** (marcar disponibilidad y vista previa de asignación). Es la única pantalla que no pasa por `ScheduleView`.
 
 ## Contratos del backend en los que se apoya el front
+
+Avisos por DNI de monitores: `features/incidencias/useDniIncidenceCounts.ts` consulta los DNI visibles en conjunto; `DniIncidenceWarning.tsx` muestra el contador y abre el historial paginado. `PersonForm.dniNotice` permite la alerta al introducir el DNI sin bloquear el registro. Monitores e Importar monitores comparten el mismo aviso. El contador incluye pendientes y resueltas de todos los procesos y roles de esa persona; no depende del correo ni del salón. Solo administración consulta estos antecedentes.
+
+`GET /monitors` incorpora `dni: string | null`. `POST /incidences/dni-summary` (solo admin) acepta `{ dnis: string[] }`, hasta 500 DNI únicos de ocho dígitos, y devuelve `[{ dni, total, pending }]` para los que tienen incidencias. Es una consulta agrupada y parametrizada, no una petición por fila. El desglose reutiliza `GET /incidences?dni=...&page=...`.
 
 Seguridad: la sesión del navegador usa cookie HttpOnly (Secure en producción), `withCredentials` y `X-Requested-With: ceprunsa` en las escrituras. OAuth confirma `{ authenticated: true }` desde la ventana esperada; nunca entrega el JWT al JavaScript. Se eliminan tokens antiguos de localStorage y no se aceptan tokens por URL. `POST /auth/logout` revoca en servidor el token actual y borra su cookie. Bearer sigue disponible para clientes API y la herramienta local; sus tokens también están sujetos a revocación.
 
