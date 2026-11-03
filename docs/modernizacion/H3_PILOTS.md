@@ -27,10 +27,11 @@ esas columnas; horas con límite explícito y cifras tabulares; acción «Ver de
 accesible por teclado además del clic de fila; contenedor de tabla posicionado
 para que el texto `sr-only` no ensanche el documento.
 
-Resultado medido: `UI-11` deja de desbordar a 390 px (el resto de tablas compartidas
-también se beneficia); auditoría global H2 baja de 14 a 8 rutas con desbordamiento.
-Pendiente del piloto: probar foco/zoom/lector manual y decidir si las acciones
-de fila deben quedar visibles sin desplazamiento horizontal en móvil (H4).
+Resultado medido: `UI-11` deja de desbordar a 390 px. El reflow se extendió a los
+contenedores compartidos (`SimpleLayout`, `ModuleLayout`, `Card` y `DataTable`):
+**0 de 32 rutas desbordan** a 390 px en la nueva línea base. Queda validar foco,
+zoom y lector manual, y decidir si las acciones de fila deben quedar visibles sin
+desplazamiento horizontal en móvil (H4).
 
 Objetivo: identidad y densidad operativa. Jerarquía nombre/correo, curso y
 dedicación legibles; barra de horas con valor y límite explícitos; cabecera de

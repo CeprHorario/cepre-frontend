@@ -28,8 +28,9 @@ restricciones de seguridad o bloqueos imprescindibles.
 |---|---|---|
 | H0 | Verificado | Preparación: contratos, mapa de rutas/propietarios, caracterización y fixtures. Fichas exhaustivas/capturas se completan en H2 antes de estética |
 | H1 | Verificado | Matriz F1.0–F1.5 cerrada; contratos reconciliados y línea base funcional posterior en FUNCTIONAL_BASELINE.md |
-| H2 | En ejecución | 32 rutas capturadas a 1920 y auditadas a 390 px en `baseline/`; fichas en BASELINE_H2.md. Faltan variantes restringidas, estados de error/zoom/teclado y formularios/overlays |
-| H3 | En ejecución | Piloto A aplicado y verificado (identidad, horas y reflow de tabla); B/C pendientes |
+| H2 | En ejecución | 32 rutas capturadas a 1920 y 390 px en `baseline/`; fichas en BASELINE_H2.md. Desbordamiento móvil corregido (0/32). Faltan variantes restringidas, estados de error/zoom/teclado y formularios/overlays |
+| H3 | En ejecución | Piloto A aplicado y verificado; B/C pendientes |
+| H4 | En ejecución | Reflow global corregido: 0/32 rutas desbordan a 390 px; contenedores de layout, tarjetas y tablas contienen su ancho. Faltan navegación/acceso/estados globales y validación de teclado/zoom |
 | H4–H10 | Bloqueado | Secuencia contractual, no iniciada |
 
 ## Trazabilidad funcional
@@ -131,9 +132,9 @@ fijado presupuesto H2 ni realizado migración visual.
 El harness local compone ahora también supervisores, coordinadores, cursos,
 admisión, sedes, turnos, reportes y horarios, además de lo anterior. `baseline.json`
 captura 32 rutas con datos sintéticos, sin errores HTTP inesperados, y las fichas
-resumidas están en [BASELINE_H2.md](BASELINE_H2.md). A 390 px, 14 rutas presentan
-desbordamiento del documento (solicitudes, tablas administrativas, panel de
-supervisor y detalles); se corrige en reflow por módulo H4–H9, no ocultando datos.
+resumidas están en [BASELINE_H2.md](BASELINE_H2.md). A 390 px, **0 de 32 rutas
+desbordan** tras corregir contenedores compartidos; la validación de teclado, zoom,
+contraste y estados por pantalla sigue pendiente.
 
 Pendiente para cerrar H2: variante de coordinación por curso, UI-02/errores de
 ruta, estados vacío/error/carga por pantalla, formularios/overlays, teclado/foco,

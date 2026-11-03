@@ -1,5 +1,5 @@
 # Línea base H2 — rutas y estados capturados
-Generado: 2026-11-03T13:29:48.488Z. Fixtures sintéticos del harness. Chromium a 1920×1080,
+Generado: 2026-11-03T13:45:42.711Z. Fixtures sintéticos del harness. Chromium a 1920×1080,
 compilado servido en 127.0.0.1:5174. Una captura no acredita por sí sola todos
 los estados ni accesibilidad; completa el inventario, no lo sustituye.
 Rutas capturadas: **32**. Resultado: correcto.
@@ -38,7 +38,7 @@ Errores HTTP inesperados: 0.
 - Título: Solicitudes y reemplazos
 - Secciones: —
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Notificaciones: 1 pendientes · AF · Anterior · Siguiente
 - Enlaces: Ir al inicio · Panel · Incidencias e historial
 - Columnas: Fecha y solicitante · Trabajo solicitado · Estado · Documento · Acciones
@@ -101,7 +101,7 @@ Errores HTTP inesperados: 0.
 - Título: Prueba A, teacher
 - Secciones: Disponibilidad · Salones compatibles · Salones asignados
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Volver a docentes · Disponibilidad en Excel · Editar disponibilidad · Shift · 08:00–13:40 · Seleccionar · Quitar todas las asignaciones · Quitar Aula ficticia A
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: —
@@ -164,7 +164,7 @@ Errores HTTP inesperados: 0.
 - Título: AulaAreaCompleto
 - Secciones: Horario semanal · Docentes por curso
 - Campos: 0; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Volver a salones · Eliminar · Editar Google Meet · Editar Google Classroom · Semana · Por día · Cambiar
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: —
@@ -191,7 +191,7 @@ Errores HTTP inesperados: 0.
 - Título: Solicitudes y reemplazos
 - Secciones: —
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Notificaciones: 1 pendientes · TP · Solicitar reemplazo · Anterior · Siguiente
 - Enlaces: Ir al inicio · Panel
 - Columnas: Fecha y solicitante · Trabajo solicitado · Estado · Documento · Acciones
@@ -218,7 +218,7 @@ Errores HTTP inesperados: 0.
 - Título: Solicitudes y reemplazos
 - Secciones: —
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Notificaciones: 1 pendientes · MP · Solicitar reemplazo · Anterior · Siguiente
 - Enlaces: Ir al inicio · Panel
 - Columnas: Fecha y solicitante · Trabajo solicitado · Estado · Documento · Acciones
@@ -227,7 +227,7 @@ Errores HTTP inesperados: 0.
 - Título: Mis salones
 - Secciones: Aula ficticia A · Horario · Docentes del salón
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Notificaciones: 1 pendientes · SP · Todos · Sin enlaces · 2 · AulaPrueba A, monitor · AulaPrueba A, otherMonitor · Semana · Por día · CoursePrueba A, teacherteacher@test.invalid · N/A
 - Enlaces: Ir al inicio · Revisar solicitudes · Solicitar reemplazo · Revisar partes · Incidencias de monitores · monitor@test.invalid
 - Columnas: —
@@ -245,7 +245,7 @@ Errores HTTP inesperados: 0.
 - Título: Solicitudes y reemplazos
 - Secciones: —
 - Campos: 1; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Notificaciones: 1 pendientes · SP · Solicitar reemplazo · Anterior · Siguiente
 - Enlaces: Ir al inicio · Panel
 - Columnas: Fecha y solicitante · Trabajo solicitado · Estado · Documento · Acciones
@@ -290,7 +290,7 @@ Errores HTTP inesperados: 0.
 - Título: AulaAreaCompleto
 - Secciones: Horario semanal · Docentes por curso
 - Campos: 0; filas: 0; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · CP · Contraer menú · Volver a salones · Semana · Por día
 - Enlaces: Ir al inicio · Docentes · Salones
 - Columnas: —

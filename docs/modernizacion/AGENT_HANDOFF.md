@@ -21,9 +21,10 @@ No rebajar las puertas de calidad ni presentar como final lo que siga pendiente.
 
 **H1 funcional verificado**: F1.0–F1.5 y D-05 tienen evidencia vigente; cinco suites
 de partes reconciliadas y 21 recorridos adicionales. H2 en ejecución: 32 rutas
-capturadas y auditadas a 390 px; faltan variantes/estados y teclado/zoom. H3 en
-ejecución: piloto Docentes aplicado (avatar, horas, detalle por teclado y reflow de
-tabla); faltan horario del Monitor y evidencias. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
+capturadas y auditadas a 390 px con 0 desbordamientos; faltan variantes/estados y
+teclado/zoom. H3 en ejecución: piloto Docentes aplicado (avatar, horas, detalle por
+teclado y reflow); faltan horario del Monitor y evidencias. H4 iniciado con el
+reflow global de layout, tarjetas y tablas. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
 [línea base H2](BASELINE_H2.md), [pilotos](H3_PILOTS.md) y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
 
 ## Repositorios y protección
@@ -78,8 +79,8 @@ lector de pantalla ni cierre visual/entrega integral.
    frontend `127.0.0.1:5174` con API `127.0.0.1:3000`. No tocar puerto 5173 ajeno.
 3. **H2/H3:** cerrar estados/variantes faltantes y ejecutar pilotos B (horario del
    Monitor, revisando consumidores de ScheduleView) y C (evidencias en dos zonas),
-   con capturas/teclado/móvil. Después H4: reflow global, foco y estados; las 8
-   rutas que aún desbordan a 390 px están registradas en baseline.json.
+   con capturas/teclado/móvil. Después H4: navegación/acceso/estados globales,
+   foco y zoom. El reflow ya está corregido (0/32 desbordamientos).
 4. Ampliar fixtures/composición local solo donde falten para H2, sin presentar
    endpoints simulados como integración ni modificar servicios productivos para
    acomodar pruebas. El harness aún no compone todas las pantallas/controladores.

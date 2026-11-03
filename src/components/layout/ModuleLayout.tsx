@@ -174,7 +174,7 @@ export function ModuleLayout({ title, groups, baseCrumbs = [] }: ModuleLayoutPro
         )}
 
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mx-auto flex w-full max-w-[1320px] flex-col gap-5">
+          <div className="mx-auto flex w-full min-w-0 max-w-[1320px] flex-col gap-5 [&>*]:min-w-0 [&>main]:w-full">
             <Outlet />
           </div>
         </main>
@@ -194,7 +194,7 @@ export function SimpleLayout({ crumbs, greeting, subtitle, children }: {
     <div className="flex min-h-screen flex-col">
       <AppHeader crumbs={crumbs} greeting={greeting} subtitle={subtitle} />
       {greeting && <OperationsNotice />}
-      {children ?? <Outlet />}
+      <div className="flex min-w-0 flex-1 flex-col [&>*]:min-w-0 [&>main]:w-full">{children ?? <Outlet />}</div>
     </div>
   );
 }
