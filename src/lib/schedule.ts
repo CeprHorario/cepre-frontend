@@ -20,6 +20,20 @@ export const WEEKDAY_SHORT: Record<Weekday, string> = {
   Sabado: "Sáb",
 };
 
+/** Fechas de lunes a sábado de la semana actual en Lima, incluso al cambiar de mes. */
+export function currentWeekDates(now = new Date()) {
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+  const monday = new Date(`${today}T12:00:00Z`);
+  monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+  const label = new Intl.DateTimeFormat("es-PE", { timeZone: "UTC", dateStyle: "full" });
+  return WEEKDAYS.map((weekday, index) => {
+    const date = new Date(monday);
+    date.setUTCDate(date.getUTCDate() + index);
+    const iso = date.toISOString().slice(0, 10);
+    return { weekday, number: date.getUTCDate(), iso, label: label.format(date), isToday: iso === today };
+  });
+}
+
 /** "1970-01-01T07:00:00.000Z" | "07:00:00" | "07:00" → "07:00" (horas guardadas en UTC) */
 export function toHHMM(value: string | null | undefined): string {
   if (!value) return "";

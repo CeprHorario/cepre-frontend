@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { FiArrowRight, FiCalendar, FiDatabase, FiLink, FiShield, FiSliders, FiUpload, FiUserPlus } from "react-icons/fi";
+import { IncidenceWarnings } from '../incidencias/IncidencesPage';
+import { FiArrowRight, FiCalendar, FiDatabase, FiLink, FiShield, FiSliders, FiUpload, FiUserPlus, FiBarChart2, FiRepeat, FiFlag } from "react-icons/fi";
 import type { ReactNode } from "react";
 import background from "@/assets/cepr-background.jpg";
 import {
@@ -77,6 +78,7 @@ export function AdminHub() {
       </section>
 
       <main className="relative mx-auto -mt-16 flex w-full max-w-[1280px] flex-col gap-6 px-4 pb-10 sm:px-10">
+        <IncidenceWarnings />
         <section aria-label="Módulos" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <ModuleTile to="/admin/partes" icon={<FiCalendar />} iconClass="bg-guinda-50 text-guinda-700" title="Partes diarios" description="Registro, seguimiento, reemplazos y reportes del proceso." footer={<TileLink>Administrar partes</TileLink>} />
           <ModuleTile
@@ -125,6 +127,9 @@ export function AdminHub() {
               </span>
             }
           />
+          <ModuleTile to="/admin/reportes" icon={<FiBarChart2 />} iconClass="bg-marino-50 text-marino-900" title="Reportes de seguimiento" description="Consulta y exporta el seguimiento del personal y las observaciones del proceso." footer={<TileLink>Consultar reportes</TileLink>} />
+          <ModuleTile to="/admin/solicitudes" icon={<FiRepeat />} iconClass="bg-oro-100 text-oro-700" title="Solicitudes y reemplazos" description="Revisa solicitudes, decide reemplazos y consulta sus documentos de respaldo." footer={<TileLink>Administrar solicitudes</TileLink>} />
+          <ModuleTile to="/admin/incidencias" icon={<FiFlag />} iconClass="bg-guinda-50 text-guinda-700" title="Incidencias e historial" description="Registra incidencias y consulta los antecedentes del personal entre procesos." footer={<TileLink>Administrar incidencias</TileLink>} />
         </section>
 
         <section className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">

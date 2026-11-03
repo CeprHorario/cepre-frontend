@@ -1,22 +1,25 @@
 import type { ReactNode } from "react";
 import type { Weekday } from "@/api/types";
 import { cn } from "@/lib/cn";
-import { WEEKDAY_SHORT, WEEKDAYS, minutesOf, todayWeekday, type MergedEntry } from "@/lib/schedule";
+import { WEEKDAY_SHORT, currentWeekDates, minutesOf, todayWeekday, type MergedEntry } from "@/lib/schedule";
 import { Dot } from "@/components/ui/Badge";
 
 /** Selector de día con el día actual destacado */
 export function DayPicker({ value, onChange, counts }: { value: Weekday; onChange: (day: Weekday) => void; counts?: Partial<Record<Weekday, number>> }) {
-  const today = todayWeekday();
   return (
     <div role="radiogroup" aria-label="Día" className="flex justify-between gap-1.5">
-      {WEEKDAYS.map((day) => {
+      {currentWeekDates().map((date) => {
+        const day = date.weekday;
         const active = day === value;
+        const count = counts?.[day] ?? 0;
         return (
           <button
             key={day}
             type="button"
             role="radio"
             aria-checked={active}
+            title={date.label}
+            aria-label={`${date.label}${date.isToday ? ", hoy" : ""}; ${count} ${count === 1 ? "clase" : "clases"}`}
             onClick={() => onChange(day)}
             className={cn(
               "relative flex h-14 min-w-11 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl border text-ink-700 transition-colors",
@@ -24,8 +27,8 @@ export function DayPicker({ value, onChange, counts }: { value: Weekday; onChang
             )}
           >
             <span className="text-[11px]">{WEEKDAY_SHORT[day]}</span>
-            <strong className="tabular text-sm">{counts?.[day] ?? 0}</strong>
-            {day === today && <span className={cn("absolute -top-1 size-2 rounded-full", active ? "bg-oro-500" : "bg-guinda-700")} aria-label="hoy" />}
+            <strong className="tabular text-sm"><time dateTime={date.iso}>{date.number}</time></strong>
+            {date.isToday && <span className={cn("absolute -top-1 size-2 rounded-full", active ? "bg-oro-500" : "bg-guinda-700")} aria-label="hoy" />}
           </button>
         );
       })}
