@@ -28,7 +28,7 @@ restricciones de seguridad o bloqueos imprescindibles.
 |---|---|---|
 | H0 | Verificado | Preparación: contratos, mapa de rutas/propietarios, caracterización y fixtures. Fichas exhaustivas/capturas se completan en H2 antes de estética |
 | H1 | Verificado | Matriz F1.0–F1.5 cerrada; contratos reconciliados y línea base funcional posterior en FUNCTIONAL_BASELINE.md |
-| H2 | Preparado | Inventario detallado y capturas de todas las pantallas pendientes; no hay línea base visual integral vigente |
+| H2 | En ejecución | 32 rutas capturadas a 1920 y auditadas a 390 px en `baseline/`; fichas en BASELINE_H2.md. Faltan variantes restringidas, estados de error/zoom/teclado y formularios/overlays |
 | H3 | Bloqueado | Depende H2; pilotos no realizados |
 | H4–H10 | Bloqueado | Secuencia contractual, no iniciada |
 
@@ -125,6 +125,20 @@ fijado presupuesto H2 ni realizado migración visual.
 - R-P01 conserva filtros de persona/curso/revisión dentro de la hoja; fecha/aula/
   turno se eligen desde el listado. El tamaño 25/50/100 pagina jornadas, no trunca
   bloques. El resto de roles mantiene su hoja y paginación anteriores.
+
+## H2 en ejecución
+
+El harness local compone ahora también supervisores, coordinadores, cursos,
+admisión, sedes, turnos, reportes y horarios, además de lo anterior. `baseline.json`
+captura 32 rutas con datos sintéticos, sin errores HTTP inesperados, y las fichas
+resumidas están en [BASELINE_H2.md](BASELINE_H2.md). A 390 px, 14 rutas presentan
+desbordamiento del documento (solicitudes, tablas administrativas, panel de
+supervisor y detalles); se corrige en reflow por módulo H4–H9, no ocultando datos.
+
+Pendiente para cerrar H2: variante de coordinación por curso, UI-02/errores de
+ruta, estados vacío/error/carga por pantalla, formularios/overlays, teclado/foco,
+zoom 200 %, capturas móviles de todas las rutas y revisión de contraste. La línea
+base actual permite empezar H3 sin declarar H2 terminado.
 
 ## Cierre de H1 y siguiente puerta
 

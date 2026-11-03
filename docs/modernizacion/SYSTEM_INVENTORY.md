@@ -52,6 +52,11 @@ Redirecciones: `/admin/gestionar` → docentes; `/coordinador` → docentes.
 Los estados globales no son necesariamente rutas nuevas; conservar resolución
 actual de SessionGate. No crear páginas adicionales por inventariarlos.
 
+**Línea base H2 vigente (2026-11-03):** 32 rutas capturadas a 1920×1080 en
+`baseline/` y auditadas a 390×844, con fichas en [BASELINE_H2.md](BASELINE_H2.md).
+No están capturadas UI-02, UI-31/34 restringidas, estados de error/zoom ni
+formularios. Catorce rutas desbordan a 390 px; es deuda de reflow H4–H9.
+
 ### Caracterización incremental vigente
 
 - **UI-24:** entrada por lista de jornadas, rango inicial de hoy menos 30 días a

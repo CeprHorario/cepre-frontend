@@ -20,10 +20,10 @@ No rebajar las puertas de calidad ni presentar como final lo que siga pendiente.
 ## Estado
 
 **H1 funcional verificado**: F1.0–F1.5 y D-05 tienen evidencia vigente; cinco suites
-de partes reconciliadas y 21 recorridos adicionales. H2 preparado: faltan fichas
-exhaustivas/capturas de todas las pantallas; no se ha iniciado reconstrucción
-visual. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md)
-y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
+de partes reconciliadas y 21 recorridos adicionales. H2 en ejecución: 32 rutas
+capturadas y auditadas a 390 px; faltan variantes/estados y teclado/zoom. No se ha
+iniciado la migración visual. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
+[línea base H2](BASELINE_H2.md) y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
 
 ## Repositorios y protección
 

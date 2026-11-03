@@ -1,0 +1,1663 @@
+{
+  "ok": true,
+  "suite": "modernizacion-baseline",
+  "date": "2026-11-03T13:17:47.903Z",
+  "version": "h2-2026-11-03",
+  "routes": [
+    {
+      "id": "UI-01",
+      "role": "public",
+      "path": "/",
+      "label": "Inicio de sesión",
+      "screenshot": "docs/modernizacion/baseline/UI-01-public.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Sistema de horarios académicos"
+      ],
+      "h2": [
+        "Iniciar sesión"
+      ],
+      "buttons": [
+        "Continuar con Google"
+      ],
+      "links": [
+        "ceprunsa@unsa.edu.pe"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [
+        {
+          "status": 401,
+          "path": "/api/auth/user-info"
+        }
+      ],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-03",
+      "role": "admin",
+      "path": "/admin",
+      "label": "Panel administrativo",
+      "screenshot": "docs/modernizacion/baseline/UI-03-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "sr_9afdf302a3104ce5b7a4f7e71b0cd467_a"
+      ],
+      "h2": [
+        "⚠ Incidencias pendientes · 46",
+        "Pendientes del proceso",
+        "Salones por turno"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Revisar solicitudes",
+        "Ver incidencias e historial",
+        "Partes diariosRegistro, seguimiento, reemplazos y reportes del proceso.",
+        "Generar procesoCrea un proceso de admisión con turnos, salones y horarios automáticos.",
+        "Gestionar datosUsuarios, salones y cursos del proceso actual.",
+        "Docentes 2",
+        "Monitores 2",
+        "Salones 2",
+        "Cursos 1",
+        "Supervisores 2",
+        "Coordinadores 1",
+        "Importar archivosCarga docentes, monitores o supervisores desde CSV o JSON.",
+        "Configurar sistemaModo mantenimiento y proceso visible para cada rol.",
+        "Reportes de seguimientoConsulta y exporta el seguimiento del personal y las observaciones del proceso.",
+        "Solicitudes y reemplazosRevisa solicitudes, decide reemplazos y consulta sus documentos de respaldo.",
+        "Incidencias e historialRegistra incidencias y consulta los antecedentes del personal entre procesos.",
+        "Ver salones",
+        "Revisar"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-04",
+      "role": "admin",
+      "path": "/admin/partes",
+      "label": "Partes administrativo",
+      "screenshot": "docs/modernizacion/baseline/UI-04-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Parte diario"
+      ],
+      "h2": [
+        "PARTE DIARIO DE CLASES"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Actualizar",
+        "Ver reporte",
+        "Registrar reemplazo / emergencia",
+        "Resolver cobertura",
+        "Anular partes",
+        "Restaurar partes",
+        "Crear recuperación",
+        "Configuración operativa",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #1: pendiente",
+        "Ver captura de fin del parte #1: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #2: asociada",
+        "Ver captura de fin del parte #2: asociada",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #3: pendiente",
+        "Ver captura de fin del parte #3: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #4: pendiente",
+        "Ver captura de fin del parte #4: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #5: pendiente",
+        "Ver captura de fin del parte #5: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #6: pendiente",
+        "Ver captura de fin del parte #6: pendiente",
+        "Editar",
+        "Más opciones"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Inicio",
+        "Volver al panel"
+      ],
+      "headers": [
+        "HORAS PROGRAMADAS",
+        "CONTROL DE HORAS",
+        "CONTROL DEL PROFESOR",
+        "CAPTURAS DE PANTALLA",
+        "Acciones",
+        "N.º",
+        "Hora inicio",
+        "Hora fin",
+        "Inicio de clase",
+        "Fin de clase",
+        "Curso",
+        "Profesor oficial",
+        "Estado",
+        "Profesor reemplazante",
+        "Observaciones",
+        "Inicio de clase",
+        "Fin de clase"
+      ],
+      "rows": 6,
+      "alerts": [],
+      "fields": 16,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-05",
+      "role": "admin",
+      "path": "/admin/solicitudes",
+      "label": "Solicitudes administrativo",
+      "screenshot": "docs/modernizacion/baseline/UI-05-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Solicitudes y reemplazos"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel",
+        "Incidencias e historial"
+      ],
+      "headers": [
+        "Fecha y solicitante",
+        "Trabajo solicitado",
+        "Estado",
+        "Documento",
+        "Acciones"
+      ],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-06",
+      "role": "admin",
+      "path": "/admin/incidencias",
+      "label": "Incidencias administrativo",
+      "screenshot": "docs/modernizacion/baseline/UI-06-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Incidencias e historial"
+      ],
+      "h2": [
+        "Incidencias e historial por persona"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Registrar incidencia",
+        "Buscar historial",
+        "Resolver",
+        "Historial",
+        "Reabrir",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Reabrir",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Reabrir",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Reabrir",
+        "Historial",
+        "Resolver",
+        "Historial",
+        "Resolver",
+        "Historial"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel",
+        "Volver al panel"
+      ],
+      "headers": [
+        "Persona / DNI",
+        "Proceso y fecha",
+        "Incidencia",
+        "Estado"
+      ],
+      "rows": 25,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-07",
+      "role": "admin",
+      "path": "/admin/reportes",
+      "label": "Reportes",
+      "screenshot": "docs/modernizacion/baseline/UI-07-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Reportes de seguimiento"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Exportar Excel",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel",
+        "Administrar reemplazos y documentos",
+        "Administrar incidencias e historial"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 3,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-08",
+      "role": "admin",
+      "path": "/admin/generar",
+      "label": "Generar proceso",
+      "screenshot": "docs/modernizacion/baseline/UI-08-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Datos del proceso"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "1Datos del proceso",
+        "2Turnos",
+        "3Salones por área",
+        "4Revisar y crear",
+        "Cancelar",
+        "Continuar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 6,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-09",
+      "role": "admin",
+      "path": "/admin/importar",
+      "label": "Importar",
+      "screenshot": "docs/modernizacion/baseline/UI-09-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Importar archivos"
+      ],
+      "h2": [
+        "Registrar docentes"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Docentes",
+        "Monitores",
+        "Supervisores",
+        "Descargar plantilla Excel",
+        "Seleccionar archivo",
+        "Arrastrar o seleccionar archivo para importar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal"
+      ],
+      "headers": [
+        "Cabecera exacta",
+        "Valor",
+        "Formato",
+        "Ejemplo",
+        "Descripción"
+      ],
+      "rows": 10,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-10",
+      "role": "admin",
+      "path": "/admin/configuracion",
+      "label": "Configuración",
+      "screenshot": "docs/modernizacion/baseline/UI-10-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Configurar sistema"
+      ],
+      "h2": [
+        "Modo mantenimiento",
+        "Proceso visible",
+        "Historial de cambios"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Activar mantenimiento",
+        "Descartar",
+        "Guardar configuración",
+        "Restaurar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 5,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-11",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes",
+      "label": "Docentes",
+      "screenshot": "docs/modernizacion/baseline/UI-11-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Docentes"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Exportar Excel",
+        "Agregar docente",
+        "Seleccionar",
+        "Registrar incidencia",
+        "Asignar salones",
+        "Ver horario",
+        "Editar datos",
+        "Eliminar",
+        "Registrar incidencia",
+        "Asignar salones",
+        "Ver horario",
+        "Editar datos",
+        "Eliminar",
+        "Página anterior",
+        "Página 1",
+        "Página siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [
+        "Incidencia",
+        "Docente",
+        "Curso",
+        "Dedicación",
+        "Horas",
+        "Acciones"
+      ],
+      "rows": 2,
+      "alerts": [],
+      "fields": 3,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      },
+      "mobileScreenshot": "docs/modernizacion/baseline/UI-11-admin-390.png"
+    },
+    {
+      "id": "UI-12",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/2abf057f-d023-45c4-8c93-8757a66183f5/asignar",
+      "label": "Asignar salones",
+      "screenshot": "docs/modernizacion/baseline/UI-12-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Prueba A, teacher"
+      ],
+      "h2": [
+        "Disponibilidad",
+        "Salones compatibles",
+        "Salones asignados"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Volver a docentes",
+        "Disponibilidad en Excel",
+        "Editar disponibilidad",
+        "Shift · 08:00–13:40",
+        "Seleccionar",
+        "Quitar todas las asignaciones",
+        "Quitar Aula ficticia A"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-13",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/2abf057f-d023-45c4-8c93-8757a66183f5/horario",
+      "label": "Horario docente",
+      "screenshot": "docs/modernizacion/baseline/UI-13-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Horario de Prueba A, teacher"
+      ],
+      "h2": [
+        "Horario semanal",
+        "Salones y enlaces"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Volver",
+        "Asignar salones",
+        "Semana",
+        "Por día",
+        "Quitar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-14",
+      "role": "admin",
+      "path": "/admin/gestionar/monitores",
+      "label": "Monitores",
+      "screenshot": "docs/modernizacion/baseline/UI-14-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Monitores"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Agregar monitor",
+        "Seleccionar",
+        "Registrar incidencia",
+        "DNI 92000001: tiene 19 incidencias. Ver historial",
+        "Editar datos",
+        "Eliminar",
+        "Registrar incidencia",
+        "Editar datos",
+        "Eliminar",
+        "Página anterior",
+        "Página 1",
+        "Página siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [
+        "Incidencia",
+        "DNI",
+        "Salón",
+        "Monitor",
+        "Correo de acceso",
+        "Celular",
+        "Turno",
+        "Acciones"
+      ],
+      "rows": 2,
+      "alerts": [],
+      "fields": 4,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-15",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores",
+      "label": "Supervisores",
+      "screenshot": "docs/modernizacion/baseline/UI-15-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Supervisores"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Agregar supervisor",
+        "Seleccionar",
+        "Registrar incidencia",
+        "Monitores",
+        "Editar datos",
+        "Eliminar",
+        "Registrar incidencia",
+        "Monitores",
+        "Editar datos",
+        "Eliminar",
+        "Página anterior",
+        "Página 1",
+        "Página siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [
+        "Incidencia",
+        "Supervisor",
+        "Celular",
+        "Turno",
+        "Acciones"
+      ],
+      "rows": 2,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-16",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores/dc0d1977-4ac1-40af-a005-66e2a5951441/monitores",
+      "label": "Monitores del supervisor",
+      "screenshot": "docs/modernizacion/baseline/UI-16-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Monitores de Prueba A, supervisor"
+      ],
+      "h2": [
+        "Asignados",
+        "Disponibles"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Volver a supervisores",
+        "Quitar",
+        "Quitar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-17",
+      "role": "admin",
+      "path": "/admin/gestionar/coordinadores",
+      "label": "Coordinadores",
+      "screenshot": "docs/modernizacion/baseline/UI-17-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Coordinadores"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Agregar coordinador",
+        "Seleccionar",
+        "Registrar incidencia",
+        "Editar datos",
+        "Eliminar",
+        "Página anterior",
+        "Página 1",
+        "Página siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [
+        "Incidencia",
+        "Coordinador",
+        "Alcance",
+        "DNI",
+        "Celular",
+        "Acciones"
+      ],
+      "rows": 1,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-18",
+      "role": "admin",
+      "path": "/admin/gestionar/salones",
+      "label": "Salones",
+      "screenshot": "docs/modernizacion/baseline/UI-18-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Salones"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Tarjetas",
+        "Tabla",
+        "Agregar salones",
+        "Todas",
+        "Area",
+        "Shift08:00 – 23:59 · 2 salones2 con docentes faltantes"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1",
+        "Aula",
+        "Aula"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 2,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-19",
+      "role": "admin",
+      "path": "/admin/gestionar/salones/20f87340-a836-4dfc-9955-5a8fa8481eb4",
+      "label": "Detalle del salón",
+      "screenshot": "docs/modernizacion/baseline/UI-19-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "AulaAreaCompleto"
+      ],
+      "h2": [
+        "Horario semanal",
+        "Docentes por curso"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Volver a salones",
+        "Eliminar",
+        "Editar Google Meet",
+        "Editar Google Classroom",
+        "Semana",
+        "Por día",
+        "Cambiar"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-20",
+      "role": "admin",
+      "path": "/admin/gestionar/cursos",
+      "label": "Cursos",
+      "screenshot": "docs/modernizacion/baseline/UI-20-admin.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Cursos"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "Notificaciones: 1 pendientes",
+        "AF",
+        "Usuarios",
+        "Académico",
+        "Contraer menú",
+        "Agregar curso",
+        "Editar Course",
+        "Eliminar Course"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Menú principal",
+        "Menú principal",
+        "Docentes2",
+        "Monitores2",
+        "Supervisores2",
+        "Coordinadores1",
+        "Salones2",
+        "Cursos1"
+      ],
+      "headers": [
+        "Curso",
+        "Así se ve en el horario",
+        "Acciones"
+      ],
+      "rows": 1,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-21",
+      "role": "teacher",
+      "path": "/docente",
+      "label": "Panel docente",
+      "screenshot": "docs/modernizacion/baseline/UI-21-teacher.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "TP",
+        "Disponibilidad en Excel",
+        "Semana",
+        "Por día",
+        "Mis salones"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Revisar solicitudes",
+        "Solicitar reemplazo"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-22",
+      "role": "teacher",
+      "path": "/docente/solicitudes",
+      "label": "Solicitudes docente",
+      "screenshot": "docs/modernizacion/baseline/UI-22-teacher.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Solicitudes y reemplazos"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "TP",
+        "Solicitar reemplazo",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel"
+      ],
+      "headers": [
+        "Fecha y solicitante",
+        "Trabajo solicitado",
+        "Estado",
+        "Documento",
+        "Acciones"
+      ],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-23",
+      "role": "monitor",
+      "path": "/monitor",
+      "label": "Panel monitor",
+      "screenshot": "docs/modernizacion/baseline/UI-23-monitor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [],
+      "h2": [
+        "Docentes del salón"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "MP",
+        "Enlaces",
+        "Agregar",
+        "Semana",
+        "Por día",
+        "CoursePrueba A, teacherteacher@test.invalid · N/A"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Revisar solicitudes",
+        "Solicitar reemplazo",
+        "Registrar parte diario"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      },
+      "mobileScreenshot": "docs/modernizacion/baseline/UI-23-monitor-390.png"
+    },
+    {
+      "id": "UI-24",
+      "role": "monitor",
+      "path": "/monitor/partes",
+      "label": "Partes por fecha",
+      "screenshot": "docs/modernizacion/baseline/UI-24-monitor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Parte diario"
+      ],
+      "h2": [
+        "PARTE DIARIO DE CLASES"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "MP",
+        "Volver al listado de jornadas",
+        "Actualizar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #1: pendiente",
+        "Ver captura de fin del parte #1: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #2: asociada",
+        "Ver captura de fin del parte #2: asociada",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #3: pendiente",
+        "Ver captura de fin del parte #3: pendiente",
+        "Ver parte",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #4: pendiente",
+        "Ver captura de fin del parte #4: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #5: pendiente",
+        "Ver captura de fin del parte #5: pendiente",
+        "Editar",
+        "Más opciones",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #6: pendiente",
+        "Ver captura de fin del parte #6: pendiente",
+        "Ver parte",
+        "Más opciones"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Inicio",
+        "Volver al panel"
+      ],
+      "headers": [
+        "HORAS PROGRAMADAS",
+        "CONTROL DE HORAS",
+        "CONTROL DEL PROFESOR",
+        "CAPTURAS DE PANTALLA",
+        "Acciones",
+        "N.º",
+        "Hora inicio",
+        "Hora fin",
+        "Inicio de clase",
+        "Fin de clase",
+        "Curso",
+        "Profesor oficial",
+        "Estado",
+        "Profesor reemplazante",
+        "Observaciones",
+        "Inicio de clase",
+        "Fin de clase"
+      ],
+      "rows": 6,
+      "alerts": [],
+      "fields": 8,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      },
+      "mobileScreenshot": "docs/modernizacion/baseline/UI-24-monitor-390.png"
+    },
+    {
+      "id": "UI-25",
+      "role": "monitor",
+      "path": "/monitor/solicitudes",
+      "label": "Solicitudes monitor",
+      "screenshot": "docs/modernizacion/baseline/UI-25-monitor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Solicitudes y reemplazos"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "MP",
+        "Solicitar reemplazo",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel"
+      ],
+      "headers": [
+        "Fecha y solicitante",
+        "Trabajo solicitado",
+        "Estado",
+        "Documento",
+        "Acciones"
+      ],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-26",
+      "role": "supervisor",
+      "path": "/supervisor",
+      "label": "Panel supervisor",
+      "screenshot": "docs/modernizacion/baseline/UI-26-supervisor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Mis salones"
+      ],
+      "h2": [
+        "Aula ficticia A",
+        "Horario",
+        "Docentes del salón"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "SP",
+        "Todos",
+        "Sin enlaces · 2",
+        "AulaPrueba A, monitor",
+        "AulaPrueba A, otherMonitor",
+        "Semana",
+        "Por día",
+        "CoursePrueba A, teacherteacher@test.invalid · N/A"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Revisar solicitudes",
+        "Solicitar reemplazo",
+        "Revisar partes",
+        "Incidencias de monitores",
+        "monitor@test.invalid"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-27",
+      "role": "supervisor",
+      "path": "/supervisor/partes",
+      "label": "Partes supervisor",
+      "screenshot": "docs/modernizacion/baseline/UI-27-supervisor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Parte diario"
+      ],
+      "h2": [
+        "PARTE DIARIO DE CLASES"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "SP",
+        "Actualizar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #1: pendiente",
+        "Ver captura de fin del parte #1: pendiente",
+        "Seleccionar",
+        "Revisar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #2: asociada",
+        "Ver captura de fin del parte #2: asociada",
+        "Seleccionar",
+        "Revisar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #3: pendiente",
+        "Ver captura de fin del parte #3: pendiente",
+        "Seleccionar",
+        "Revisar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #4: pendiente",
+        "Ver captura de fin del parte #4: pendiente",
+        "Seleccionar",
+        "Revisar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #5: pendiente",
+        "Ver captura de fin del parte #5: pendiente",
+        "Seleccionar",
+        "Revisar",
+        "Curso ficticio",
+        "Ver captura de inicio del parte #6: pendiente",
+        "Ver captura de fin del parte #6: pendiente",
+        "Seleccionar",
+        "Revisar",
+        "Anterior",
+        "Siguiente",
+        "Actualizar alertas",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Inicio",
+        "Volver al panel"
+      ],
+      "headers": [
+        "HORAS PROGRAMADAS",
+        "CONTROL DE HORAS",
+        "CONTROL DEL PROFESOR",
+        "CAPTURAS DE PANTALLA",
+        "Acciones",
+        "N.º",
+        "Hora inicio",
+        "Hora fin",
+        "Inicio de clase",
+        "Fin de clase",
+        "Curso",
+        "Profesor oficial",
+        "Estado",
+        "Profesor reemplazante",
+        "Observaciones",
+        "Inicio de clase",
+        "Fin de clase"
+      ],
+      "rows": 6,
+      "alerts": [],
+      "fields": 9,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-28",
+      "role": "supervisor",
+      "path": "/supervisor/solicitudes",
+      "label": "Solicitudes supervisor",
+      "screenshot": "docs/modernizacion/baseline/UI-28-supervisor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Solicitudes y reemplazos"
+      ],
+      "h2": [],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "SP",
+        "Solicitar reemplazo",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel"
+      ],
+      "headers": [
+        "Fecha y solicitante",
+        "Trabajo solicitado",
+        "Estado",
+        "Documento",
+        "Acciones"
+      ],
+      "rows": 0,
+      "alerts": [],
+      "fields": 1,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-29",
+      "role": "supervisor",
+      "path": "/supervisor/incidencias",
+      "label": "Incidencias supervisor",
+      "screenshot": "docs/modernizacion/baseline/UI-29-supervisor.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Incidencias e historial"
+      ],
+      "h2": [
+        "Incidencias de monitores"
+      ],
+      "buttons": [
+        "Notificaciones: 1 pendientes",
+        "SP",
+        "Registrar incidencia",
+        "Anterior",
+        "Siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Panel",
+        "Volver al panel"
+      ],
+      "headers": [
+        "Persona / DNI",
+        "Proceso y fecha",
+        "Incidencia",
+        "Estado"
+      ],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-30",
+      "role": "coordinator",
+      "path": "/coordinador/docentes",
+      "label": "Docentes coordinación",
+      "screenshot": "docs/modernizacion/baseline/UI-30-coordinator.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Docentes"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "CP",
+        "Contraer menú",
+        "Horario",
+        "Horario",
+        "Página anterior",
+        "Página 1",
+        "Página siguiente"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Docentes",
+        "Salones"
+      ],
+      "headers": [
+        "Incidencia",
+        "Docente",
+        "Curso",
+        "Dedicación",
+        "Horas",
+        "Acciones"
+      ],
+      "rows": 2,
+      "alerts": [],
+      "fields": 3,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-32",
+      "role": "coordinator",
+      "path": "/coordinador/docentes/2abf057f-d023-45c4-8c93-8757a66183f5/horario",
+      "label": "Horario coordinación",
+      "screenshot": "docs/modernizacion/baseline/UI-32-coordinator.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Horario de Prueba A, teacher"
+      ],
+      "h2": [
+        "Horario semanal",
+        "Salones y enlaces"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "CP",
+        "Contraer menú",
+        "Volver",
+        "Semana",
+        "Por día"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Docentes",
+        "Salones"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-33",
+      "role": "coordinator",
+      "path": "/coordinador/salones",
+      "label": "Salones coordinación",
+      "screenshot": "docs/modernizacion/baseline/UI-33-coordinator.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "Salones"
+      ],
+      "h2": [],
+      "buttons": [
+        "Abrir menú",
+        "CP",
+        "Contraer menú",
+        "Tarjetas",
+        "Tabla",
+        "Todas",
+        "Area",
+        "Shift08:00 – 23:59 · 2 salones2 con docentes faltantes"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Docentes",
+        "Salones",
+        "Aula",
+        "Aula"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 2,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": false,
+        "width": 390
+      }
+    },
+    {
+      "id": "UI-35",
+      "role": "coordinator",
+      "path": "/coordinador/salones/20f87340-a836-4dfc-9955-5a8fa8481eb4",
+      "label": "Detalle salón coordinación",
+      "screenshot": "docs/modernizacion/baseline/UI-35-coordinator.png",
+      "title": "CEPRUNSA | Sistema de horarios",
+      "h1": [
+        "AulaAreaCompleto"
+      ],
+      "h2": [
+        "Horario semanal",
+        "Docentes por curso"
+      ],
+      "buttons": [
+        "Abrir menú",
+        "CP",
+        "Contraer menú",
+        "Volver a salones",
+        "Semana",
+        "Por día"
+      ],
+      "links": [
+        "Ir al inicio",
+        "Docentes",
+        "Salones"
+      ],
+      "headers": [],
+      "rows": 0,
+      "alerts": [],
+      "fields": 0,
+      "busy": false,
+      "overflowX": false,
+      "errors": [],
+      "httpErrors": [],
+      "mobile": {
+        "overflowX": true,
+        "width": 390
+      }
+    }
+  ],
+  "limits": [
+    "Captura funcional de Chromium a 1920×1080 y 390×844 con datos sintéticos",
+    "Algunas pantallas requieren datos que el harness no compone; se registran HTTP fallidos",
+    "No sustituye teclado, zoom, Firefox/WebKit ni lector de pantalla"
+  ]
+}

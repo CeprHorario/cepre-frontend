@@ -3,7 +3,7 @@ import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const suites = { states: ['modernizacion-states-browser.cjs', 'estados'], incidencias: ['modernizacion-incidences-browser.cjs', 'incidencias'], transportes: ['modernizacion-transports-browser.cjs', 'transportes'], fase1: ['modernizacion-browser.cjs', 'fase1'] };
+const suites = { baseline: ['modernizacion-baseline-browser.cjs', 'baseline'], states: ['modernizacion-states-browser.cjs', 'estados'], incidencias: ['modernizacion-incidences-browser.cjs', 'incidencias'], transportes: ['modernizacion-transports-browser.cjs', 'transportes'], fase1: ['modernizacion-browser.cjs', 'fase1'] };
 const suite = suites[process.argv[2] ?? 'fase1'];
 if (!suite) throw new Error('Suite de modernización desconocida');
 const run = args => execFileSync('playwright-cli', ['-s=cepr-modernizacion-test', ...args], { cwd: root, encoding: 'utf8', timeout: 240000, maxBuffer: 1024 * 1024 });
@@ -20,4 +20,4 @@ try {
 }
 writeFileSync(new URL(`../docs/modernizacion/evidence/${suite[1]}.json`, import.meta.url), JSON.stringify(result, null, 2) + '\n');
 if (!result?.ok) throw new Error(`${result?.stage}: ${result?.error ?? 'Sin resultado explícito'}`);
-console.log(`${result.suite}: ${result.results.length} recorridos verificados`);
+console.log(`${result.suite}: ${(result.results ?? result.routes ?? []).length} recorridos verificados`);
