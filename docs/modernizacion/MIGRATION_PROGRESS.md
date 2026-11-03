@@ -29,7 +29,7 @@ restricciones de seguridad o bloqueos imprescindibles.
 | H0 | Verificado | Preparación: contratos, mapa de rutas/propietarios, caracterización y fixtures. Fichas exhaustivas/capturas se completan en H2 antes de estética |
 | H1 | Verificado | Matriz F1.0–F1.5 cerrada; contratos reconciliados y línea base funcional posterior en FUNCTIONAL_BASELINE.md |
 | H2 | En ejecución | 32 rutas capturadas a 1920 y auditadas a 390 px en `baseline/`; fichas en BASELINE_H2.md. Faltan variantes restringidas, estados de error/zoom/teclado y formularios/overlays |
-| H3 | Bloqueado | Depende H2; pilotos no realizados |
+| H3 | Preparado | Criterios y alcance de los tres pilotos en H3_PILOTS.md; sin cambios visuales aplicados |
 | H4–H10 | Bloqueado | Secuencia contractual, no iniciada |
 
 ## Trazabilidad funcional
