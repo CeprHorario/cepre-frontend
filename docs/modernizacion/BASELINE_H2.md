@@ -1,5 +1,5 @@
 # Línea base H2 — rutas y estados capturados
-Generado: 2026-11-03T13:17:47.903Z. Fixtures sintéticos del harness. Chromium a 1920×1080,
+Generado: 2026-11-03T13:29:48.488Z. Fixtures sintéticos del harness. Chromium a 1920×1080,
 compilado servido en 127.0.0.1:5174. Una captura no acredita por sí sola todos
 los estados ni accesibilidad; completa el inventario, no lo sustituye.
 Rutas capturadas: **32**. Resultado: correcto.
@@ -92,8 +92,8 @@ Errores HTTP inesperados: 0.
 - Título: Docentes
 - Secciones: —
 - Campos: 3; filas: 2; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
-- Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Exportar Excel · Agregar docente · Seleccionar · Registrar incidencia · Asignar salones · Ver horario · Editar datos · Eliminar
+- Móvil 390 px: sin desbordamiento.
+- Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Exportar Excel · Agregar docente · Seleccionar · Registrar incidencia · Asignar salones · Ver detalle · Ver horario · Editar datos
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: Incidencia · Docente · Curso · Dedicación · Horas · Acciones
 ### UI-12 · admin · `/admin/gestionar/docentes/2abf057f-d023-45c4-8c93-8757a66183f5/asignar` — Asignar salones
@@ -119,7 +119,7 @@ Errores HTTP inesperados: 0.
 - Título: Monitores
 - Secciones: —
 - Campos: 4; filas: 2; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Agregar monitor · Seleccionar · Registrar incidencia · DNI 92000001: tiene 19 incidencias. Ver historial · Editar datos · Eliminar · Registrar incidencia · Editar datos
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: Incidencia · DNI · Salón · Monitor · Correo de acceso · Celular · Turno · Acciones
@@ -128,7 +128,7 @@ Errores HTTP inesperados: 0.
 - Título: Supervisores
 - Secciones: —
 - Campos: 1; filas: 2; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Agregar supervisor · Seleccionar · Registrar incidencia · Monitores · Editar datos · Eliminar · Registrar incidencia · Monitores
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: Incidencia · Supervisor · Celular · Turno · Acciones
@@ -146,7 +146,7 @@ Errores HTTP inesperados: 0.
 - Título: Coordinadores
 - Secciones: —
 - Campos: 0; filas: 1; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Agregar coordinador · Seleccionar · Registrar incidencia · Editar datos · Eliminar · Página anterior · Página 1 · Página siguiente
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: Incidencia · Coordinador · Alcance · DNI · Celular · Acciones
@@ -173,7 +173,7 @@ Errores HTTP inesperados: 0.
 - Título: Cursos
 - Secciones: —
 - Campos: 0; filas: 1; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · Notificaciones: 1 pendientes · AF · Usuarios · Académico · Contraer menú · Agregar curso · Editar Course · Eliminar Course
 - Enlaces: Ir al inicio · Menú principal · Menú principal · Docentes2 · Monitores2 · Supervisores2 · Coordinadores1 · Salones2 · Cursos1
 - Columnas: Curso · Así se ve en el horario · Acciones
@@ -263,7 +263,7 @@ Errores HTTP inesperados: 0.
 - Título: Docentes
 - Secciones: —
 - Campos: 3; filas: 2; desbordamiento horizontal: no.
-- Móvil 390 px: desborda.
+- Móvil 390 px: sin desbordamiento.
 - Acciones: Abrir menú · CP · Contraer menú · Horario · Horario · Página anterior · Página 1 · Página siguiente
 - Enlaces: Ir al inicio · Docentes · Salones
 - Columnas: Incidencia · Docente · Curso · Dedicación · Horas · Acciones

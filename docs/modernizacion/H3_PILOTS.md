@@ -19,6 +19,19 @@ antes de extender el lenguaje al resto.
 
 ## Piloto A — tabla de Docentes (`UI-11`)
 
+Estado: **aplicado y verificado** el 2026-11-03.
+
+Cambios: avatar de iniciales junto a nombre/correo; curso, dedicación y horas
+repetidos bajo la identidad solo en móvil para no perder información al ocultar
+esas columnas; horas con límite explícito y cifras tabulares; acción «Ver detalle»
+accesible por teclado además del clic de fila; contenedor de tabla posicionado
+para que el texto `sr-only` no ensanche el documento.
+
+Resultado medido: `UI-11` deja de desbordar a 390 px (el resto de tablas compartidas
+también se beneficia); auditoría global H2 baja de 14 a 8 rutas con desbordamiento.
+Pendiente del piloto: probar foco/zoom/lector manual y decidir si las acciones
+de fila deben quedar visibles sin desplazamiento horizontal en móvil (H4).
+
 Objetivo: identidad y densidad operativa. Jerarquía nombre/correo, curso y
 dedicación legibles; barra de horas con valor y límite explícitos; cabecera de
 tabla estable al desplazar; acciones agrupadas y accesibles por teclado.

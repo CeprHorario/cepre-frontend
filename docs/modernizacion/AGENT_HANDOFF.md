@@ -21,9 +21,10 @@ No rebajar las puertas de calidad ni presentar como final lo que siga pendiente.
 
 **H1 funcional verificado**: F1.0–F1.5 y D-05 tienen evidencia vigente; cinco suites
 de partes reconciliadas y 21 recorridos adicionales. H2 en ejecución: 32 rutas
-capturadas y auditadas a 390 px; faltan variantes/estados y teclado/zoom. No se ha
-iniciado la migración visual. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
-[línea base H2](BASELINE_H2.md) y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
+capturadas y auditadas a 390 px; faltan variantes/estados y teclado/zoom. H3 en
+ejecución: piloto Docentes aplicado (avatar, horas, detalle por teclado y reflow de
+tabla); faltan horario del Monitor y evidencias. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
+[línea base H2](BASELINE_H2.md), [pilotos](H3_PILOTS.md) y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
 
 ## Repositorios y protección
 
@@ -75,9 +76,10 @@ lector de pantalla ni cierre visual/entrega integral.
 1. Revisar Git de ambos repositorios y leer pendientes exactos de MIGRATION_PROGRESS.
 2. Seguir `backend/test/records-browser.md`: iniciar solo DB/GCS aislados y harness;
    frontend `127.0.0.1:5174` con API `127.0.0.1:3000`. No tocar puerto 5173 ajeno.
-3. **H2:** completar fichas de cada UI del SYSTEM_INVENTORY: campos, acciones,
-   columnas/filtros, variantes/roles, contratos, estados y capturas actuales. H1 es
-   solo la base del área intervenida, no sustituye ese inventario integral.
+3. **H2/H3:** cerrar estados/variantes faltantes y ejecutar pilotos B (horario del
+   Monitor, revisando consumidores de ScheduleView) y C (evidencias en dos zonas),
+   con capturas/teclado/móvil. Después H4: reflow global, foco y estados; las 8
+   rutas que aún desbordan a 390 px están registradas en baseline.json.
 4. Ampliar fixtures/composición local solo donde falten para H2, sin presentar
    endpoints simulados como integración ni modificar servicios productivos para
    acomodar pruebas. El harness aún no compone todas las pantallas/controladores.

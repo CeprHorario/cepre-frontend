@@ -2,7 +2,7 @@ import { IncidenceAction } from '@/features/incidencias/IncidenceAction';
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { FiCalendar, FiDownload, FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiCalendar, FiDownload, FiEdit2, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
 import { apiErrorMessage } from "@/api/client";
 import { TeachersApi } from "@/api/services";
 import { useClearTeacherAvailability, useCourses, useTeacherMutations, useTeachers, useTeacherSearch } from "@/api/queries";
@@ -10,7 +10,7 @@ import { ConfirmDialog } from "@/components/ui/Overlay";
 import type { TeacherSummary } from "@/api/types";
 import { Button } from "@/components/ui/Button";
 import { Badge, CourseBadge } from "@/components/ui/Badge";
-import { Card, PageHeader, ProgressBar } from "@/components/ui/Card";
+import { Avatar, Card, PageHeader, ProgressBar } from "@/components/ui/Card";
 import { DataTable, Pagination, type Column } from "@/components/ui/DataTable";
 import { SearchInput, Select } from "@/components/ui/Field";
 import { RowActions } from "@/components/ui/Menu";
@@ -85,16 +85,31 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
     {
       key: "name",
       header: "Docente",
-      cell: (t) => (
-        <div className="flex min-w-0 flex-col">
-          <strong className="font-semibold">{fullName(t)}</strong>
-          <span className="truncate text-xs text-ink-500">{t.email}</span>
-        </div>
-      ),
+      cell: (t) => {
+        const done = t.scheduledHours ?? 0;
+        const max = t.maxHours;
+        return (
+          <div className="flex min-w-0 items-center gap-3">
+            <Avatar size="sm" text={`${t.firstName?.[0] ?? ""}${t.lastName?.[0] ?? ""}`.toUpperCase() || "?"} />
+            <div className="flex min-w-0 flex-col">
+              <strong className="truncate font-semibold">{fullName(t)}</strong>
+              <span className="truncate text-xs text-ink-500">{t.email}</span>
+              <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-500 md:hidden">
+                <span>{t.courseName ?? "Sin curso"}</span>
+                <span aria-hidden="true">·</span>
+                <span>{t.jobStatus ? (JOB_STATUS_LABEL[t.jobStatus] ?? t.jobStatus) : "Sin dedicación"}</span>
+                <span aria-hidden="true">·</span>
+                <span className="tabular">{max === undefined ? "Horas sin límite" : `${done}/${max} h`}</span>
+              </span>
+            </div>
+          </div>
+        );
+      },
     },
     {
       key: "course",
       header: "Curso",
+      hideOnMobile: true,
       cell: (t) => (t.courseName ? <CourseBadge name={t.courseName} color={courseColor.get(t.courseName)} /> : <span className="text-ink-500">—</span>),
     },
     {
@@ -106,15 +121,16 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
     {
       key: "hours",
       header: "Horas",
+      hideOnMobile: true,
       cell: (t) => {
-        if (t.maxHours === undefined) return <span className="text-ink-500">—</span>;
+        if (t.maxHours === undefined) return <span className="text-ink-500">Sin límite</span>;
         const done = t.scheduledHours ?? 0;
         const max = t.maxHours ?? 0;
         return (
           <div className="flex items-center gap-2.5">
-            <ProgressBar value={done} max={max} className="w-20" label={`${done} de ${max} horas`} />
-            <span className={`tabular text-[13px] ${done === 0 ? "font-bold text-danger-700" : ""}`}>
-              {done}/{max || "—"}
+            <ProgressBar value={done} max={max} className="w-20" label={`${done} de ${max} horas asignadas`} />
+            <span className={`tabular whitespace-nowrap text-[13px] ${done === 0 ? "text-ink-500" : "text-ink-900"}`}>
+              {done}/{max || "—"} h
             </span>
           </div>
         );
@@ -138,6 +154,7 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
               <RowActions
                 label={`Acciones para ${fullName(t)}`}
                 items={[
+                  { label: "Ver detalle", icon: <FiEye />, onSelect: () => setDetail(t) },
                   { label: "Ver horario", icon: <FiCalendar />, onSelect: () => schedule(t) },
                   { label: "Editar datos", icon: <FiEdit2 />, onSelect: () => setEditing(t), hidden: searching },
                   { label: "Eliminar", icon: <FiTrash2 />, tone: "danger", onSelect: () => removal.request([t]) },

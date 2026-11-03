@@ -48,7 +48,7 @@ export function DataTable<T>({ columns, rows, rowKey, loading, empty, selectedKe
   const alignClass = (align?: Column<T>["align"]) => (align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left");
 
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <table className="w-full border-collapse" style={{ minWidth }}>
         <thead>
           <tr>
