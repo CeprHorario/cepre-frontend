@@ -5,6 +5,17 @@ código/servidor/pruebas vigentes. Las pruebas históricas no prueban el estado
 actual. Este documento enlaza, no sustituye, [operaciones](../OPERACIONES.md),
 [partes](../partes.md) y los propietarios compartidos de [roles](../ROLES.md).
 
+## Continuidad contractual
+
+Por instrucción expresa del usuario, la ejecución abarca **todas las fases hasta
+H10**, sin detenerse ni pedir confirmación por entregable parcial. Se aplica la
+regla de [ejecución continua del plan maestro](MASTER_PLAN.md#ejecución-continua-hasta-la-entrega-integral):
+verificar el hito, registrar evidencia y continuar con el siguiente habilitado.
+Se conservan todas las invariantes y puertas de calidad siguientes; los checkpoints
+no son finales de tarea ni autorizan omitir pruebas, ampliar alcance o desplegar.
+
+## Invariantes de conservación
+
 | ID | Invariante obligatorio |
 |---|---|
 | CF-01 | Conservar rutas, redirecciones, enlaces directos/parámetros y cinco ámbitos. `profesor`/`docente` equivalentes; coordinación general/de curso con alcance propio. No añadir gestión de permisos por existir endpoints. |

@@ -21,6 +21,37 @@ En ejecución, Implementado sin verificar, Verificado, Bloqueado.
 «Implementado» nunca equivale a terminado. En cada checkpoint actualizar progreso,
 decisiones, desviaciones y siguiente paso; al interrumpir, actualizar el traspaso.
 
+## Ejecución continua hasta la entrega integral
+
+Instrucción expresa del usuario, 2026-11-03: **terminar todas las fases sin
+detenerse en cada entregable**. Esta regla gobierna la ejecución del plan y los
+traspasos posteriores; sustituye cualquier interpretación de los checkpoints
+como cierres de trabajo o solicitudes de autorización para continuar.
+
+- La unidad de finalización es **H10 y el entregable integral**, no una pantalla,
+  lote, commit, suite, piloto o fase. Al verificar un hito, actualizar la evidencia
+  y continuar inmediatamente con el siguiente habilitado, dentro del mismo trabajo.
+  No terminar la ejecución con «siguiente fase pendiente» si se puede avanzar.
+- No pedir «continúa», otra aprobación ni una confirmación entre H0–H10. Los
+  checkpoints y commits son controles internos; comunicar avances breves durante
+  el trabajo, no convertirlos en entregas finales que exijan otro mensaje del usuario.
+- Las puertas de calidad siguen siendo obligatorias: comprobar, corregir y volver
+  a verificar antes de avanzar por una dependencia. «Aprobado» o «validado» en
+  pilotos/capturas significa aceptación técnica documentada contra los criterios
+  del plan; no introduce una espera de aprobación humana por fase.
+- Resolver autónomamente los problemas dentro del alcance autorizado. Ante un
+  bloqueo, continuar las tareas independientes posibles. Pausar y consultar solo
+  cuando falte una decisión o acceso imprescindible del usuario, exista riesgo
+  fuera de la autorización, o el usuario ordene detener/cambiar el trabajo. No
+  desplegar, usar datos reales ni descartar cambios ajenos por esta continuidad.
+- Si un límite técnico de ejecución/contexto impide continuar, dejar estado,
+  evidencia, bloqueo y próxima acción exacta en el traspaso. Reanudar desde ahí al
+  recuperar la ejecución, sin reautorizar fases ni tratar la interrupción como
+  entrega completada. No prometer ejecución en segundo plano que no esté activa.
+- La entrega final exige H0–H10 verificados según sus criterios, regresión y
+  documentación finales, y límites expresos. Un bloqueo o prueba no ejecutada no
+  se convierte en verificación para declarar terminado el plan.
+
 ## Alcance y exclusiones
 
 Conservar React 19, TypeScript, Vite 6, Tailwind 4, React Router 7, TanStack Query 5,

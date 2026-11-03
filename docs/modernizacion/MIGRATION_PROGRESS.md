@@ -2,6 +2,16 @@
 
 Actualizado: 2026-11-03. No interpretar autorización total como verificación total.
 
+## Decisión vigente de ejecución
+
+El usuario ha precisado que deben terminarse **todas las fases sin detenerse en
+cada entregable**. La [regla contractual de continuidad](MASTER_PLAN.md#ejecución-continua-hasta-la-entrega-integral)
+obliga a verificar, documentar y avanzar automáticamente hasta H10. Los hitos y
+commits no cierran la tarea ni requieren otro mensaje del usuario. Los checkpoints
+anteriores conservan su valor histórico, no justifican nuevas pausas por fase.
+Esta modificación no cambia el estado real de los hitos ni elimina verificaciones,
+restricciones de seguridad o bloqueos imprescindibles.
+
 ## Versiones iniciales y trabajo protegido
 
 - Frontend: `4ee6350` — `fix(ui): integrar tarjetas administrativas y fechas del calendario`.
@@ -131,4 +141,5 @@ H1 no lo sustituye. Después, H3 valida los tres pilotos antes de extender estil
 Faltan accesibilidad integral, zoom/reflow completo, presupuestos medidos y los
 hitos visuales H3–H10. No se ha iniciado reconstrucción visual ni desplegado nada.
 La autorización integral sigue vigente; este checkpoint no es una solicitud de
-nueva aprobación ni la entrega final del plan.
+nueva aprobación ni la entrega final del plan. La ejecución debe continuar desde
+H2 hasta H10 sin detenerse en estos entregables intermedios.

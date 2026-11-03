@@ -3,6 +3,20 @@
 Actualizado: 2026-11-03. Trabajo autorizado integralmente; no pedir de nuevo
 autorización para lotes del alcance. No declarar terminado sin puertas cumplidas.
 
+## Mandato de continuidad
+
+El usuario exige **completar todas las fases sin detenerse por entregable**.
+Continuar desde H2 hasta H10: al verificar cada hito, registrar el checkpoint y
+ejecutar el siguiente, sin esperar otro «continúa» ni emitir un cierre parcial de
+la ejecución. Las aprobaciones de pilotos/capturas son validaciones técnicas
+contra el plan, no nuevas solicitudes de aprobación humana.
+
+Aplicar [la regla completa del contrato](MASTER_PLAN.md#ejecución-continua-hasta-la-entrega-integral).
+Solo pausar por bloqueo imprescindible, riesgo fuera del alcance, instrucción del
+usuario o límite técnico real; agotar antes las tareas independientes. Si un límite
+interrumpe la ejecución, este traspaso permite reanudarla sin reautorizar fases.
+No rebajar las puertas de calidad ni presentar como final lo que siga pendiente.
+
 ## Estado
 
 **H1 funcional verificado**: F1.0–F1.5 y D-05 tienen evidencia vigente; cinco suites
@@ -71,7 +85,8 @@ lector de pantalla ni cierre visual/entrega integral.
    nueva dentro de estética. Defectos funcionales nuevos se registran aparte.
 6. Después de H2: tres pilotos H3 (Docentes/horario Monitor/evidencias), validar antes
    de extender estilos H4–H9 y regresión integral H10. Mantener contratos/payloads/
-   permisos/persistencia. No pedir nueva autorización del alcance ya concedido.
+   permisos/persistencia. Ejecutar esta secuencia sin detenerse en cada hito;
+   actualizar progreso/traspaso como control interno, no como cierre parcial.
 
 Comandos ejecutados: `git status --short`, `git log -1 --oneline` por repo;
 `git diff --no-ext-diff --no-textconv --stat` backend;
