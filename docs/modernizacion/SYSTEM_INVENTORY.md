@@ -52,6 +52,22 @@ Redirecciones: `/admin/gestionar` → docentes; `/coordinador` → docentes.
 Los estados globales no son necesariamente rutas nuevas; conservar resolución
 actual de SessionGate. No crear páginas adicionales por inventariarlos.
 
+### Caracterización incremental vigente
+
+- **UI-24:** entrada por lista de jornadas, rango inicial de hoy menos 30 días a
+  hoy, tamaño 25/50/100, total y orden explícitos; agrupación fecha/salón/turno.
+  Abrir muestra todos los bloques (6 actuales y 105 históricos comprobados).
+  Fecha/aula/turno quedan fijados al grupo; se mantienen filtros de personas,
+  curso y revisión, operaciones/detalle/evidencias y retorno protegido por pendientes.
+  Ver `evidence/fase1.json`; faltan estados para declarar toda la pantalla verificada.
+- **UI-04:** selector de salón administrativo usa catálogo completo, conserva valor
+  con resultado vacío y «Todos». No cambia catálogo de otros roles.
+- **UI-26 / UI-10:** error inicial distinto de vacío/carga y Reintentar comprobados.
+- **UI-03 / UI-18 / UI-26:** semántica corregida en tarjetas y selector; destinos
+  conservados. Ver `evidence/estados.json`, con catálogos/fallos UI identificados.
+- La columna de línea base sigue pendiente: estas comprobaciones parciales no
+  equivalen a fichas completas por ruta, rol, resolución y estado.
+
 ## Propietarios y consumidores compartidos
 
 | Superficie | Propietario existente | Consumidores / revisión |

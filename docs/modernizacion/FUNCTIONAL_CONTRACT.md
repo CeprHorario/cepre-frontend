@@ -35,8 +35,12 @@ actual. Este documento enlaza, no sustituye, [operaciones](../OPERACIONES.md),
 ## Riesgo pendiente, no cambio aprobado
 
 **K-01:** sustitución docente en salón ejecuta desasignación/asignación separadas.
-Reproducir fallo intermedio con fixtures y registrar resultado/recuperación.
-No convertirlo silenciosamente en una operación atómica ni rediseñar backend.
+Fallo intermedio reproducido en PostgreSQL por `test/availability.e2e-spec.ts`:
+la retirada queda persistida, el nuevo docente incompatible se rechaza, la carga
+del anterior queda en cero y la recuperación exige reasignación explícita. Se
+clasifica como riesgo de resultado parcial existente (CF-05). No convertirlo
+silenciosamente en una operación atómica ni rediseñar backend; cualquier corrección
+adicional debe registrarse en lote funcional separado, no dentro de estética.
 
 ## Control de contratos de red
 
@@ -47,8 +51,10 @@ funcional nuevo abre requisito separado, nunca una corrección estética oculta.
 
 ## Reconciliación documental inicial
 
-`ROLES.md` contiene descripciones antiguas de importación general de disponibilidad
-y registro directo de incidencias. Deben contrastarse con ImportarPage,
-ObservationsEditor y servicios; no recuperar un cuarto tipo general. El contrato
-vigente de observaciones se explica en OPERACIONES.md. Cada discrepancia conserva
-estado pendiente hasta confirmar fuente y pruebas.
+Se corrigieron las descripciones antiguas de `ROLES.md` sobre importación general
+de disponibilidad y registro directo de incidencias; no se recuperó un cuarto
+tipo general. OPERACIONES.md explica observaciones y contexto operativo; partes.md
+describe el listado nuevo y separa evidencia histórica de verificación actual.
+La documentación backend corrige la materialización de todos los bloques de hoy
+(no únicamente futuros) y documenta journals. Los recorridos históricos aún
+requieren reconciliación: consultar MIGRATION_PROGRESS, no asumir conformidad total.
