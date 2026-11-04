@@ -1,0 +1,92 @@
+async (page, config) => {
+  const { api, origin, output } = config;
+  const results = [];
+  const check = (condition, name) => { if (!condition) throw new Error(name); results.push(name); };
+  const login = async role => {
+    const response = await page.request.get(api + '/__test/session?role=' + role);
+    if (!response.ok()) throw new Error('Sesión sintética no disponible');
+  };
+  const headers = { Origin: origin, 'X-Requested-With': 'ceprunsa' };
+  await login('admin');
+  await page.goto(origin + '/admin/gestionar/cursos');
+  const edit = page.getByRole('button', { name: 'Editar Course', exact: true });
+  config.stage = 'H3 ayuda con foco y Escape';
+  await edit.focus();
+  const tooltip = page.getByRole('tooltip');
+  await tooltip.waitFor({ timeout: 3000 });
+  check(await tooltip.innerText() === 'Editar Course', 'UX-10 ayuda por foco con nombre de acción');
+  const helpBox = await tooltip.boundingBox();
+  check(helpBox.x >= 0 && helpBox.y >= 0 && helpBox.x + helpBox.width <= 1920, 'UX-10 ayuda sin recorte');
+  await page.keyboard.press('Escape');
+  await tooltip.waitFor({ state: 'hidden' });
+  check(await edit.evaluate(node => document.activeElement === node), 'UX-10 Escape conserva foco');
+  await edit.click();
+  const dialog = page.getByRole('dialog', { name: 'Editar curso', exact: true });
+  await dialog.waitFor();
+  check(await dialog.getByLabel('Nombre del curso', { exact: false }).evaluate(node => document.activeElement === node), 'UX-11 foco inicial útil en curso');
+  await page.keyboard.press('Escape');
+  await dialog.waitFor({ state: 'hidden' });
+  check(await edit.evaluate(node => document.activeElement === node), 'UX-11 retorno al disparador');
+
+  config.stage = 'H3 Cursos CRUD real y fallo persistente';
+  const courseName = 'Curso sintético ' + Date.now();
+  await page.getByRole('button', { name: 'Agregar curso', exact: true }).click();
+  const createDialog = page.getByRole('dialog', { name: 'Agregar curso', exact: true });
+  check(await createDialog.getByRole('button', { name: 'Guardar', exact: true }).isDisabled(), 'Cursos conserva habilitación por nombre válido');
+  await createDialog.getByLabel('Nombre del curso', { exact: false }).fill(courseName);
+  await createDialog.getByLabel('Color', { exact: true }).fill('#661124');
+  await page.route(api + '/api/courses', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    return route.fulfill({ status: 500, contentType: 'application/json', body: '{"message":"Fallo sintético al guardar curso"}' });
+  });
+  await createDialog.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await createDialog.getByRole('alert').filter({ hasText: 'Fallo sintético al guardar curso' }).waitFor();
+  await page.waitForTimeout(6000);
+  check(await createDialog.getByRole('alert').filter({ hasText: 'Fallo sintético al guardar curso' }).isVisible(), 'UX-12 error persistente conserva borrador');
+  check(await createDialog.getByLabel('Nombre del curso', { exact: false }).inputValue() === courseName, 'Cursos error conserva nombre');
+  await page.unroute(api + '/api/courses');
+  const created = page.waitForResponse(response => response.url() === api + '/api/courses' && response.request().method() === 'POST');
+  await createDialog.getByRole('button', { name: 'Guardar', exact: true }).click();
+  const response = await created;
+  check(response.ok(), 'Cursos alta HTTP real');
+  const persisted = (await (await page.request.get(api + '/api/courses')).json()).find(course => course.name === courseName);
+  check(persisted?.color === '#661124', 'Cursos nombre/color persistidos sin limitar paleta');
+  await page.getByRole('button', { name: 'Eliminar ' + courseName, exact: true }).click();
+  const confirmation = page.getByRole('dialog').last();
+  await confirmation.getByRole('button', { name: 'Eliminar curso', exact: true }).click();
+  await confirmation.waitFor({ state: 'hidden' });
+  check(!(await (await page.request.get(api + '/api/courses')).json()).some(course => course.id === persisted.id), 'Cursos borrado real sin asociaciones');
+  const rejected = await page.request.delete(api + '/api/courses/1', { headers });
+  check(rejected.status() >= 400 && (await (await page.request.get(api + '/api/courses')).json()).some(course => course.id === 1), 'Cursos rechazo real por asociaciones conserva curso');
+
+  for (const width of [1920, 1440, 1366, 1024, 768, 390, 320]) {
+    config.stage = 'H3 pilotos ' + width;
+    await page.setViewportSize({ width, height: width === 1366 ? 768 : 1080 });
+    await login('admin');
+    await page.goto(origin + '/admin/gestionar/docentes');
+    await page.getByRole('heading', { name: 'Docentes', exact: true }).waitFor();
+    await page.getByRole('button', { name: /^Ver detalle/ }).first().waitFor();
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Docentes sin overflow ' + width);
+    await page.screenshot({ path: output + '/pilot-docentes-' + width + '.png' });
+    await login('monitor');
+    await page.goto(origin + '/monitor');
+    await page.getByRole('radio', { name: 'Semana', exact: true }).waitFor();
+    await page.getByRole('radio', { name: 'Por día', exact: true }).click();
+    await page.getByRole('radio', { name: /lunes/i }).first().click();
+    check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horario Monitor Por día sin overflow ' + width);
+    await page.getByRole('radio', { name: 'Semana', exact: true }).click();
+    await page.screenshot({ path: output + '/pilot-monitor-' + width + '.png' });
+    await login('admin');
+    await page.goto(origin + '/admin/gestionar/cursos');
+    await page.getByRole('button', { name: 'Agregar curso', exact: true }).click();
+    const modal = page.getByRole('dialog').last();
+    check(await modal.getByLabel('Nombre del curso', { exact: false }).isVisible(), 'Cursos campo accesible ' + width);
+    await page.screenshot({ path: output + '/pilot-cursos-' + width + '.png' });
+    await page.keyboard.press('Escape');
+  }
+  await login('coordinator');
+  await page.goto(origin + '/coordinador/docentes');
+  await page.getByRole('heading', { name: 'Docentes', exact: true }).waitFor();
+  check(await page.getByRole('button', { name: /Agregar docente|Exportar Excel|Editar datos|Eliminar|Asignar salones/ }).count() === 0, 'H3 coordinación conserva solo lectura');
+  return { ok: true, suite: 'H3 tres pilotos', results, date: new Date().toISOString(), limits: ['Zoom nativo/lector/motores adicionales bloqueados se registran aparte; no certificación integral.'] };
+}

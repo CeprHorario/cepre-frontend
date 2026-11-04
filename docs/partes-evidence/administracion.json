@@ -3,7 +3,7 @@
   "suite": "administracion",
   "results": [
     "Corrección y captura extraordinarias motivadas sin alterar cierre",
-    "Habilitación posterior al cierre rechazada; monitor conserva consulta sin Guardar",
+    "P-03: habilitación posterior al cierre con motivo, sin mover el cierre; motivo por cambio se prueba en backend",
     "Resolver y revocar cobertura separadas de ejecución y resultado titular",
     "Reemplazos masivos y destinos congelados al conservar operación",
     "Anulación/restauración sin abrir fila; lote parcial detiene sin reintentar, selección vieja descartada",

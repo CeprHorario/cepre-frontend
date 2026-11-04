@@ -1,0 +1,42 @@
+{
+  "id": "UI-15",
+  "fixture": "sr_7b203f31a38841989b43091d863b5268_a",
+  "email": "e3-ui-15-1793819053380@test.invalid",
+  "name": "Curso sintético 1793819053380",
+  "phase": "success-confirmed",
+  "payload": {
+    "email": "e3-ui-15-1793819053380@test.invalid",
+    "firstName": "Persona",
+    "lastName": "Sintetica",
+    "personalEmail": "personal-e3-ui-15-1793819053380@test.invalid",
+    "phone": "999999991",
+    "shift_id": 1,
+    "dni": "98053687",
+    "phonesAdditional": []
+  },
+  "status": 201,
+  "response": {
+    "id": "01a1a7f2-a97b-7282-963e-a6ba7840814f",
+    "email": "e3-ui-15-1793819053380@test.invalid",
+    "password": null,
+    "isActive": true,
+    "createdAt": "2026-11-04T19:04:20.602Z",
+    "updatedAt": "2026-11-04T19:04:20.602Z",
+    "lastLogin": null,
+    "googleId": null,
+    "role": "supervisor",
+    "userProfile": {
+      "id": "01a1a7f2-a97b-7cd2-9355-ed0da199116c",
+      "userId": "01a1a7f2-a97b-7282-963e-a6ba7840814f",
+      "dni": "98053687",
+      "firstName": "Persona",
+      "lastName": "Sintetica",
+      "phone": "999999991",
+      "phonesAdditional": [],
+      "personalEmail": "personal-e3-ui-15-1793819053380@test.invalid",
+      "isActive": true,
+      "createdAt": "2026-11-04T19:04:20.602Z",
+      "updatedAt": "2026-11-04T19:04:20.602Z"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "email": "e3-import-1793820959081@test.invalid",
+  "phase": "success-confirmed-after-read",
+  "note": "La operación anterior sí persistió; falló solo selector role=alert de mensaje informativo."
+}

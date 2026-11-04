@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "línea original 69: locator.waitFor: Timeout 35000ms exceeded.\n",
+  "stack": "Error: locator.waitFor: Timeout 35000ms exceeded.\n",
+  "date": "2026-11-04T19:58:00.965Z"
+}

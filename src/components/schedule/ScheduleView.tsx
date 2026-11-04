@@ -19,6 +19,7 @@ interface ExtraView {
 }
 
 interface Props {
+  appearance?: 'default' | 'operational';
   /** Bloques ya combinados con layoutEntries */
   entries: MergedEntry[];
   rows: { start: string; end: string }[];
@@ -40,7 +41,7 @@ interface Props {
 }
 
 /** Horario con el mismo comportamiento en todos los roles: Semana por defecto, Por día y estados de carga/error/vacío */
-export function ScheduleView({ entries, rows, loading, error, onRetry, empty, title, tone = "light", weekEntries, renderActions, compact, footer, extraViews = [] }: Props) {
+export function ScheduleView({ entries, rows, loading, error, onRetry, empty, title, tone = "light", weekEntries, renderActions, compact, footer, extraViews = [], appearance = 'default' }: Props) {
   const [view, setView] = useState<string>(DEFAULT_SCHEDULE_VIEW);
   const [day, setDay] = useState<Weekday>(todayWeekday());
   const counts = Object.fromEntries(WEEKDAYS.map((d) => [d, entries.filter((e) => e.day === d).length]));
@@ -78,10 +79,10 @@ export function ScheduleView({ entries, rows, loading, error, onRetry, empty, ti
   ) : view === "dia" ? (
     <div className="flex flex-col gap-3">
       <DayPicker value={day} onChange={setDay} counts={counts} />
-      <DayAgenda entries={entries} day={day} renderActions={renderActions} />
+      <DayAgenda entries={entries} day={day} renderActions={renderActions} readable={appearance === 'operational'} />
     </div>
   ) : (
-    <WeekGrid rows={rows} entries={weekEntries ? weekEntries(entries) : entries} compact={compact} highlightDay={todayWeekday()} />
+    <WeekGrid rows={rows} entries={weekEntries ? weekEntries(entries) : entries} compact={compact} highlightDay={todayWeekday()} readable={appearance === 'operational'} />
   );
 
   if (title) {

@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "línea original 69: cambiar cuenta monitor: locator.click: Timeout 30000ms exceeded.\n",
+  "stack": "Error: cambiar cuenta monitor: locator.click: Timeout 30000ms exceeded.\n",
+  "date": "2026-11-04T21:35:14.157Z"
+}

@@ -1,0 +1,17 @@
+.cepr-global-header { height:64px; min-height:64px; font-family:"Open Sans",Arial,sans-serif; }
+.cepr-global-header :is(button,a):focus-visible { outline:3px solid #d2ae6d; outline-offset:3px; }
+.cepr-global-header .header-process > span:first-child { flex-shrink:0; }
+.cepr-global-header [role=region] { font-family:"Open Sans",Arial,sans-serif; }
+@media (max-width:767px) {
+  .cepr-global-header .header-crumbs > span:not(:first-child) { display:none; }
+  .cepr-global-header .header-crumbs > span:first-child { max-width:24vw; }
+  .cepr-global-header .header-crumbs a { font-size:12px; }
+}
+@media (max-width:359px) {
+  .cepr-global-header { gap:4px; padding-right:8px; }
+  .cepr-global-header .logo-cutout { padding-left:10px; padding-right:18px; }
+  .cepr-global-header .logo-cutout img { max-width:96px; height:auto; }
+  .cepr-global-header > div:first-child { gap:8px; }
+  .cepr-global-header .header-crumbs > span:first-child { max-width:23vw; }
+}
+@media (forced-colors:active) { .cepr-global-header :is(button,a):focus-visible { outline-color:Highlight; } }

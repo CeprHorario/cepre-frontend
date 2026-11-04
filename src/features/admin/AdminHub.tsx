@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { IncidenceWarnings } from '../incidencias/IncidencesPage';
 import { FiArrowRight, FiCalendar, FiDatabase, FiLink, FiShield, FiSliders, FiUpload, FiUserPlus, FiBarChart2, FiRepeat, FiFlag } from "react-icons/fi";
 import type { ReactNode } from "react";
-import background from "@/assets/cepr-background.jpg";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
 import {
   useClasses,
   useCoordinators,
@@ -42,34 +42,33 @@ export function AdminHub() {
 
   return (
     <SimpleLayout greeting>
-      <section className="relative overflow-hidden bg-marino-900">
-        <div className="absolute inset-0 bg-cover opacity-[0.18]" style={{ backgroundImage: `url(${background})`, backgroundPosition: "center 40%" }} />
-        <div className="relative mx-auto flex max-w-[1280px] flex-wrap items-end justify-between gap-6 px-5 pb-24 pt-9 sm:px-10">
-          <div className="flex flex-col gap-2.5 text-white">
-            <SectionLabel className="text-oro-500">Menú principal</SectionLabel>
+      <section className="border-b border-line bg-white">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-8">
+          <div className="flex min-w-0 flex-col gap-2 text-marino-900">
+            <SectionLabel>Menú principal</SectionLabel>
             {admission.isLoading ? (
               <Skeleton className="h-9 w-72 bg-white/10" />
             ) : (
-              <h1 className="font-display text-3xl font-extrabold sm:text-[34px]">{admission.data?.description ?? admission.data?.name}</h1>
+              <h1 className="break-all font-display text-2xl font-bold">{admission.data?.description ?? admission.data?.name}</h1>
             )}
             {admission.data && (
-              <span className="text-[15px] text-white/80">
+              <span className="text-sm text-ink-500">
                 {formatDate(admission.data.started)} – {formatDate(admission.data.finished)} · {shifts.length} turnos · {list.length} salones
               </span>
             )}
           </div>
-          <div className="flex w-full max-w-sm flex-col gap-2 text-white">
+          <div className="flex w-full max-w-sm flex-col gap-2 text-marino-900">
             <div className="flex justify-between text-[13px]">
-              <span className="text-white/80">Salones con todos sus docentes</span>
+              <span className="text-ink-500">Salones con todos sus docentes</span>
               <strong className="tabular">
                 {complete} de {list.length}
               </strong>
             </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-white/15">
-              <div className="h-full rounded-full bg-oro-500" style={{ width: `${coverage}%` }} />
+            <div className="h-2 overflow-hidden rounded-full bg-line-soft">
+              <div className="h-full rounded-full bg-guinda-700" style={{ width: `${coverage}%` }} />
             </div>
             {startsIn !== null && (
-              <span className="text-xs text-white/70">
+              <span className="text-xs text-ink-500">
                 {startsIn > 0 ? `Las clases inician en ${startsIn} días` : startsIn === 0 ? "Las clases inician hoy" : "Proceso en curso"}
               </span>
             )}
@@ -77,7 +76,9 @@ export function AdminHub() {
         </div>
       </section>
 
-      <main className="relative mx-auto -mt-16 flex w-full max-w-[1280px] flex-col gap-6 px-4 pb-10 sm:px-10">
+      <main className="mx-auto flex w-full max-w-[1600px] flex-col gap-5 px-4 py-5 sm:px-8">
+        <QueryFeedback query={admission} label="proceso" />
+        <QueryFeedback query={classes} label="salones" />
         <IncidenceWarnings />
         <section aria-label="Módulos" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <ModuleTile to="/admin/partes" icon={<FiCalendar />} iconClass="bg-guinda-50 text-guinda-700" title="Partes diarios" description="Registro, seguimiento, reemplazos y reportes del proceso." footer={<TileLink>Administrar partes</TileLink>} />
@@ -140,7 +141,7 @@ export function AdminHub() {
                 <Skeleton className="h-12" />
                 <Skeleton className="h-12" />
               </div>
-            ) : (
+            ) : classes.isError ? <p role="alert" className="text-sm text-danger-700">No se pueden determinar los pendientes hasta recuperar los salones.</p> : (
               <ul className="flex flex-col">
                 <Pending
                   show={missingTeachers > 0}
@@ -222,12 +223,12 @@ function ModuleTile({ to, icon, iconClass, title, description, footer }: {
 }) {
   return (
     <div
-      className="group flex flex-col gap-3.5 rounded-[20px] border border-line bg-white p-6 text-ink-900 shadow-[0_1px_2px_rgba(26,28,43,0.04)] transition hover:border-guinda-700 hover:shadow-[0_14px_34px_rgba(102,17,36,0.12)]"
+      className="group flex flex-col gap-3 rounded-xl border border-line bg-white p-4 text-ink-900 transition-colors hover:border-guinda-700 motion-reduce:transition-none"
     >
-      <Link to={to} className="flex flex-col gap-3.5">
-      <span className={cn("flex size-14 items-center justify-center rounded-2xl text-[26px]", iconClass)}>{icon}</span>
+      <Link to={to} className="flex items-start gap-3">
+      <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-lg text-xl", iconClass)}>{icon}</span>
       <span className="flex flex-col gap-1.5">
-        <strong className="font-display text-lg text-marino-900">{title}</strong>
+        <strong className="font-display text-base text-marino-900">{title}</strong>
         <span className="text-sm leading-6 text-ink-500">{description}</span>
       </span>
       </Link>

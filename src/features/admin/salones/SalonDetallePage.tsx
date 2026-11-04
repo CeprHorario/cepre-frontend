@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FiChevronLeft, FiEdit2, FiTrash2 } from "react-icons/fi";
@@ -23,7 +23,7 @@ import { Field, Input } from "@/components/ui/Field";
 import { ConfirmDialog, Dialog } from "@/components/ui/Overlay";
 import { LoadingScreen, Skeleton } from "@/components/ui/Spinner";
 import { fullName, shortClassName } from "@/lib/format";
-import { layoutEntries, toHHMM, type ScheduleEntry } from "@/lib/schedule";
+import { layoutEntries, toHHMM, uniqueRows, type ScheduleEntry } from "@/lib/schedule";
 import { linkState } from "@/lib/validators";
 
 export function SalonDetallePage({ basePath, readOnly = false }: { basePath: string; readOnly?: boolean }) {
@@ -33,7 +33,8 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
   const schedules = useClassSchedules(id);
   const teachers = useClassTeachers(id);
   const courses = useCourses();
-  const { periods } = usePeriods();
+  const periodQuery = usePeriods();
+  const { periods } = periodQuery;
   const { remove } = useClassMutations();
   const [openCourse, setOpenCourse] = useState<string | null>(null);
   const [linksOpen, setLinksOpen] = useState(false);
@@ -41,7 +42,7 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
 
   const classroom = classes.data?.find((c) => c.id === id);
   const rows = useMemo(
-    () => periods.filter((p) => p.shiftId === classroom?.shiftId).map((p) => ({ start: p.start, end: p.end })),
+    () => uniqueRows(periods.filter((p) => p.shiftId === classroom?.shiftId)),
     [periods, classroom?.shiftId],
   );
 
@@ -62,9 +63,9 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
       start: toHHMM(s.startTime),
       end: toHHMM(s.endTime),
       title: s.courseName,
-      subtitle: teacher ? `${teacher.firstName.split(" ")[0]} ${teacher.lastName.split(" ")[0]}` : "Por asignar",
+      subtitle: teachers.data === undefined ? (teachers.isError ? "Docentes no disponibles" : "Cargando docentes…") : teacher ? `${teacher.firstName.split(" ")[0]} ${teacher.lastName.split(" ")[0]}` : "Por asignar",
       color: courseByName.get(s.courseName)?.color,
-      pending: !teacher,
+      pending: teachers.data !== undefined && !teacher,
       groupKey: s.courseName,
     };
   });
@@ -72,9 +73,10 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
 
   // Cursos del salón con sus bloques (para buscar docentes disponibles)
   const courseRows = useMemo(() => {
-    const map = new Map<string, { course?: Course; name: string; slots: Slot[] }>();
+    const map = new Map<string, { course?: Course; name: string; slots: Slot[]; blocks: number }>();
     (schedules.data ?? []).forEach((s) => {
-      const entry = map.get(s.courseName) ?? { course: courseByName.get(s.courseName), name: s.courseName, slots: [] };
+      const entry = map.get(s.courseName) ?? { course: courseByName.get(s.courseName), name: s.courseName, slots: [], blocks: 0 };
+      entry.blocks++;
       const start = toHHMM(s.startTime);
       const period = periods.find((p) => p.shiftId === classroom?.shiftId && p.start === start);
       if (period) entry.slots.push({ hourSessionId: period.id, weekday: s.weekDay });
@@ -84,6 +86,7 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
   }, [schedules.data, courseByName, periods, classroom?.shiftId]);
 
   if (classes.isLoading) return <LoadingScreen />;
+  if (!classroom && classes.isError) return <Card className="p-5"><QueryNotice label="salón" query={classes} /></Card>;
   if (!classroom) {
     return (
       <Card>
@@ -94,6 +97,8 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
 
   const assignedCount = courseRows.filter((c) => teacherByCourse.has(c.name)).length;
   const missing = courseRows.length - assignedCount;
+  const assignmentsKnown = teachers.isSuccess && schedules.isSuccess;
+  const assignmentReady = [classes, schedules, teachers, courses, periodQuery].every(query => query.isSuccess && !query.isFetching);
 
   const deleteClass = async () => {
     try {
@@ -117,7 +122,7 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
           <span className="flex flex-wrap items-center gap-3">
             {shortClassName(classroom.name)}
             <AreaBadge name={classroom.area?.name} />
-            {courseRows.length > 0 && (missing ? <Badge tone="warn">Faltan {missing} docentes</Badge> : <Badge tone="ok">Completo</Badge>)}
+            {assignmentsKnown && courseRows.length > 0 && (missing ? <Badge tone="warn">Faltan {missing} docentes</Badge> : <Badge tone="ok">Completo</Badge>)}
           </span>
         }
         description={`${classroom.shift?.name} · ${toHHMM(classroom.shift?.startTime)} – ${toHHMM(classroom.shift?.endTime)} · ${classroom.sede?.name ?? "Sede"} · Capacidad ${classroom.capacity}`}
@@ -130,6 +135,12 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
         }
       />
 
+      <QueryNotice label="salón" query={classes} />
+      <QueryNotice label="horario" query={schedules} />
+      <QueryNotice label="docentes" query={teachers} />
+      <QueryNotice label="cursos" query={courses} />
+      <QueryNotice label="periodos" query={periodQuery} />
+
       <div className="grid gap-4 md:grid-cols-2">
         <LinkCard label="Google Meet" url={classroom.urlMeet} host="meet.google.com" onEdit={readOnly ? undefined : () => setLinksOpen(true)} />
         <LinkCard label="Google Classroom" url={classroom.urlClassroom} host="classroom.google.com" onEdit={readOnly ? undefined : () => setLinksOpen(true)} />
@@ -137,12 +148,13 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
 
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
         <ScheduleView
+          appearance="operational"
           title="Horario semanal"
           entries={merged}
           rows={rows}
-          loading={schedules.isLoading}
-          error={schedules.isError}
-          onRetry={() => schedules.refetch()}
+          loading={schedules.isLoading || periodQuery.isLoading}
+          error={(schedules.isError && schedules.data === undefined) || (periodQuery.isError && periodQuery.data === undefined)}
+          onRetry={() => { void schedules.refetch(); void periodQuery.refetch(); }}
           empty={{ title: "Sin horario", description: "Este salón todavía no tiene horario cargado." }}
           footer={<span className="text-xs text-ink-500">Borde punteado: curso sin docente asignado.</span>}
         />
@@ -151,20 +163,23 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
           <div className="flex items-center justify-between pb-2">
             <h2 className="font-display text-lg font-bold text-marino-900">Docentes por curso</h2>
             <span className="tabular text-[13px] font-semibold text-ink-500">
-              {assignedCount} / {courseRows.length}
+              {assignmentsKnown ? `${assignedCount} / ${courseRows.length}` : "Sin confirmar"}
             </span>
           </div>
           {teachers.isLoading && <Skeleton className="h-40" />}
+          {schedules.isLoading && <p role="status">Cargando cursos del horario…</p>}
+          {schedules.isSuccess && !courseRows.length && <p className="py-3 text-sm text-ink-500">No hay cursos programados en este salón.</p>}
           <ul className="flex flex-col">
-            {courseRows.map((row) => (
+            {teachers.data !== undefined && courseRows.map((row) => (
               <CourseRow
-                key={row.name}
+                key={`${classroom.id}:${row.course?.id}:${row.name}:${JSON.stringify(row.slots)}`}
                 row={row}
                 classId={classroom.id}
                 teacher={teacherByCourse.get(row.name)}
                 open={openCourse === row.name}
                 onToggle={() => setOpenCourse((v) => (v === row.name ? null : row.name))}
                 readOnly={readOnly}
+                assignmentReady={assignmentReady && row.slots.length === row.blocks}
               />
             ))}
           </ul>
@@ -185,42 +200,58 @@ export function SalonDetallePage({ basePath, readOnly = false }: { basePath: str
   );
 }
 
-function CourseRow({ row, classId, teacher, open, onToggle, readOnly }: {
+function QueryNotice({ label, query }: { label: string; query: { isError: boolean; data: unknown; isFetching: boolean; refetch: () => unknown } }) {
+  if (!query.isError) return null;
+  return <Alert tone="danger"><div className="flex flex-wrap items-center justify-between gap-3"><span>No se pudo {query.data === undefined ? "cargar" : "actualizar"} {label}.{query.data !== undefined && " Se muestran los últimos datos recibidos; las asignaciones están bloqueadas hasta actualizar."}</span><Button size="sm" variant="secondary" loading={query.isFetching} onClick={() => { query.refetch(); }}>Reintentar {label}</Button></div></Alert>;
+}
+
+function CourseRow({ row, classId, teacher, open, onToggle, readOnly, assignmentReady }: {
   row: { course?: Course; name: string; slots: Slot[] };
   classId: string;
   teacher?: ClassTeacher;
   open: boolean;
   onToggle: () => void;
   readOnly: boolean;
+  assignmentReady: boolean;
 }) {
-  const candidates = useAvailableTeachers(open ? row.course?.id : undefined, row.slots);
-  const { assign, unassign } = useAssignmentMutations();
+  const [page, setPage] = useState(1);
+  const candidates = useAvailableTeachers(open && !readOnly && assignmentReady ? row.course?.id : undefined, row.slots, page, 20, classId);
+  const { assign, unassign, replace } = useAssignmentMutations();
   const [busy, setBusy] = useState<string | null>(null);
+  const sending = useRef(false);
+  const [error, setError] = useState<string | null>(null);
 
   const choose = async (teacherId: string) => {
+    if (readOnly || sending.current || !assignmentReady || !row.course || candidates.isError || candidates.isFetching) return;
+    sending.current = true;
     setBusy(teacherId);
+    setError(null);
     try {
-      if (teacher) await unassign.mutateAsync({ teacherId: teacher.teacherId, classId });
-      await assign.mutateAsync({ teacherId, classId });
+      if (teacher) await replace.mutateAsync({ teacherId, classId, courseId: row.course.id, expectedTeacherId: teacher.teacherId });
+      else await assign.mutateAsync({ teacherId, classId });
       toast.success(`Docente asignado a ${row.name}`);
       onToggle();
     } catch (error) {
-      toast.error(apiErrorMessage(error, "No se pudo asignar el docente"));
+      setError(apiErrorMessage(error, "No se pudo asignar el docente. Actualiza la información antes de volver a elegir."));
     } finally {
       setBusy(null);
+      sending.current = false;
     }
   };
 
   const removeTeacher = async () => {
-    if (!teacher) return;
+    if (!teacher || readOnly || sending.current || !assignmentReady) return;
+    sending.current = true;
     setBusy("remove");
+    setError(null);
     try {
       await unassign.mutateAsync({ teacherId: teacher.teacherId, classId });
       toast.success(`${row.name} quedó sin docente`);
     } catch (error) {
-      toast.error(apiErrorMessage(error, "No se pudo quitar el docente"));
+      setError(apiErrorMessage(error, "No se pudo quitar el docente"));
     } finally {
       setBusy(null);
+      sending.current = false;
     }
   };
 
@@ -239,29 +270,37 @@ function CourseRow({ row, classId, teacher, open, onToggle, readOnly }: {
           </div>
         </div>
         {!readOnly && (
-          <Button size="sm" variant={teacher ? "secondary" : "primary"} aria-expanded={open} onClick={onToggle}>
+          <Button size="sm" variant={teacher ? "secondary" : "primary"} disabled={Boolean(busy) || !assignmentReady || !row.course} aria-expanded={open} onClick={onToggle}>
             {open ? "Cerrar" : teacher ? "Cambiar" : "Asignar"}
           </Button>
         )}
       </div>
+      {error && <Alert tone="danger">{error}</Alert>}
       {open && (
         <div className="flex flex-col gap-2 pb-3">
           <span className="text-xs text-ink-500">Docentes de {row.name} libres en esos {row.slots.length} bloques</span>
-          {candidates.isLoading && <Skeleton className="h-12" />}
-          {candidates.data?.data.length === 0 && <Alert tone="warn">No hay docentes disponibles para todos esos bloques.</Alert>}
-          {candidates.data?.data.slice(0, 8).map((c) => (
+          {!assignmentReady && <Alert tone="warn">Actualiza los datos del salón antes de asignar docentes.</Alert>}
+          {candidates.isFetching && <p role="status">Cargando docentes de la página {page}…</p>}
+          {candidates.isError && <Alert tone="danger"><span>No se pudieron cargar los candidatos.</span> <Button size="sm" variant="secondary" loading={candidates.isFetching} onClick={() => { void candidates.refetch(); }}>Reintentar candidatos</Button></Alert>}
+          {!candidates.isError && !candidates.isFetching && candidates.data?.data.length === 0 && <Alert tone="warn">{page === 1 ? "No hay docentes disponibles para todos esos bloques." : "No hay más docentes."}</Alert>}
+          {assignmentReady && !candidates.isError && !candidates.isFetching && candidates.data?.data.map((c) => (
             <div key={c.id} className="flex items-center justify-between gap-2 rounded-[10px] border border-line bg-white px-3 py-2">
               <div className="flex min-w-0 flex-col">
                 <strong className="truncate text-[13px]">{fullName(c)}</strong>
                 <span className="truncate text-xs text-ink-500">{c.email}</span>
               </div>
-              <Button size="sm" loading={busy === c.id} disabled={Boolean(busy)} onClick={() => choose(c.id)}>
+              <Button size="sm" loading={busy === c.id} disabled={Boolean(busy)} onClick={() => choose(c.id)} aria-label={`Asignar a ${fullName(c)}`}>
                 Asignar
               </Button>
             </div>
           ))}
+          <nav aria-label={`Páginas de docentes de ${row.name}`} className="flex flex-wrap items-center justify-between gap-2">
+            <Button size="sm" variant="secondary" disabled={page === 1 || Boolean(busy) || candidates.isFetching} onClick={() => setPage(value => value - 1)}>Anterior</Button>
+            <span className="text-xs" aria-live="polite">Página {page}</span>
+            <Button size="sm" variant="secondary" disabled={!assignmentReady || Boolean(busy) || candidates.isFetching || candidates.isError || candidates.data?.data.length !== 20} onClick={() => setPage(value => value + 1)}>Siguiente</Button>
+          </nav>
           {teacher && (
-            <Button size="sm" variant="danger" loading={busy === "remove"} onClick={removeTeacher}>
+            <Button size="sm" variant="danger" disabled={Boolean(busy) || !assignmentReady} loading={busy === "remove"} onClick={removeTeacher}>
               Quitar a {teacher.firstName.split(" ")[0]} de este curso
             </Button>
           )}

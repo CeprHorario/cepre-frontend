@@ -6,25 +6,7 @@ import { RequireRole, SessionGate } from "@/auth/guards";
 import { useAuth } from "@/auth/AuthProvider";
 import { useCoordinatorCourseName } from "@/features/coordinador/useCoordinatorCourse";
 import { ModuleLayout, type NavGroup } from "@/components/layout/ModuleLayout";
-import { AdminHub } from "@/features/admin/AdminHub";
-import { ConfiguracionPage } from "@/features/admin/configuracion/ConfiguracionPage";
-import { CursosPage } from "@/features/admin/cursos/CursosPage";
-import { AsignarSalonesPage } from "@/features/admin/docentes/AsignarSalonesPage";
-import { DocentesPage } from "@/features/admin/docentes/DocentesPage";
-import { HorarioDocentePage } from "@/features/admin/docentes/HorarioDocentePage";
-import { GenerarProcesoPage } from "@/features/admin/generar/GenerarProcesoPage";
-import { ImportarPage } from "@/features/admin/importar/ImportarPage";
-import { CoordinadoresPage } from "@/features/admin/personas/CoordinadoresPage";
-import { MonitoresPage } from "@/features/admin/personas/MonitoresPage";
-import { SupervisoresPage } from "@/features/admin/personas/SupervisoresPage";
-import { SupervisorMonitoresPage } from "@/features/admin/personas/SupervisorMonitoresPage";
-import { SalonDetallePage } from "@/features/admin/salones/SalonDetallePage";
-import { SalonesPage } from "@/features/admin/salones/SalonesPage";
-import { DocentePanel } from "@/features/docente/DocentePanel";
-import { MonitorPanel } from "@/features/monitor/MonitorPanel";
-import { SupervisorPanel } from "@/features/supervisor/SupervisorPanel";
 import { PartsPage } from "@/features/partes/PartsPage";
-import { IncidencesPage } from '@/features/incidencias/IncidencesPage';
 import { NotFoundPage } from "./NotFoundPage";
 import { RouteError } from "./RouteError";
 
@@ -76,12 +58,12 @@ function CoordinadorLayout() {
   return <ModuleLayout title={courseName ? `Coordinación · ${courseName}` : "Coordinación general"} groups={groups} />;
 }
 
-function CoordinadorDocentes() {
+function CoordinadorDocentes({ Page }: { Page: typeof import('@/features/admin/docentes/DocentesPage').DocentesPage }) {
   const { user } = useAuth();
   const general = user?.coordinatorCourseId == null;
   const courseName = useCoordinatorCourseName(user?.coordinatorCourseId);
   return (
-    <DocentesPage
+    <Page
       basePath="/coordinador/docentes"
       readOnly
       showCourseFilter={general}
@@ -90,9 +72,9 @@ function CoordinadorDocentes() {
   );
 }
 
-function CoordinadorSalones() {
+function CoordinadorSalones({ Page }: { Page: typeof import('@/features/admin/salones/SalonesPage').SalonesPage }) {
   const { user } = useAuth();
-  return <SalonesPage basePath="/coordinador/salones" readOnly allowDetail={user?.coordinatorCourseId == null} />;
+  return <Page basePath="/coordinador/salones" readOnly allowDetail={user?.coordinatorCourseId == null} />;
 }
 
 export const router = createBrowserRouter([
@@ -105,27 +87,27 @@ export const router = createBrowserRouter([
         path: "admin",
         element: <RequireRole roles={["administrador"]} />,
         children: [
-          { index: true, element: <AdminHub /> },
-          { path: "generar", element: <GenerarProcesoPage /> },
-          { path: "importar", element: <ImportarPage /> },
-          { path: "configuracion", element: <ConfiguracionPage /> },
+          { index: true, lazy: async () => ({ Component: (await import('@/features/admin/AdminHub')).AdminHub }) },
+          { path: "generar", lazy: async () => ({ Component: (await import('@/features/admin/generar/GenerarProcesoPage')).GenerarProcesoPage }) },
+          { path: "importar", lazy: async () => ({ Component: (await import('@/features/admin/importar/ImportarPage')).ImportarPage }) },
+          { path: "configuracion", lazy: async () => ({ Component: (await import('@/features/admin/configuracion/ConfiguracionPage')).ConfiguracionPage }) },
           { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> },
-          { path: "reportes", lazy: async()=>({Component:(await import('@/features/operations/ReportsPage')).ReportsPage}) }, { path: "incidencias", element: <IncidencesPage /> },
+          { path: "reportes", lazy: async()=>({Component:(await import('@/features/operations/ReportsPage')).ReportsPage}) }, { path: "incidencias", lazy: async () => ({ Component: (await import('@/features/incidencias/IncidencesPage')).IncidencesPage }) },
           {
             path: "gestionar",
             element: <GestionarLayout />,
             children: [
               { index: true, element: <Navigate to="docentes" replace /> },
-              { path: "docentes", element: <DocentesPage basePath={`${G}/docentes`} /> },
-              { path: "docentes/:id/asignar", element: <AsignarSalonesPage basePath={`${G}/docentes`} /> },
-              { path: "docentes/:id/horario", element: <HorarioDocentePage basePath={`${G}/docentes`} /> },
-              { path: "monitores", element: <MonitoresPage /> },
-              { path: "supervisores", element: <SupervisoresPage basePath={`${G}/supervisores`} /> },
-              { path: "supervisores/:id/monitores", element: <SupervisorMonitoresPage basePath={`${G}/supervisores`} /> },
-              { path: "coordinadores", element: <CoordinadoresPage /> },
-              { path: "salones", element: <SalonesPage basePath={`${G}/salones`} /> },
-              { path: "salones/:id", element: <SalonDetallePage basePath={`${G}/salones`} /> },
-              { path: "cursos", element: <CursosPage /> },
+              { path: "docentes", lazy: async () => { const { DocentesPage } = await import('@/features/admin/docentes/DocentesPage'); return { Component: () => <DocentesPage basePath={`${G}/docentes`} /> }; } },
+              { path: "docentes/:id/asignar", lazy: async () => { const { AsignarSalonesPage } = await import('@/features/admin/docentes/AsignarSalonesPage'); return { Component: () => <AsignarSalonesPage basePath={`${G}/docentes`} /> }; } },
+              { path: "docentes/:id/horario", lazy: async () => { const { HorarioDocentePage } = await import('@/features/admin/docentes/HorarioDocentePage'); return { Component: () => <HorarioDocentePage basePath={`${G}/docentes`} /> }; } },
+              { path: "monitores", lazy: async () => ({ Component: (await import('@/features/admin/personas/MonitoresPage')).MonitoresPage }) },
+              { path: "supervisores", lazy: async () => { const { SupervisoresPage } = await import('@/features/admin/personas/SupervisoresPage'); return { Component: () => <SupervisoresPage basePath={`${G}/supervisores`} /> }; } },
+              { path: "supervisores/:id/monitores", lazy: async () => { const { SupervisorMonitoresPage } = await import('@/features/admin/personas/SupervisorMonitoresPage'); return { Component: () => <SupervisorMonitoresPage basePath={`${G}/supervisores`} /> }; } },
+              { path: "coordinadores", lazy: async () => ({ Component: (await import('@/features/admin/personas/CoordinadoresPage')).CoordinadoresPage }) },
+              { path: "salones", lazy: async () => { const { SalonesPage } = await import('@/features/admin/salones/SalonesPage'); return { Component: () => <SalonesPage basePath={`${G}/salones`} /> }; } },
+              { path: "salones/:id", lazy: async () => { const { SalonDetallePage } = await import('@/features/admin/salones/SalonDetallePage'); return { Component: () => <SalonDetallePage basePath={`${G}/salones`} /> }; } },
+              { path: "cursos", lazy: async () => ({ Component: (await import('@/features/admin/cursos/CursosPage')).CursosPage }) },
             ],
           },
         ],
@@ -133,17 +115,17 @@ export const router = createBrowserRouter([
       {
         path: "docente",
         element: <RequireRole roles={["profesor", "docente"]} />,
-        children: [{ index: true, element: <DocentePanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }],
+        children: [{ index: true, lazy: async () => ({ Component: (await import('@/features/docente/DocentePanel')).DocentePanel }) }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }],
       },
       {
         path: "monitor",
         element: <RequireRole roles={["monitor"]} />,
-        children: [{ index: true, element: <MonitorPanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }],
+        children: [{ index: true, lazy: async () => ({ Component: (await import('@/features/monitor/MonitorPanel')).MonitorPanel }) }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }],
       },
       {
         path: "supervisor",
         element: <RequireRole roles={["supervisor"]} />,
-        children: [{ index: true, element: <SupervisorPanel /> }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }, { path: "incidencias", element: <IncidencesPage /> }],
+        children: [{ index: true, lazy: async () => ({ Component: (await import('@/features/supervisor/SupervisorPanel')).SupervisorPanel }) }, { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) }, { path: "partes", element: <PartsPage /> }, { path: "incidencias", lazy: async () => ({ Component: (await import('@/features/incidencias/IncidencesPage')).IncidencesPage }) }],
       },
       {
         path: "coordinador",
@@ -153,10 +135,10 @@ export const router = createBrowserRouter([
             element: <CoordinadorLayout />,
             children: [
               { index: true, element: <Navigate to="docentes" replace /> },
-              { path: "docentes", element: <CoordinadorDocentes /> },
-              { path: "docentes/:id/horario", element: <HorarioDocentePage basePath="/coordinador/docentes" readOnly /> },
-              { path: "salones", element: <CoordinadorSalones /> },
-              { path: "salones/:id", element: <SalonDetallePage basePath="/coordinador/salones" readOnly /> },
+              { path: "docentes", lazy: async () => { const { DocentesPage } = await import('@/features/admin/docentes/DocentesPage'); return { Component: () => <CoordinadorDocentes Page={DocentesPage} /> }; } },
+              { path: "docentes/:id/horario", lazy: async () => { const { HorarioDocentePage } = await import('@/features/admin/docentes/HorarioDocentePage'); return { Component: () => <HorarioDocentePage basePath="/coordinador/docentes" readOnly /> }; } },
+              { path: "salones", lazy: async () => { const { SalonesPage } = await import('@/features/admin/salones/SalonesPage'); return { Component: () => <CoordinadorSalones Page={SalonesPage} /> }; } },
+              { path: "salones/:id", lazy: async () => { const { SalonDetallePage } = await import('@/features/admin/salones/SalonDetallePage'); return { Component: () => <SalonDetallePage basePath="/coordinador/salones" readOnly /> }; } },
             ],
           },
         ],

@@ -12,6 +12,7 @@ import { Field, Input, Select, Switch, Textarea } from "@/components/ui/Field";
 import { ConfirmDialog } from "@/components/ui/Overlay";
 import { LoadingScreen } from "@/components/ui/Spinner";
 import { formatDateTime } from "@/lib/format";
+import '@/components/layout/task-workspace.css';
 
 const toLocalInput = (value: string | null) => {
   if (!value) return "";
@@ -77,8 +78,9 @@ export function ConfiguracionPage() {
 
   return (
     <SimpleLayout crumbs={[{ label: "Menú principal", to: "/admin" }, { label: "Configurar sistema" }]}>
-      <main className="mx-auto flex w-full max-w-[1200px] flex-col gap-5 px-4 py-7 sm:px-10">
+      <main className="task-workspace mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-6 sm:px-8">
         <PageHeader title="Configurar sistema" description={`Versión activa ${config.data?.version}. Los cambios aplican a todos los usuarios en unos segundos.`} />
+        {(update.error || rollback.error) && <Alert tone="danger">{apiErrorMessage(update.error ?? rollback.error, 'No se guardó la configuración')}</Alert>}
 
         <div className="grid gap-5 lg:grid-cols-2">
           <Card className="flex flex-col gap-4 p-6">
@@ -200,7 +202,7 @@ function HistoryItem({ item, current, label, onRestore }: { item: RuntimeConfig;
           Versión {item.version}
           {current ? " · actual" : ""}
         </strong>
-        <span className="text-[13px] text-ink-500">
+        <span className="break-words text-[13px] text-ink-500" style={{ overflowWrap: 'anywhere' }}>
           {item.changeReason || "Sin motivo"} · mantenimiento {item.maintenance.enabled ? "activo" : "inactivo"} · {label(item.schemaRouting.userSchema)}
         </span>
         <span className="text-xs text-ink-500">

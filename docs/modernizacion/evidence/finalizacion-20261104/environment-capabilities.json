@@ -1,0 +1,12 @@
+{
+  "tools": {
+    "orca": null,
+    "firefox": null,
+    "Xvfb": null,
+    "xdotool": null,
+    "speech-dispatcher": null,
+    "spd-say": null,
+    "chromium": "/usr/bin/chromium"
+  },
+  "displayAvailable": true
+}

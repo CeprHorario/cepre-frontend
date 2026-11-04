@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="../../../public/ceprunsa_ico.ico">
+  <title>CEPRUNSA · Propuesta oficial y validada · Parte del monitor</title>
+  <style>
+    :root {
+      --wine:#661124; --wine-hover:#7d1b32; --navy:#1c2140; --ink:#191b28; --muted:#686d80;
+      --line:#e2e3ea; --line-strong:#d2d4df; --bg:#f4f5f7; --soft:#f8f9fc;
+      --blue:#25608f; --blue-soft:#eef6fd; --green:#24614b; --green-soft:#eaf5ef;
+      --amber:#86570b; --amber-soft:#fff4dc; --red:#a92b34; --red-soft:#fff0f1;
+      --purple:#5b4389; --purple-soft:#f1edf9; --head-h:54px;
+      --shadow:0 1px 2px rgba(28,33,64,.05), 0 10px 28px rgba(28,33,64,.07);
+    }
+    * { box-sizing:border-box; }
+    [hidden] { display:none!important; }
+    html,body { height:100%; }
+    body { margin:0; height:100dvh; display:flex; flex-direction:column; background:var(--bg); color:var(--ink); font:13px/1.42 "Open Sans",Arial,sans-serif; overflow:hidden; }
+    h1,h2,h3,p { margin:0; }
+    h1,h2,h3 { font-family:Montserrat,"Open Sans",Arial,sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; }
+    :focus-visible { outline:3px solid #a37217; outline-offset:2px; }
+    .sprite { position:absolute; width:0; height:0; overflow:hidden; }
+    svg.icon { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+    .muted { color:var(--muted); }
+    small { font-size:10px; }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+    /* Development bar — not part of the product */
+    .lab { min-height:30px; padding:3px 24px; display:flex; align-items:center; gap:10px; background:var(--navy); color:#dfe1ec; font-size:10px; flex-shrink:0; }
+    .lab strong { color:white; letter-spacing:.02em; }
+    .lab a { color:white; text-decoration:none; margin-left:6px; border-bottom:1px solid rgba(255,255,255,.35); }
+    .lab a:hover { border-color:white; }
+    .lab-clock { margin-left:auto; display:flex; align-items:center; gap:8px; }
+    .lab-clock label { font-size:10px; color:#c9ccdb; }
+    .lab-clock input { width:90px; height:23px; min-height:23px; padding:0 5px; border:1px solid #626985; border-radius:4px; color:white; background:#2a3152; font-size:11px; }
+
+    .app-header { min-height:58px; padding:8px 26px; display:flex; align-items:center; gap:22px; background:white; border-bottom:1px solid var(--line); flex-shrink:0; }
+    .app-header img { width:132px; height:31px; object-fit:contain; }
+    .crumb { border-left:1px solid var(--line); padding-left:22px; font-size:11px; color:var(--muted); }
+    .crumb strong { color:var(--navy); margin-left:12px; font-weight:600; }
+    .account { margin-left:auto; display:flex; align-items:center; gap:10px; font-size:11px; text-align:right; }
+    .account .avatar { width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:#efedf5; color:var(--navy); font-weight:700; font-size:11px; }
+
+    main { flex:1; min-height:0; padding:16px 26px 10px; display:flex; flex-direction:column; gap:11px; }
+    .heading { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    h1 { font-size:26px; line-height:1.15; letter-spacing:-.7px; color:var(--navy); }
+    .heading-status { display:flex; align-items:center; gap:10px; }
+    .alert-chip { display:inline-flex; align-items:center; gap:5px; height:28px; padding:0 9px; border-radius:7px; color:var(--red); background:var(--red-soft); border:1px solid #f0cdd0; font-size:11px; font-weight:700; font-variant-numeric:tabular-nums; }
+    .alert-chip .icon { width:13px; height:13px; }
+    .now-chip { display:inline-flex; align-items:center; gap:7px; height:28px; padding:0 10px; border:1px solid #c8d9e8; border-radius:7px; background:#f6fbff; color:var(--blue); font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; }
+    .now-chip i { width:6px; height:6px; border-radius:50%; background:var(--blue); box-shadow:0 0 0 3px rgba(37,96,143,.12); }
+    .now-chip i.idle { background:#9a9eaf; box-shadow:0 0 0 3px rgba(154,158,175,.12); }
+    .now-chip small { color:#7189a2; font-size:9px; font-weight:600; }
+    @media (prefers-reduced-motion:no-preference) { .now-chip i:not(.idle) { animation:pulse 2.4s ease-in-out infinite; } @keyframes pulse { 50% { box-shadow:0 0 0 5px rgba(37,96,143,.05); } } }
+
+    .board { height:100%; min-height:0; position:relative; border:1px solid var(--line); border-top:3px solid var(--wine); border-radius:12px; background:white; box-shadow:var(--shadow); overflow:hidden; }
+    .board-scroll { height:100%; overflow:auto; overscroll-behavior:contain; scrollbar-color:#c5c8d4 transparent; scrollbar-width:thin; }
+    .context-bar { flex-shrink:0; display:flex; flex-wrap:wrap; align-items:center; gap:6px; color:#666b7e; font-size:12px; }
+    .context-item { display:inline-flex; align-items:center; gap:7px; height:34px; padding:0 11px 0 6px; white-space:nowrap; border:1px solid #e3e5ec; border-radius:7px; background:#fff; box-shadow:0 1px 1px rgba(28,33,64,.03); font-size:12.5px; }
+    .context-icon { width:23px; height:23px; display:grid; place-items:center; border-radius:5px; background:#f5f6fa; color:var(--wine); flex-shrink:0; }
+    .context-icon .icon { width:14px; height:14px; }
+    .context-item.date .context-icon { color:var(--wine); background:#faf0f3; }
+    .context-item.room .context-icon { color:#24588b; background:#edf5fc; }
+    .context-item.shift .context-icon { color:#86570b; background:#fff5e1; }
+    .context-item.monitor .context-icon { color:#5b4389; background:#f2eef9; }
+    .context-item b { color:var(--navy); font-weight:600; }
+    .context-item .context-label { color:#7b8091; margin-left:1px; }
+
+    /* Minimal vertical timeline in the left margin, outside the table card. */
+    .workspace { flex:1; min-height:0; display:grid; grid-template-columns:18px minmax(0,1fr); gap:6px; }
+    .timeline-panel { min-height:0; height:100%; position:relative; }
+    .timeline-head { height:var(--head-h); display:flex; align-items:center; justify-content:center; color:#a0a4b4; }
+    .timeline-head .icon { width:12px; height:12px; }
+    .timeline-track { position:absolute; top:var(--head-h); bottom:0; left:0; right:0; }
+    .timeline-fill { position:absolute; left:7px; width:4px; border-radius:2px; background:#596074; z-index:2; }
+    .timeline-fill.past { background:#596074; }
+    .timeline-fill.current { background:var(--blue); box-shadow:0 0 0 1px rgba(37,96,143,.1); }
+    .timeline-fill.future { background:#d5d8e1; }
+    .timeline-fill.break { left:7px; width:4px; background:#b7bbc7; z-index:1; }
+    .timeline-fill.break.future { background:#e8eaf0; }
+    .timeline-dot { position:absolute; left:3px; width:12px; height:12px; border-radius:50%; background:var(--blue); border:2px solid var(--bg); box-shadow:0 0 0 1px var(--blue); z-index:3; }
+
+    table { width:100%; min-width:1240px; height:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; font-size:12px; }
+    col.c-num { width:4%; } col.c-scheduled { width:8%; } col.c-real { width:8.5%; } col.c-course { width:14%; } col.c-teacher { width:16.5%; } col.c-state { width:15%; } col.c-notes { width:20%; } col.c-capture { width:7%; }
+    thead th { padding:0 7px; background:#fafbfd; color:#626779; font-size:10px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; text-align:center; border-bottom:1px solid var(--line); position:sticky; z-index:5; }
+    thead tr:first-child th { top:0; height:25px; }
+    thead tr:last-child th { top:25px; height:29px; }
+    thead th + th { border-left:1px solid #eff0f5; }
+    .th-content { display:inline-flex; align-items:center; justify-content:center; gap:4px; }
+    .th-content.center { justify-content:center; width:100%; }
+    .info-dot { display:inline-grid; place-items:center; width:14px; height:14px; color:#b1b4c1; }
+    .info-dot .icon { width:10px; height:10px; }
+    th:hover .info-dot { color:var(--wine); }
+    thead th.group { text-align:center; color:#5c6175; border-left:1px solid var(--line-strong); border-bottom:1px solid var(--line-strong); }
+    thead tr:last-child th { text-align:center; color:#767b8d; font-size:9.5px; font-weight:700; border-left:1px solid var(--line-strong); border-top:1px solid var(--line-strong); }
+    .th-num { text-align:center; }
+
+    tbody tr { height:calc((100% - var(--head-h)) / 7); }
+    tbody td { padding:7px 10px; border-bottom:1px solid #ecedf3; vertical-align:middle; overflow:hidden; }
+    tbody tr:last-child td { border-bottom:0; }
+    tbody tr td + td { border-left:1px solid #f1f2f6; }
+    tbody tr:hover td { background:#fbfbfd; }
+    tbody tr.current td { background:var(--blue-soft); }
+    tbody tr.current:hover td { background:#e8f2fb; }
+    tbody tr.current td:first-child { box-shadow:inset 3px 0 var(--blue); }
+
+    .num-cell { display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .row-num { width:27px; height:27px; display:grid; place-items:center; border-radius:50%; background:#f0f1f6; color:var(--navy); font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; }
+    tr.current .row-num { background:var(--blue); color:white; box-shadow:0 0 0 4px rgba(37,96,143,.11); }
+    .row-alert { color:var(--red); display:inline-flex; }
+    .row-alert .icon { width:12px; height:12px; }
+
+    .time-text { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; color:var(--navy); font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600; }
+    .time-text.soft { color:#5d6275; font-weight:500; }
+    .time-text .sep { color:#b3b6c3; font-weight:400; }
+    .time-text .missing { color:var(--red); border-bottom:1px dashed #d5979c; }
+    .time-text.small { font-size:11px; }
+
+    button.cell-btn { width:calc(100% + 12px); min-height:38px; margin:-5px -6px; padding:5px 6px; display:flex; align-items:center; gap:6px; border:0; border-radius:6px; background:transparent; color:inherit; text-align:left; font-weight:400; }
+    button.cell-btn:hover { background:#f2f3f8; }
+    tr.current button.cell-btn:hover { background:#dfedf9; }
+    .cell-btn .cell-pencil { margin-left:auto; color:#979bab; opacity:0; transition:opacity .12s; }
+    .cell-btn:hover .cell-pencil, .cell-btn:focus-visible .cell-pencil { opacity:1; }
+    .cell-pencil .icon { width:12px; height:12px; }
+    .alert-ico { color:var(--red); display:inline-flex; flex-shrink:0; }
+    .alert-ico .icon { width:13px; height:13px; }
+
+    .course-cell { display:flex; align-items:center; gap:8px; min-width:0; }
+    .course-code { width:34px; height:30px; display:grid; place-items:center; border-radius:7px; font-size:10px; font-weight:800; letter-spacing:.02em; flex-shrink:0; }
+    .course-code.blue { color:#24588b; background:#e9f2fb; }
+    .course-code.green { color:#24614b; background:#e9f5ef; }
+    .course-code.wine { color:var(--wine); background:#f9edf0; }
+    .course-code.amber { color:#86570b; background:#fff5e1; }
+    .course-name { color:var(--navy); font-size:13px; font-weight:600; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+    .person { display:flex; align-items:center; gap:7px; min-width:0; }
+    .person-code { width:34px; height:30px; border-radius:7px; display:grid; place-items:center; flex-shrink:0; font-size:10px; font-weight:800; letter-spacing:.02em; }
+    .av-1 { color:#24588b; background:#e9f2fb; } .av-2 { color:#24614b; background:#e9f5ef; } .av-3 { color:var(--wine); background:#f9edf0; } .av-4 { color:#86570b; background:#fff5e1; }
+    .person-copy { min-width:0; }
+    .person-name { display:block; color:var(--navy); font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .person-mail { display:block; margin-top:1px; color:#7b8091; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .pill { display:inline-flex; align-items:center; gap:4px; height:23px; padding:0 7px; border-radius:5px; font-size:10.5px; font-weight:700; white-space:nowrap; }
+    .pill .icon { width:11px; height:11px; }
+    .pill.n { color:var(--green); background:var(--green-soft); }
+    .pill.t { color:var(--amber); background:var(--amber-soft); }
+    .pill.sd { color:var(--red); background:var(--red-soft); }
+    .pill.rn { color:var(--purple); background:var(--purple-soft); }
+    .pill.re { color:#8d2530; background:#fbe9ec; }
+    .pill.empty { height:23px; border:1px dashed #c6c9d4; background:transparent; color:#8a8e9f; font-weight:600; }
+    .pill.empty.due { border-color:#d5979c; color:var(--red); background:var(--red-soft); }
+    .state-stack { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; max-width:100%; }
+    .replacement-line { display:flex; align-items:center; gap:4px; margin-top:2px; min-width:0; width:100%; color:var(--purple); font-size:9.5px; }
+    .replacement-line .src { width:14px; height:14px; display:grid; place-items:center; border-radius:50%; background:var(--purple-soft); flex-shrink:0; }
+    .replacement-line .src .icon { width:9px; height:9px; }
+    .replacement-line .src.proposed { color:var(--amber); background:var(--amber-soft); }
+    .replacement-line .mail { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:10px; }
+    .replacement-line .mail.pending { color:var(--red); }
+
+    .mini-notes { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .mini-note { display:flex; align-items:center; gap:4px; min-width:0; color:#696e80; font-size:10.5px; line-height:1.3; }
+    .mini-note .icon { width:11px; height:11px; color:#5f6478; flex-shrink:0; }
+    .mini-note span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mini-note.student .icon { color:var(--blue); }
+    .mini-note.teacher .icon { color:var(--purple); }
+    .mini-note.classroom .icon { color:var(--green); }
+    .notes-empty { display:inline-flex; align-items:center; gap:5px; color:#9a9eae; font-size:10px; }
+    .notes-empty .plus-dot { width:18px; height:18px; display:grid; place-items:center; border:1px dashed #b9bdc9; border-radius:50%; background:#fbfbfd; }
+    .notes-empty .plus-dot .icon { width:10px; height:10px; color:#7f8496; }
+    .note-more { display:inline-block; margin-top:2px; color:var(--wine); font-size:9px; font-weight:700; }
+
+    tbody td.cap-cell { padding:5px 6px; text-align:center; }
+    .cap-wrap { position:relative; width:100%; aspect-ratio:16/9; margin:auto; }
+    .thumb { width:100%; height:100%; padding:0; display:block; border:1px solid var(--line-strong); border-radius:6px; overflow:hidden; background:#202638; }
+    .thumb img { width:100%; height:100%; display:block; object-fit:cover; }
+    .thumb .zoom-hint { position:absolute; inset:0; display:grid; place-items:center; background:rgba(20,25,42,.42); color:white; opacity:0; transition:opacity .13s; border-radius:5px; }
+    .thumb .zoom-hint .icon { width:16px; height:16px; }
+    .thumb:hover .zoom-hint, .thumb:focus-visible .zoom-hint { opacity:1; }
+    .thumb-edit { position:absolute; top:-5px; right:-5px; width:20px; height:20px; padding:0; display:grid; place-items:center; border:1px solid var(--line-strong); border-radius:50%; background:white; color:var(--navy); box-shadow:0 1px 4px rgba(28,33,64,.16); opacity:.82; transform:scale(.94); transition:opacity .12s,transform .12s,background .12s; z-index:2; }
+    .cap-wrap:hover .thumb-edit, .thumb-edit:focus-visible { opacity:1; transform:scale(1.05); }
+    .thumb-edit:hover { background:#f8f4f6; }
+    .thumb-edit .icon { width:10px; height:10px; }
+    .empty-cap { width:100%; aspect-ratio:16/9; margin:auto; padding:0; display:grid; place-items:center; border:1px dashed #c6c9d4; border-radius:6px; background:#fcfcfe; color:#9da1b1; }
+    .empty-cap .icon { width:17px; height:17px; }
+    .empty-cap:hover { border-color:var(--wine); color:var(--wine); background:#fdf8fa; }
+    .empty-cap.due { border-color:#d5979c; background:var(--red-soft); color:var(--red); }
+    .empty-cap .cap-alert { position:absolute; }
+    .cap-wrap.due { position:relative; }
+
+    .board-foot { flex-shrink:0; min-height:15px; display:flex; align-items:center; justify-content:space-between; gap:12px; color:#9195a6; font-size:9px; padding:0 2px; }
+
+    /* Tooltips: secondary help only, delayed, anchored near the pointer. */
+    #tooltip { position:fixed; z-index:120; max-width:250px; padding:7px 9px; border-radius:6px; background:#1c2140; color:white; font-size:10.5px; line-height:1.35; box-shadow:0 8px 22px rgba(20,25,42,.22); pointer-events:none; opacity:0; transform:translateY(2px); transition:opacity .12s,transform .12s; }
+    #tooltip.show { opacity:1; transform:none; }
+
+    /* Dialogs stay deliberately small. */
+    dialog { padding:0; border:1px solid var(--line); border-radius:14px; width:min(590px,calc(100% - 28px)); max-height:90dvh; color:var(--ink); box-shadow:0 24px 70px rgba(20,25,42,.24); }
+    dialog[open] { display:flex; flex-direction:column; }
+    dialog::backdrop { background:rgba(24,29,52,.48); backdrop-filter:blur(1.5px); }
+    .modal-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:18px 20px 14px; border-bottom:1px solid var(--line); flex-shrink:0; }
+    .modal-head h2 { font-size:20px; line-height:1.15; letter-spacing:-.4px; }
+    .modal-head p { margin-top:4px; color:var(--muted); font-size:11px; }
+    .icon-btn { width:30px; height:30px; min-height:30px; padding:0; display:inline-grid; place-items:center; border:1px solid transparent; border-radius:7px; background:transparent; color:#707487; }
+    .icon-btn:hover { color:var(--navy); background:#f0f1f6; border-color:var(--line); }
+    .icon-btn .icon { width:16px; height:16px; }
+    .modal-body { padding:18px 20px; overflow:auto; min-height:0; }
+    .modal-foot { display:flex; justify-content:flex-end; gap:8px; padding:12px 20px; border-top:1px solid var(--line); flex-shrink:0; }
+    .modal-foot button { min-height:37px; padding:7px 14px; border-radius:7px; border:1px solid var(--line-strong); background:white; color:var(--navy); font-size:12px; font-weight:600; }
+    .modal-foot button:hover { background:#f6f7fa; }
+    .modal-foot .primary { padding-inline:18px; border-color:var(--wine); background:var(--wine); color:white; }
+    .modal-foot .primary:hover { background:var(--wine-hover); }
+    .modal-foot .primary:disabled { opacity:.5; cursor:default; }
+    .modal-error { margin-top:11px; padding:8px 10px; border-radius:6px; background:var(--red-soft); color:var(--red); font-size:11px; }
+
+    .time-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .big-field span { display:block; margin-bottom:6px; color:var(--muted); font-size:11px; font-weight:600; }
+    .big-field input { width:100%; height:48px; padding:0 12px; border:1px solid #b9bdc9; border-radius:8px; color:var(--navy); background:white; font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
+    .big-field input:focus { border-color:var(--wine); }
+    .scheduled-line { margin-top:13px; display:flex; align-items:center; gap:6px; color:#8b8fa1; font-size:10.5px; font-variant-numeric:tabular-nums; }
+    .scheduled-line .icon { width:12px; height:12px; }
+    .inline-alert { margin-top:7px; display:flex; align-items:center; gap:5px; color:var(--red); font-size:10px; }
+
+    .state-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+    .state-option { min-height:68px; padding:10px 8px; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:6px; border:1px solid var(--line); border-radius:9px; background:white; text-align:left; color:var(--navy); }
+    .state-option:hover { border-color:#c4c7d3; background:#fbfbfd; }
+    .state-option .state-ico { width:24px; height:24px; display:grid; place-items:center; border-radius:6px; background:#f2f3f7; color:#6e7284; }
+    .state-option .state-ico .icon { width:13px; height:13px; }
+    .state-option strong { font-size:11px; line-height:1.2; font-weight:700; }
+    .state-option small { color:#9a9eae; font-size:9px; font-weight:600; }
+    .state-option[aria-checked="true"] { border-color:var(--wine); box-shadow:inset 0 0 0 1px var(--wine); background:#fdf8fa; }
+    .state-option[aria-checked="true"] .state-ico { color:white; background:var(--wine); }
+    .state-option.n .state-ico { color:var(--green); background:var(--green-soft); }
+    .state-option.t .state-ico { color:var(--amber); background:var(--amber-soft); }
+    .state-option.sd .state-ico { color:var(--red); background:var(--red-soft); }
+    .state-option.rn .state-ico { color:var(--purple); background:var(--purple-soft); }
+    .state-option.re .state-ico { color:#8d2530; background:#fbe9ec; }
+    .state-option.empty .state-ico { border:1px dashed #c6c9d4; background:transparent; color:#9a9eae; }
+    .state-option[aria-checked="true"] .state-ico { color:white; background:var(--wine); border-color:var(--wine); }
+    .replace-panel { margin-top:15px; padding:13px 14px; border:1px solid #ddd4eb; border-radius:9px; background:#fbf9fe; }
+    .replace-panel label { display:block; margin-bottom:6px; color:#5c4a7d; font-size:11px; font-weight:600; }
+    .replace-panel input { width:100%; height:38px; padding:0 11px; border:1px solid #c9c0d9; border-radius:7px; background:white; color:var(--navy); font-size:12px; }
+    .replace-note { margin-top:7px; display:flex; align-items:center; gap:5px; color:var(--purple); font-size:10px; }
+    .replace-note .icon { width:11px; height:11px; }
+    .replace-note.proposed { color:var(--amber); }
+
+    .notes-toolbar { display:flex; align-items:center; gap:7px; margin-bottom:9px; }
+    .notes-count { color:#8b8fa1; font-size:10px; font-weight:600; }
+    .notes-sort { display:inline-flex; align-items:center; gap:3px; color:#a0a4b4; font-size:9px; }
+    .notes-sort .icon { width:11px; height:11px; }
+    .notes-toolbar .icon-btn { margin-left:auto; width:28px; height:28px; min-height:28px; border:1px solid var(--line); background:white; }
+    .notes-list { display:flex; flex-direction:column; gap:8px; }
+    .note-card { display:flex; align-items:flex-start; gap:9px; padding:10px 11px; border:1px solid var(--line); border-radius:8px; background:white; }
+    .note-card .note-type { width:27px; height:27px; display:grid; place-items:center; border-radius:7px; flex-shrink:0; }
+    .note-type.teacher { color:var(--purple); background:var(--purple-soft); }
+    .note-type.student { color:var(--blue); background:#eaf3fb; }
+    .note-type.classroom { color:var(--green); background:var(--green-soft); }
+    .note-type .icon { width:13px; height:13px; }
+    .note-copy { min-width:0; flex:1; }
+    .note-top { display:flex; align-items:baseline; gap:7px; }
+    .note-who { color:var(--navy); font-size:11px; font-weight:700; }
+    .note-time { margin-left:auto; color:#85899a; font-size:9.5px; font-variant-numeric:tabular-nums; }
+    .note-text { margin-top:3px; color:#5f6375; font-size:11.5px; line-height:1.4; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .note-actions { display:flex; gap:1px; margin-left:auto; flex-shrink:0; }
+    .note-actions .icon-btn { width:24px; height:24px; min-height:24px; }
+    .note-actions .icon-btn .icon { width:12px; height:12px; }
+    .notes-empty-state { padding:20px 0; text-align:center; color:#9a9eae; font-size:11px; }
+    .composer { margin-bottom:11px; padding:12px; border:1px solid #e2d6e2; border-radius:9px; background:#fdfafc; }
+    .composer-top { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:8px; }
+    .type-switch { display:flex; gap:3px; padding:2px; border:1px solid var(--line); border-radius:7px; background:white; }
+    .type-switch button { width:auto; height:29px; min-height:29px; padding:0 8px; display:flex; align-items:center; justify-content:center; gap:4px; border:0; border-radius:5px; background:transparent; color:#85899b; font-size:10.5px; font-weight:600; }
+    .type-switch button:hover { background:#f3f4f8; color:var(--navy); }
+    .type-switch button[aria-checked="true"] { background:var(--navy); color:white; }
+    .type-switch button .icon { width:13px; height:13px; }
+    .composer-mode { margin-left:auto; color:#a0a4b4; font-size:9px; }
+    .composer textarea { width:100%; min-height:70px; max-height:130px; padding:8px 10px; border:1px solid #c8cbd6; border-radius:7px; background:white; color:var(--ink); font-size:12px; line-height:1.4; resize:vertical; }
+    .composer textarea:focus { border-color:var(--wine); }
+    .student-names { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+    .student-names input { height:35px; padding:0 9px; border:1px solid #c8cbd6; border-radius:6px; background:white; font-size:11px; }
+    .composer-actions { display:flex; justify-content:flex-end; gap:5px; margin-top:9px; }
+    .composer-actions .icon-btn { width:29px; height:29px; min-height:29px; border:1px solid var(--line-strong); background:white; }
+    .composer-actions .icon-btn:hover { background:#f4f5f9; }
+    .composer-actions .primary-icon { border-color:var(--wine); background:var(--wine); color:white; }
+    .composer-actions .primary-icon:hover { background:var(--wine-hover); color:white; }
+    .composer-error { margin-top:7px; color:var(--red); font-size:10px; }
+
+    .capture-stage { position:relative; min-height:250px; display:grid; place-items:center; border:1px solid var(--line); border-radius:10px; background:#fbfbfd; overflow:hidden; transition:border-color .12s,background .12s; }
+    .capture-stage.dragover { border:2px dashed var(--wine); background:#fdf5f8; }
+    .capture-stage.dragover::after { content:"Suelta la captura aquí"; position:absolute; inset:0; display:grid; place-items:center; background:rgba(253,245,248,.9); color:var(--wine); font-size:13px; font-weight:700; z-index:2; }
+    .capture-stage img { display:block; width:100%; max-height:300px; object-fit:contain; background:#202638; }
+    .capture-stage .stage-actions { position:absolute; top:9px; right:9px; display:flex; gap:5px; z-index:2; }
+    .stage-actions .icon-btn { width:31px; height:31px; min-height:31px; border-color:rgba(255,255,255,.25); background:rgba(20,25,42,.65); color:white; backdrop-filter:blur(3px); }
+    .stage-actions .icon-btn:hover { background:rgba(20,25,42,.9); color:white; border-color:rgba(255,255,255,.5); }
+    .dropzone { width:100%; min-height:250px; padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px; border:0; background:transparent; color:#8d91a3; text-align:center; }
+    .dropzone:hover { color:var(--wine); background:#fdf8fa; }
+    .dropzone .drop-icon { width:46px; height:46px; display:grid; place-items:center; border-radius:50%; background:white; border:1px dashed #c6c9d4; }
+    .dropzone .drop-icon .icon { width:21px; height:21px; }
+    .dropzone strong { color:#5f6375; font-size:12px; font-weight:700; }
+    .dropzone span { font-size:10.5px; }
+    .dropzone small { color:#a0a4b4; font-size:9px; }
+    .capture-meta { margin-top:9px; display:flex; align-items:center; gap:7px; flex-wrap:wrap; color:#8b8fa1; font-size:10px; }
+    .status-chip { display:inline-flex; align-items:center; gap:4px; height:21px; padding:0 7px; border-radius:5px; font-size:9.5px; font-weight:700; }
+    .status-chip .icon { width:10px; height:10px; }
+    .status-chip.associated { color:var(--green); background:var(--green-soft); }
+    .status-chip.pending { color:var(--amber); background:var(--amber-soft); }
+    .status-chip.removing { color:var(--red); background:var(--red-soft); }
+    .status-chip.empty { color:#8b8fa1; background:#f1f2f6; }
+    .file-note { margin-left:auto; color:#a0a4b4; font-size:9px; }
+
+    #preview-dialog { width:min(1120px,calc(100% - 30px)); }
+    .preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 17px; border-bottom:1px solid var(--line); flex-shrink:0; }
+    .preview-head h2 { font-size:15px; }
+    .preview-head .icon-btn { width:29px; height:29px; }
+    .preview-body { padding:12px; background:#171c2b; overflow:auto; }
+    .preview-body img { display:block; width:100%; max-height:72dvh; object-fit:contain; }
+
+    #toast { position:fixed; left:24px; bottom:22px; z-index:130; display:flex; align-items:center; gap:8px; min-height:38px; padding:0 13px; border-radius:8px; background:#1c2140; color:white; font-size:11px; font-weight:600; box-shadow:0 12px 30px rgba(20,25,42,.25); opacity:0; transform:translateY(6px); transition:opacity .18s,transform .18s; pointer-events:none; }
+    #toast.show { opacity:1; transform:none; }
+    #toast .icon { width:14px; height:14px; color:#a9e4c3; }
+
+    @media (hover:none) { .thumb-edit { opacity:1; } .cell-btn .cell-pencil { opacity:.55; } }
+    @media (max-width:1250px) { main { padding-left:18px; padding-right:18px; } .app-header { padding-left:20px; padding-right:20px; } }
+    @media (max-height:900px) {
+      .lab { min-height:26px; padding-top:1px; padding-bottom:1px; }
+      .app-header { min-height:50px; padding-top:5px; padding-bottom:5px; }
+      .app-header img { width:118px; height:28px; }
+      main { padding-top:11px; gap:8px; }
+      h1 { font-size:22px; }
+      .heading-status { gap:7px; }
+      .alert-chip,.now-chip { height:25px; }
+      thead tr:first-child th { height:25px; }
+      thead tr:last-child th { height:29px; top:25px; }
+      tbody td { padding:5px 8px; }
+      .row-num { width:24px; height:24px; font-size:11px; }
+      .course-code { width:31px; height:27px; font-size:9px; }
+      .course-name { font-size:12.5px; }
+      .person-code { width:31px; height:27px; font-size:9px; }
+      .person-name { font-size:12px; }
+      .person-mail { font-size:9.5px; }
+      .pill { height:21px; font-size:10.5px; }
+      .replacement-line { margin-top:3px; }
+      .mini-note { font-size:10.5px; }
+      .empty-cap .icon { width:15px; height:15px; }
+      .board-foot { min-height:12px; }
+      .now-chip small { display:none; }
+    }
+    @media (max-height:780px) and (min-width:761px) {
+      .app-header { min-height:46px; }
+      .app-header img { width:105px; }
+      .lab { display:none; }
+      tbody td { padding:4px 7px; }
+      .thumb-edit { width:18px; height:18px; }
+      .replacement-line { font-size:9px; }
+      .board-foot { display:none; }
+    }
+    @media (max-width:760px) {
+      body { height:auto; min-height:100dvh; overflow:auto; }
+      .lab { flex-wrap:wrap; gap:4px; padding:5px 14px; font-size:9px; }
+      .lab-clock { margin-left:0; width:100%; justify-content:flex-end; }
+      .app-header { gap:13px; padding:9px 15px; }
+      .app-header img { width:112px; }
+      .crumb { border:0; padding-left:0; }
+      .crumb span,.account-copy { display:none; }
+      .crumb strong { margin:0; }
+      main { flex:auto; padding:14px 12px 12px; }
+      .heading { align-items:flex-start; }
+      h1 { font-size:22px; }
+      .heading-status { flex-direction:column; align-items:flex-end; gap:5px; }
+      .context-bar { gap:5px; font-size:11px; }
+      .context-item { height:29px; padding-right:8px; }
+      .context-icon { width:19px; height:19px; }
+      .context-icon .icon { width:12px; height:12px; }
+      .workspace { flex:none; height:660px; grid-template-columns:18px minmax(0,1fr); gap:6px; }
+      .board { height:100%; }
+      .board-foot { font-size:8px; }
+      dialog { width:calc(100% - 18px); max-height:94dvh; }
+      .modal-head { padding:15px 16px 12px; }
+      .modal-head h2 { font-size:18px; }
+      .modal-body { padding:15px 16px; }
+      .modal-foot { padding:11px 16px; }
+      .state-grid { grid-template-columns:1fr 1fr; }
+      .state-option { min-height:60px; }
+      .time-grid { gap:9px; }
+      .big-field input { font-size:16px; }
+      .student-names { grid-template-columns:1fr; }
+      .capture-stage,.dropzone { min-height:210px; }
+      .capture-stage img { max-height:230px; }
+      #toast { left:12px; right:12px; bottom:12px; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-user-x" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 8h.01M15 8h.01M9 12h.01M15 12h.01M9 16h.01M15 16h.01"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H5"/><path d="m8 21-4-4 4-4"/><path d="M4 17h15"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24"><path d="M8 6h13M8 12h9M8 18h5"/><path d="M3 8V5l2 1"/></symbol>
+  </svg>
+
+  <div class="lab">
+    <span><strong>Propuesta oficial y validada · monitor</strong> · maqueta sin API · datos ficticios</span>
+    <div class="lab-clock"><label for="demo-time">Hora demo · Lima</label><input id="demo-time" type="time" value="10:17"></div>
+  </div>
+
+  <header class="app-header">
+    <img src="../../../src/assets/logo-light.png" alt="CEPRUNSA">
+    <div class="crumb"><span>Panel del monitor &nbsp;/&nbsp;</span><strong>Partes</strong></div>
+    <div class="account"><span class="account-copy">Camila Flores<br><span class="muted">Monitor</span></span><span class="avatar" aria-hidden="true">CF</span></div>
+  </header>
+
+  <main>
+    <div class="heading">
+      <div>
+        <h1>Parte diario</h1>
+      </div>
+      <div class="heading-status">
+        <span class="alert-chip" id="alert-chip" hidden></span>
+        <span class="now-chip" id="now-chip"></span>
+      </div>
+    </div>
+    <div class="context-bar" aria-label="Contexto de la jornada">
+      <span class="context-item date"><span class="context-icon"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span><b>Martes 3 nov 2026</b></span>
+      <span class="context-item room"><span class="context-icon"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg></span><b>Aula / Salón 203</b></span>
+      <span class="context-item shift"><span class="context-icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span><b>Turno mañana</b></span>
+      <span class="context-item monitor"><span class="context-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span><span class="context-label">Monitor ·</span><b>Camila Flores</b></span>
+    </div>
+
+    <div class="workspace">
+      <aside class="timeline-panel" aria-label="Línea de tiempo de la jornada">
+        <div class="timeline-head" aria-hidden="true" data-tip="Línea de tiempo · horas de Lima"><svg class="icon"><use href="#i-clock"/></svg></div>
+        <div class="timeline-track" id="timeline-track" aria-hidden="true"></div>
+      </aside>
+      <section class="board" aria-label="Parte diario del monitor">
+        <div class="board-scroll" id="board-scroll">
+          <table>
+            <caption class="sr-only">Siete horas de clase. Horario programado, hora real, curso, docente, estado, observaciones y capturas de inicio y fin.</caption>
+            <colgroup><col class="c-num"><col class="c-scheduled"><col class="c-real"><col class="c-course"><col class="c-teacher"><col class="c-state"><col class="c-notes"><col class="c-capture"><col class="c-capture"></colgroup>
+            <thead>
+              <tr>
+                <th class="th-num" scope="col" rowspan="2">#</th>
+                <th scope="col" rowspan="2"><span class="th-content" data-tip="Horario planificado de la clase.">Programado <span class="info-dot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span></span></th>
+                <th scope="col" rowspan="2"><span class="th-content" data-tip="Inicio y fin registrados por el monitor.">Hora real <span class="info-dot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span></span></th>
+                <th scope="col" rowspan="2">Curso</th>
+                <th scope="col" rowspan="2">Docente</th>
+                <th scope="col" rowspan="2"><span class="th-content" data-tip="Normal, tardanza, sin docente o reemplazo.">Estado <span class="info-dot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span></span></th>
+                <th scope="col" rowspan="2"><span class="th-content" data-tip="Notas para docente, alumno o aula. Primero las más recientes.">Observaciones <span class="info-dot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span></span></th>
+                <th class="group" colspan="2" scope="colgroup"><span class="th-content center" data-tip="Clic en la imagen para ampliar; lápiz para cambiarla.">Capturas <span class="info-dot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span></span></th>
+              </tr>
+              <tr><th scope="col">Inicio</th><th scope="col">Fin</th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+    <div class="board-foot"><span>Línea de tiempo · horas de Lima</span></div>
+  </main>
+
+  <dialog id="edit-dialog" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <div><h2 id="modal-title"></h2><p id="modal-context"></p></div>
+      <button type="button" class="icon-btn" id="modal-close" aria-label="Cerrar" data-tip="Cerrar"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot"><button type="button" id="modal-cancel">Descartar</button><button type="button" class="primary" id="modal-save">Guardar</button></div>
+  </dialog>
+
+  <dialog id="preview-dialog" aria-labelledby="preview-title">
+    <div class="preview-head"><h2 id="preview-title"></h2><button type="button" class="icon-btn" id="preview-close" aria-label="Cerrar vista previa" data-tip="Cerrar"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></div>
+    <div class="preview-body"><img id="preview-image" alt="Captura ampliada"></div>
+  </dialog>
+
+  <input id="capture-file" type="file" accept="image/png" hidden>
+  <div id="tooltip" role="tooltip" aria-hidden="true"></div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+    // ponytail: maqueta local de siete horas; integrar con useParts y validaciones del servidor, no con estos datos ni relojes de demostración.
+    const $ = id => document.getElementById(id);
+    const esc = text => String(text ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const icon = (name, cls = '') => `<svg class="icon ${cls}" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
+    const minutes = time => Number(time.slice(0,2)) * 60 + Number(time.slice(3,5));
+    const timeNow = () => $('demo-time').value || '10:17';
+
+    const STATE = {
+      N:  { label:'Normal',                 short:'Normal',                 icon:'check',  cls:'n'  },
+      T:  { label:'Tardanza',               short:'Tardanza',               icon:'clock',  cls:'t'  },
+      SD: { label:'Sin docente',            short:'Sin docente',            icon:'user-x', cls:'sd' },
+      RN: { label:'Reemplazo normal',       short:'Reemplazo normal',       icon:'swap',   cls:'rn' },
+      RE: { label:'Reemplazo de emergencia',short:'Emergencia',             icon:'alert',  cls:'re' }
+    };
+    const COURSE = {
+      'Razonamiento matemático': { code:'RM',  cls:'blue' },
+      'Biología':            { code:'BIO', cls:'green' },
+      'Matemática':          { code:'MAT', cls:'wine' },
+      'Filosofía':           { code:'FIL', cls:'amber' }
+    };
+    const AVATAR = ['av-1','av-2','av-3','av-4'];
+
+    const records = [
+      { id:1, start:'07:00', end:'07:40', course:'Razonamiento matemático', teacher:'Valeria Soto', email:'valeria.soto@example.invalid', actualStart:'07:00', actualEnd:'07:40', state:'N', images:[null,null], notes:[] },
+      { id:2, start:'07:45', end:'08:25', course:'Razonamiento matemático', teacher:'Valeria Soto', email:'valeria.soto@example.invalid', actualStart:'07:45', actualEnd:'08:25', state:'N', images:[null,null], notes:[
+        { id:'n2', target:'TEACHER', description:'Retomó la explicación tras una pausa breve de conexión.', createdAt:'08:12' }
+      ]},
+      { id:3, start:'08:30', end:'09:10', course:'Biología', teacher:'Lucía Paredes', email:'lucia.paredes@example.invalid', actualStart:'08:30', actualEnd:'', state:'N', images:[null,null], notes:[] },
+      { id:4, start:'09:15', end:'09:55', course:'Biología', teacher:'Lucía Paredes', email:'lucia.paredes@example.invalid', actualStart:'09:15', actualEnd:'09:55', state:'RN', imageReplacement:{ email:'mateo.arias@example.invalid', source:'system' }, images:[null,null], notes:[
+        { id:'n4', target:'CLASSROOM', description:'Se cambió el equipo de audio del aula.', createdAt:'09:32' }
+      ]},
+      { id:5, start:'10:00', end:'10:40', course:'Matemática', teacher:'Ana Torres', email:'ana.torres@example.invalid', actualStart:'', actualEnd:'', state:'', imageReplacement:null, images:[null,null], notes:[
+        { id:'n5a', target:'TEACHER', description:'Informó problemas de conexión al inicio del bloque.', createdAt:'10:05' },
+        { id:'n5b', target:'STUDENT', firstName:'Diego', lastName:'Ramírez', description:'Solicitó apoyo para acceder al enlace de clase.', createdAt:'10:12' }
+      ]},
+      { id:6, start:'10:45', end:'11:25', course:'Matemática', teacher:'Ana Torres', email:'ana.torres@example.invalid', actualStart:'', actualEnd:'', state:'', imageReplacement:null, images:[null,null], notes:[] },
+      { id:7, start:'11:30', end:'12:10', course:'Filosofía', teacher:'Daniel Cruz', email:'daniel.cruz@example.invalid', actualStart:'', actualEnd:'', state:'RE', imageReplacement:{ email:'elena.salas@example.invalid', source:'proposed' }, images:[null,null], notes:[] }
+    ];
+
+    let editing = null;                  // {kind,id,slot,work,...}
+    let previewTrigger = null;
+    let composer = null;                 // {mode:'add'|'edit', noteId, type, description, firstName, lastName}
+    let toastTimer = null;
+
+    function syntheticImage(record, slot) {
+      const title = `${record.course} · ${slot === 0 ? record.start : record.end}`;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" fill="#202638"/><rect width="640" height="32" fill="#151b2a"/><text x="18" y="22" fill="#ffffff" font-size="13" font-family="Arial">CEPRUNSA · ${esc(title)}</text><rect x="16" y="48" width="392" height="254" rx="4" fill="#f1f4f8"/><text x="38" y="92" fill="#1c2140" font-size="25" font-family="Arial">${esc(record.course)}</text><path d="M40 128H374M40 157H310M40 186H350M40 215H295" stroke="#b7c3d1" stroke-width="8"/>${Array.from({length:6},(_,i)=>`<rect x="${423+(i%2)*101}" y="${49+Math.floor(i/2)*86}" width="90" height="74" rx="4" fill="${['#405363','#4d4564','#3e605c'][i%3]}"/><circle cx="${468+(i%2)*101}" cy="${76+Math.floor(i/2)*86}" r="13" fill="#81909c"/><text x="${468+(i%2)*101}" y="${109+Math.floor(i/2)*86}" text-anchor="middle" fill="#ffffff" font-size="10" font-family="Arial">Ejemplo ${i+1}</text>`).join('')}<rect y="320" width="640" height="40" fill="#661124"/><text x="320" y="346" text-anchor="middle" fill="#ffffff" font-size="17" font-family="Arial">CAPTURA SINTÉTICA · HORA ${record.id}</text></svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+    // Generate only when first needed, so the demo starts with empty captures that can be edited.
+    function imageFor(record, slot) {
+      return { url:record.images[slot] || null };
+    }
+    function ensureImage(record, slot) {
+      if (!record.images[slot]) record.images[slot] = syntheticImage(record, slot);
+    }
+
+    const activeHour = () => records.find(r => minutes(timeNow()) >= minutes(r.start) && minutes(timeNow()) < minutes(r.end));
+    const sortedNotes = r => [...r.notes].sort((a,b) => minutes(b.createdAt) - minutes(a.createdAt));
+    const isReplacement = state => state === 'RN' || state === 'RE';
+
+    function pendingFields(record) {
+      const now = minutes(timeNow());
+      const out = [];
+      if (now >= minutes(record.start) && !record.actualStart) out.push({ key:'start', label:'inicio real' });
+      if (now >= minutes(record.start) && !record.state) out.push({ key:'state', label:'estado' });
+      if (now >= minutes(record.end) && !record.actualEnd) out.push({ key:'end', label:'fin real' });
+      if (now >= minutes(record.start) && !imageFor(record,0).url) out.push({ key:'cap0', label:'captura de inicio' });
+      if (now >= minutes(record.end) && !imageFor(record,1).url) out.push({ key:'cap1', label:'captura de fin' });
+      return out;
+    }
+    function dueByKey(record, key) {
+      return pendingFields(record).some(item => item.key === key);
+    }
+    function initials(name) {
+      return name.split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join('').toUpperCase();
+    }
+    function avatarClass(name) {
+      let hash = 0;
+      for (const char of name) hash = (hash + char.charCodeAt(0)) % AVATAR.length;
+      return AVATAR[hash];
+    }
+    function noteTypeLabel(note) {
+      if (note.target === 'STUDENT') return 'Alumno';
+      if (note.target === 'TEACHER') return 'Docente';
+      return 'Aula';
+    }
+    function notePerson(note) {
+      return note.target === 'STUDENT' ? `${note.firstName} ${note.lastName}` : '';
+    }
+    function noteIcon(note) {
+      return note.target === 'STUDENT' ? 'users' : note.target === 'TEACHER' ? 'user' : 'building';
+    }
+    function noteClass(note) {
+      return note.target === 'STUDENT' ? 'student' : note.target === 'TEACHER' ? 'teacher' : 'classroom';
+    }
+
+    function tableRow(record) {
+      const current = activeHour()?.id === record.id;
+      const pending = pendingFields(record);
+      const course = COURSE[record.course] || { code:record.course.slice(0,3).toUpperCase(), cls:'blue' };
+      const notes = sortedNotes(record);
+      const image0 = imageFor(record,0), image1 = imageFor(record,1);
+      const state = record.state ? STATE[record.state] : null;
+      const replacement = record.state && isReplacement(record.state) ? record.imageReplacement : null;
+
+      const alertTitle = pending.length ? `${pending.length} pendiente${pending.length === 1 ? '' : 's'}: ${pending.map(p => p.label).join(', ')}` : '';
+      const number = `<span class="row-num">${record.id}</span>${pending.length ? `<span class="row-alert" data-tip="${esc(alertTitle)}" aria-label="${esc(alertTitle)}">${icon('alert')}</span>` : ''}`;
+
+      const scheduled = `<span class="time-text soft">${record.start}<span class="sep">–</span>${record.end}</span>`;
+
+      const real = `<button type="button" class="cell-btn" data-action="hours" data-id="${record.id}" aria-label="Editar hora real del bloque ${record.id}">
+        <span class="time-text"><span class="${!record.actualStart && dueByKey(record,'start') ? 'missing' : ''}">${record.actualStart || '--:--'}</span><span class="sep">–</span><span class="${!record.actualEnd && dueByKey(record,'end') ? 'missing' : ''}">${record.actualEnd || '--:--'}</span></span>
+        ${(!record.actualStart && dueByKey(record,'start')) || (!record.actualEnd && dueByKey(record,'end')) ? `<span class="alert-ico" data-tip="Hora real pendiente">${icon('alert')}</span>` : ''}
+        <span class="cell-pencil">${icon('pencil')}</span>
+      </button>`;
+
+      const teacher = `<span class="person"><span class="person-code ${avatarClass(record.teacher)}" aria-hidden="true">${initials(record.teacher)}</span><span class="person-copy"><span class="person-name">${esc(record.teacher)}</span><span class="person-mail">${esc(record.email)}</span></span></span>`;
+
+      const stateMarkup = !state
+        ? `<span class="pill empty ${dueByKey(record,'state') ? 'due' : ''}">${dueByKey(record,'state') ? icon('alert') : ''}Sin registrar</span>`
+        : `<span class="pill ${state.cls}">${icon(state.icon)}${state.short}</span>`;
+      const replacementMarkup = replacement
+        ? `<span class="replacement-line" data-tip="${esc(replacement.email || 'Falta correo')} · ${replacement.source === 'system' ? 'Programado por el sistema' : 'Propuesto · pendiente de autorización'}"><span class="mail ${!replacement.email ? 'pending' : ''}">${replacement.email ? esc(replacement.email) : 'Falta correo'}</span><span class="src ${replacement.source === 'system' ? '' : 'proposed'}">${icon(replacement.source === 'system' ? 'check' : 'clock')}</span></span>`
+        : '';
+      const stateCell = `<button type="button" class="cell-btn" data-action="state" data-id="${record.id}" aria-label="Editar estado del bloque ${record.id}"><span class="state-stack">${stateMarkup}${replacementMarkup}</span><span class="cell-pencil">${icon('pencil')}</span></button>`;
+
+      const notePreview = notes.length
+        ? `<span class="mini-notes">${notes.slice(0,2).map(note => `<span class="mini-note ${noteClass(note)}">${icon(noteIcon(note))}<span>${esc(note.description)}</span></span>`).join('')}${notes.length > 2 ? `<span class="note-more">+${notes.length - 2}</span>` : ''}</span>`
+        : `<span class="notes-empty" data-tip="Añadir observación"><span class="plus-dot">${icon('plus')}</span></span>`;
+      const notesCell = `<button type="button" class="cell-btn" data-action="notes" data-id="${record.id}" aria-label="${notes.length ? 'Editar' : 'Añadir'} observaciones del bloque ${record.id}">${notePreview}<span class="cell-pencil">${icon('pencil')}</span></button>`;
+
+      const captureCell = (image, slot) => {
+        const label = slot === 0 ? 'inicio' : 'fin';
+        const due = dueByKey(record, slot === 0 ? 'cap0' : 'cap1');
+        if (image.url) {
+          return `<div class="cap-wrap" data-slot="${slot}">
+            <button type="button" class="thumb" data-action="preview" data-id="${record.id}" data-slot="${slot}" aria-label="Ver captura de ${label} del bloque ${record.id}" data-tip="Ver captura completa">
+              <img src="${image.url}" alt="Captura de ${label} del bloque ${record.id}">
+              <span class="zoom-hint" aria-hidden="true">${icon('expand')}</span>
+            </button>
+            <button type="button" class="thumb-edit" data-action="capture" data-id="${record.id}" data-slot="${slot}" aria-label="Cambiar captura de ${label} del bloque ${record.id}" data-tip="Cambiar captura">${icon('pencil')}</button>
+          </div>`;
+        }
+        return `<button type="button" class="empty-cap ${due ? 'due' : ''}" data-action="capture" data-id="${record.id}" data-slot="${slot}" aria-label="Añadir captura de ${label} del bloque ${record.id}" data-tip="${due ? 'Captura pendiente' : 'Añadir captura'}">${due ? icon('alert') : icon('image')}</button>`;
+      };
+
+      return `<tr data-record="${record.id}" class="${current ? 'current' : ''}" ${current ? 'aria-current="time"' : ''}>
+        <td><div class="num-cell">${number}</div></td>
+        <td>${scheduled}</td>
+        <td>${real}</td>
+        <td><span class="course-cell"><span class="course-code ${course.cls}" aria-hidden="true">${course.code}</span><span class="course-name">${esc(record.course)}</span></span></td>
+        <td>${teacher}</td>
+        <td>${stateCell}</td>
+        <td>${notesCell}</td>
+        <td class="cap-cell">${captureCell(image0,0)}</td>
+        <td class="cap-cell">${captureCell(image1,1)}</td>
+      </tr>`;
+    }
+
+    function render() {
+      const now = timeNow();
+      const current = activeHour();
+      const alertRows = records.filter(record => pendingFields(record).length);
+      const alertChip = $('alert-chip');
+      if (alertRows.length) {
+        alertChip.hidden = false;
+        alertChip.innerHTML = `${icon('alert')}<b>${alertRows.length}</b>`;
+        const title = `${alertRows.length} ${alertRows.length === 1 ? 'hora' : 'horas'} con datos pendientes`;
+        alertChip.dataset.tip = title;
+        alertChip.setAttribute('aria-label', title);
+      } else {
+        alertChip.hidden = true;
+      }
+      const nowChip = $('now-chip');
+      nowChip.innerHTML = `<i class="${current ? '' : 'idle'}"></i><time>${now}</time><small>Lima</small>`;
+      nowChip.dataset.tip = current ? `En curso · ${current.course} · hasta ${current.end}` : 'Fuera de una clase';
+      nowChip.setAttribute('aria-label', `Hora actual ${now}, Lima${current ? `, en curso ${current.course}` : ''}`);
+      nowChip.hidden = false;
+
+      $('rows').innerHTML = records.map(tableRow).join('');
+      requestAnimationFrame(layoutTimeline);
+    }
+
+    function layoutTimeline() {
+      const rows = [...$('rows').children];
+      const track = $('timeline-track');
+      if (!rows.length || !track) return;
+      const trackRect = track.getBoundingClientRect();
+      if (!trackRect.height) return;
+      const rects = rows.map(row => {
+        const rect = row.getBoundingClientRect();
+        return { top:rect.top - trackRect.top, height:rect.height };
+      });
+      const now = minutes(timeNow());
+      let nowY = null;
+      let html = '';
+      records.forEach((record, index) => {
+        const start = minutes(record.start), end = minutes(record.end);
+        const active = activeHour()?.id === record.id;
+        const past = now >= end;
+        const status = past ? 'past' : active ? 'current' : 'future';
+        const pending = pendingFields(record).length;
+        const tip = `${record.start}–${record.end} · ${past ? 'Transcurrida' : active ? 'En curso' : 'Próxima'}${pending ? ` · ${pending} pendientes` : ''}`;
+        const hasBreak = index < records.length - 1 && minutes(records[index + 1].start) > end;
+        const breakHeight = hasBreak ? 6 : 0;
+        const lineHeight = Math.max(2, rects[index].height - breakHeight);
+        html += `<span class="timeline-fill ${status}" style="top:${rects[index].top}px;height:${lineHeight}px" data-tip="${tip}"></span>`;
+        if (hasBreak) {
+          const gap = minutes(records[index + 1].start) - end;
+          html += `<span class="timeline-fill break ${status === 'past' ? '' : 'future'}" style="top:${rects[index].top + lineHeight}px;height:${breakHeight}px" data-tip="Receso · ${gap} min"></span>`;
+        }
+        if (nowY === null && now >= start && now <= end) {
+          nowY = rects[index].top + ((now - start) / (end - start)) * rects[index].height;
+        }
+      });
+      if (nowY === null) {
+        for (let index = 0; index < records.length - 1; index++) {
+          const end = minutes(records[index].end);
+          const nextStart = minutes(records[index + 1].start);
+          if (now > end && now < nextStart) { nowY = rects[index].top + rects[index].height - 3; break; }
+        }
+      }
+      if (nowY !== null) html += `<span class="timeline-dot" style="top:${nowY - 6}px" data-tip="Ahora · ${timeNow()}"></span>`;
+      track.innerHTML = html;
+    }
+
+    // --- Tooltips -----------------------------------------------------------------
+    let tooltipTimer = null, tooltipTarget = null, tooltipVisible = false;
+    const tooltip = $('tooltip');
+    function placeTooltip(x, y) {
+      const pad = 13;
+      const rect = tooltip.getBoundingClientRect();
+      let left = x + pad, top = y + pad;
+      if (left + rect.width > innerWidth - 8) left = x - rect.width - pad;
+      if (top + rect.height > innerHeight - 8) top = y - rect.height - pad;
+      tooltip.style.left = Math.max(8,left) + 'px';
+      tooltip.style.top = Math.max(8,top) + 'px';
+    }
+    function showTooltip(target, x, y) {
+      if (!target?.dataset.tip) return;
+      tooltip.textContent = target.dataset.tip;
+      tooltip.classList.add('show');
+      tooltipVisible = true;
+      placeTooltip(x, y);
+    }
+    function hideTooltip() {
+      clearTimeout(tooltipTimer);
+      tooltipTimer = null;
+      tooltipTarget = null;
+      tooltipVisible = false;
+      tooltip.classList.remove('show');
+    }
+    document.addEventListener('pointerover', event => {
+      const target = event.target.closest('[data-tip]');
+      if (!target || event.pointerType === 'touch') return;
+      if (target === tooltipTarget) return;
+      clearTimeout(tooltipTimer);
+      tooltipTarget = target;
+      tooltipTimer = setTimeout(() => { if (tooltipTarget === target) showTooltip(target, event.clientX, event.clientY); }, 480);
+    });
+    document.addEventListener('pointermove', event => {
+      if (!tooltipVisible || !tooltipTarget) return;
+      placeTooltip(event.clientX, event.clientY);
+    });
+    document.addEventListener('pointerout', event => {
+      if (event.target.closest('[data-tip]') === tooltipTarget) hideTooltip();
+    });
+    document.addEventListener('focusin', event => {
+      const target = event.target.closest('[data-tip]');
+      if (!target) return;
+      clearTimeout(tooltipTimer);
+      tooltipTarget = target;
+      tooltipTimer = setTimeout(() => {
+        const rect = target.getBoundingClientRect();
+        showTooltip(target, rect.left + rect.width / 2, rect.bottom + 6);
+      }, 350);
+    });
+    document.addEventListener('focusout', () => hideTooltip());
+
+    // --- Dialog helpers -----------------------------------------------------------
+    const editDialog = $('edit-dialog');
+    const previewDialog = $('preview-dialog');
+    let lastTrigger = null;
+
+    function openModal({ kind, id, slot = 0, trigger, title, context, body, saveLabel = 'Guardar' }) {
+      hideTooltip();
+      lastTrigger = trigger || document.activeElement;
+      editing = { kind, id, slot, work:null, extra:null };
+      $('modal-title').textContent = title;
+      $('modal-context').textContent = context;
+      $('modal-body').innerHTML = body;
+      $('modal-save').textContent = saveLabel;
+      $('modal-save').disabled = false;
+      $('modal-error')?.remove();
+      editDialog.showModal();
+    }
+    function closeModal() { editDialog.close(); }
+    function modalError(message) {
+      let error = $('modal-error');
+      if (!error) {
+        error = document.createElement('p');
+        error.id = 'modal-error';
+        error.className = 'modal-error';
+        error.setAttribute('role','alert');
+        $('modal-body').append(error);
+      }
+      error.textContent = message;
+      error.hidden = false;
+    }
+    function clearModalError() { const error = $('modal-error'); if (error) error.hidden = true; }
+    function focusTrigger(trigger) {
+      if (!trigger) return;
+      const { action, id, slot } = trigger.dataset || {};
+      if (action && id !== undefined) {
+        const selector = `[data-action="${action}"][data-id="${id}"]${slot !== undefined ? `[data-slot="${slot}"]` : ''}`;
+        const replacement = document.querySelector(selector);
+        if (replacement) { replacement.focus({ preventScroll:true }); return; }
+      }
+      trigger.focus?.({ preventScroll:true });
+    }
+    editDialog.addEventListener('close', () => {
+      hideTooltip();
+      const trigger = lastTrigger;
+      lastTrigger = null;
+      editing = null;
+      render();
+      requestAnimationFrame(() => focusTrigger(trigger));
+    });
+    editDialog.addEventListener('click', event => { if (event.target === editDialog) closeModal(); });
+    $('modal-close').addEventListener('click', closeModal);
+    $('modal-cancel').addEventListener('click', closeModal);
+    previewDialog.addEventListener('click', event => { if (event.target === previewDialog) previewDialog.close(); });
+    $('preview-close').addEventListener('click', () => previewDialog.close());
+    previewDialog.addEventListener('close', () => { previewDialog.querySelector('img').src = ''; previewTrigger?.focus?.({ preventScroll:true }); previewTrigger = null; });
+
+    // --- Hours --------------------------------------------------------------------
+    function openHours(id, trigger) {
+      const record = records.find(item => item.id === id);
+      const work = { actualStart:record.actualStart, actualEnd:record.actualEnd };
+      const alertStart = !work.actualStart && dueByKey(record,'start');
+      const alertEnd = !work.actualEnd && dueByKey(record,'end');
+      openModal({
+        kind:'hours', id, trigger,
+        title:'Hora real',
+        context:`Bloque ${id} · ${record.course} · ${record.start}–${record.end}`,
+        body:`<div class="time-grid">
+          <label class="big-field"><span>Inicio</span><input id="hour-start" type="time" value="${esc(work.actualStart)}"></label>
+          <label class="big-field"><span>Fin</span><input id="hour-end" type="time" value="${esc(work.actualEnd)}"></label>
+        </div>
+        <p class="scheduled-line">${icon('clock')}Programado ${record.start}–${record.end}</p>
+        ${alertStart ? `<span class="inline-alert">${icon('alert')}Falta el inicio real</span>` : ''}
+        ${alertEnd ? `<span class="inline-alert">${icon('alert')}Falta el fin real</span>` : ''}`
+      });
+      editing.work = work;
+      const syncSave = () => {
+        $('modal-save').disabled = work.actualStart === record.actualStart && work.actualEnd === record.actualEnd;
+      };
+      const update = () => {
+        work.actualStart = $('hour-start').value;
+        work.actualEnd = $('hour-end').value;
+        clearModalError();
+        syncSave();
+      };
+      $('hour-start').addEventListener('input', update);
+      $('hour-end').addEventListener('input', update);
+      syncSave();
+      $('modal-save').onclick = () => {
+        if (work.actualStart && work.actualEnd && work.actualEnd < work.actualStart) {
+          modalError('El fin no puede ser anterior al inicio.');
+          return;
+        }
+        record.actualStart = work.actualStart;
+        record.actualEnd = work.actualEnd;
+        closeModal();
+        showToast('Hora real guardada');
+      };
+    }
+
+    // --- State --------------------------------------------------------------------
+    function openState(id, trigger) {
+      const record = records.find(item => item.id === id);
+      const work = {
+        state: record.state,
+        email: record.imageReplacement?.email ?? '',
+        source: record.imageReplacement?.source ?? ''
+      };
+      openModal({
+        kind:'state', id, trigger,
+        title:'Estado',
+        context:`Bloque ${id} · ${record.course} · ${record.start}–${record.end}`,
+        body:`<div class="state-grid" role="radiogroup" aria-label="Estado de clase">
+          ${Object.entries(STATE).map(([key, meta]) => `<button type="button" class="state-option ${meta.cls}" role="radio" aria-checked="${work.state === key}" data-state="${key}"><span class="state-ico">${icon(meta.icon)}</span><strong>${meta.label}</strong><small>${key}</small></button>`).join('')}
+          <button type="button" class="state-option empty" role="radio" aria-checked="${!work.state}" data-state=""><span class="state-ico">${icon('x')}</span><strong>Sin registrar</strong><small>—</small></button>
+        </div>
+        <div class="replace-panel" id="replace-panel" hidden>
+          <label for="replace-email">Correo del reemplazante</label>
+          <input id="replace-email" type="email" autocomplete="off" value="${esc(work.email)}" placeholder="nombre@correo.pe">
+          <p class="replace-note" id="replace-note"></p>
+        </div>`
+      });
+      editing.work = work;
+      const panel = $('replace-panel'), email = $('replace-email'), note = $('replace-note');
+      const syncSave = () => {
+        const emailChanged = work.email.trim().toLowerCase() !== (record.imageReplacement?.email || '');
+        $('modal-save').disabled = work.state === record.state && !emailChanged;
+      };
+      const renderReplacement = () => {
+        const visible = isReplacement(work.state);
+        panel.hidden = !visible;
+        if (!visible) return;
+        const sameEmail = work.email === record.imageReplacement?.email;
+        const system = work.source === 'system' && sameEmail;
+        const proposed = work.source === 'proposed' && sameEmail && work.state === record.state;
+        note.className = 'replace-note' + (system ? '' : ' proposed');
+        note.innerHTML = system
+          ? `${icon('check')}Programado por el sistema`
+          : proposed
+            ? `${icon('clock')}Propuesto · pendiente de autorización`
+            : `${icon('clock')}Se guardará como propuesta`;
+      };
+      document.querySelectorAll('[data-state]').forEach(button => button.addEventListener('click', () => {
+        work.state = button.dataset.state;
+        document.querySelectorAll('[data-state]').forEach(item => item.setAttribute('aria-checked', String(item.dataset.state === work.state)));
+        renderReplacement();
+        clearModalError();
+        syncSave();
+      }));
+      email.addEventListener('input', () => {
+        work.email = email.value;
+        if (work.email !== record.imageReplacement?.email) work.source = 'proposed';
+        else work.source = record.imageReplacement?.source || '';
+        renderReplacement();
+        clearModalError();
+        syncSave();
+      });
+      renderReplacement();
+      syncSave();
+      $('modal-save').onclick = () => {
+        if (isReplacement(work.state) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(work.email.trim())) {
+          modalError('Indica un correo válido para el reemplazante.');
+          email.focus();
+          return;
+        }
+        record.state = work.state;
+        record.imageReplacement = isReplacement(work.state)
+          ? { email:work.email.trim().toLowerCase(), source:work.source || 'proposed' }
+          : null;
+        closeModal();
+        showToast('Estado guardado');
+      };
+    }
+
+    // --- Notes --------------------------------------------------------------------
+    function openNotes(id, trigger) {
+      const record = records.find(item => item.id === id);
+      const work = structuredClone(record.notes);
+      composer = null;
+      openModal({
+        kind:'notes', id, trigger,
+        title:'Observaciones',
+        context:`Bloque ${id} · ${record.course}`,
+        body:'<div id="notes-body"></div>'
+      });
+      editing.work = work;
+      renderNotes();
+      $('modal-save').onclick = () => {
+        record.notes = structuredClone(work);
+        closeModal();
+        showToast('Observaciones guardadas');
+      };
+    }
+    function renderNotes() {
+      const work = editing.work;
+      const sorted = [...work].sort((a,b) => minutes(b.createdAt) - minutes(a.createdAt));
+      $('notes-body').innerHTML = `
+        <div class="notes-toolbar">
+          <span class="notes-count">${sorted.length} ${sorted.length === 1 ? 'nota' : 'notas'}</span>
+          <span class="notes-sort" data-tip="Más recientes primero">${icon('sort')}</span>
+          <button type="button" class="icon-btn" id="note-add" aria-label="Añadir observación" data-tip="Añadir observación">${icon('plus')}</button>
+        </div>
+        <div id="composer-slot"></div>
+        <div class="notes-list" id="notes-list">
+          ${sorted.length ? sorted.map(note => `<div class="note-card" data-note-card="${note.id}">
+            <span class="note-type ${noteClass(note)}" data-tip="${noteTypeLabel(note)}" aria-hidden="true">${icon(noteIcon(note))}</span>
+            <div class="note-copy"><div class="note-top"><span class="sr-only">${noteTypeLabel(note)}</span>${note.target === 'STUDENT' ? `<span class="note-who">${esc(notePerson(note))}</span>` : ''}<time class="note-time">${esc(note.createdAt)}</time></div><p class="note-text">${esc(note.description)}</p></div>
+            <span class="note-actions"><button type="button" class="icon-btn" data-note-edit="${note.id}" aria-label="Editar observación" data-tip="Editar">${icon('pencil')}</button><button type="button" class="icon-btn" data-note-delete="${note.id}" aria-label="Quitar observación" data-tip="Quitar">${icon('trash')}</button></span>
+          </div>`).join('') : '<p class="notes-empty-state">Sin observaciones</p>'}
+        </div>`;
+      $('note-add').addEventListener('click', () => {
+        composer = { mode:'add', noteId:null, type:'TEACHER', description:'', firstName:'', lastName:'' };
+        renderComposer();
+      });
+      document.querySelectorAll('[data-note-edit]').forEach(button => button.addEventListener('click', () => {
+        const note = work.find(item => item.id === button.dataset.noteEdit);
+        composer = { mode:'edit', noteId:note.id, type:note.target, description:note.description, firstName:note.firstName || '', lastName:note.lastName || '' };
+        renderComposer();
+      }));
+      document.querySelectorAll('[data-note-delete]').forEach(button => button.addEventListener('click', () => {
+        const index = work.findIndex(item => item.id === button.dataset.noteDelete);
+        if (index >= 0) work.splice(index,1);
+        renderNotes();
+        showToast('Observación quitada del borrador');
+      }));
+      if (composer) renderComposer();
+      const original = records.find(item => item.id === editing.id).notes;
+      $('modal-save').disabled = JSON.stringify(work) === JSON.stringify(original);
+    }
+    function renderComposer() {
+      const slot = $('composer-slot');
+      if (!composer) { slot.innerHTML = ''; return; }
+      slot.innerHTML = `<div class="composer">
+        <div class="composer-top">
+          <div class="type-switch" role="radiogroup" aria-label="Tipo de observación">
+            <button type="button" role="radio" data-compose-type="TEACHER" aria-checked="${composer.type === 'TEACHER'}">${icon('user')}<span>Docente</span></button>
+            <button type="button" role="radio" data-compose-type="STUDENT" aria-checked="${composer.type === 'STUDENT'}">${icon('users')}<span>Alumno</span></button>
+            <button type="button" role="radio" data-compose-type="CLASSROOM" aria-checked="${composer.type === 'CLASSROOM'}">${icon('building')}<span>Aula</span></button>
+          </div>
+          <span class="composer-mode">${composer.mode === 'edit' ? 'Editando' : 'Nueva'}</span>
+        </div>
+        <textarea id="composer-text" maxlength="2000" placeholder="Escribe la observación" aria-label="Texto de la observación">${esc(composer.description)}</textarea>
+        <div class="student-names" id="student-names" ${composer.type === 'STUDENT' ? '' : 'hidden'}>
+          <input id="composer-first" maxlength="128" value="${esc(composer.firstName)}" placeholder="Nombres" aria-label="Nombres del alumno">
+          <input id="composer-last" maxlength="128" value="${esc(composer.lastName)}" placeholder="Apellidos" aria-label="Apellidos del alumno">
+        </div>
+        <p class="composer-error" id="composer-error" hidden role="alert"></p>
+        <div class="composer-actions"><button type="button" class="icon-btn" id="composer-cancel" aria-label="Descartar observación" data-tip="Descartar">${icon('x')}</button><button type="button" class="icon-btn primary-icon" id="composer-save" aria-label="${composer.mode === 'edit' ? 'Guardar observación' : 'Añadir observación'}" data-tip="${composer.mode === 'edit' ? 'Guardar observación' : 'Añadir observación'}">${icon('check')}</button></div>
+      </div>`;
+      $('composer-text').focus();
+      document.querySelectorAll('[data-compose-type]').forEach(button => button.addEventListener('click', () => {
+        composer.type = button.dataset.composeType;
+        document.querySelectorAll('[data-compose-type]').forEach(item => item.setAttribute('aria-checked', String(item.dataset.composeType === composer.type)));
+        $('student-names').hidden = composer.type !== 'STUDENT';
+        if (composer.type === 'STUDENT') $('composer-first').focus();
+      }));
+      $('composer-cancel').addEventListener('click', () => { composer = null; renderComposer(); });
+      $('composer-save').addEventListener('click', () => {
+        composer.description = $('composer-text').value;
+        composer.firstName = $('composer-first')?.value || '';
+        composer.lastName = $('composer-last')?.value || '';
+        const error = $('composer-error');
+        if (composer.description.trim().length < 3) {
+          error.hidden = false; error.textContent = 'Escribe al menos 3 caracteres.'; $('composer-text').focus(); return;
+        }
+        if (composer.type === 'STUDENT' && (!composer.firstName.trim() || !composer.lastName.trim())) {
+          error.hidden = false; error.textContent = 'Indica nombres y apellidos del alumno.'; $('composer-first').focus(); return;
+        }
+        if (composer.mode === 'edit') {
+          const note = editing.work.find(item => item.id === composer.noteId);
+          Object.assign(note, { target:composer.type, description:composer.description.trim(), firstName:composer.firstName.trim(), lastName:composer.lastName.trim() });
+        } else {
+          editing.work.push({ id:`note-${Date.now()}`, target:composer.type, description:composer.description.trim(), firstName:composer.firstName.trim(), lastName:composer.lastName.trim(), createdAt:timeNow() });
+        }
+        composer = null;
+        renderNotes();
+        showToast('Observación lista para guardar');
+      });
+    }
+
+    // --- Captures -----------------------------------------------------------------
+    const fileInput = $('capture-file');
+    let fileTarget = null;
+    function openCapture(id, slot, trigger) {
+      const record = records.find(item => item.id === id);
+      const label = slot === 0 ? 'inicio' : 'fin';
+      openModal({
+        kind:'capture', id, slot, trigger,
+        title:`Captura de ${label}`,
+        context:`Bloque ${id} · ${record.course} · ${record.start}–${record.end}`,
+        body:'<div id="capture-body"></div>',
+        saveLabel:'Guardar'
+      });
+      editing.work = { selected:record.images[slot], changed:false, name:'' };
+      renderCapture();
+      $('modal-save').onclick = () => {
+        record.images[slot] = editing.work.selected;
+        closeModal();
+        showToast(editing.work.selected ? 'Captura asociada' : 'Captura quitada');
+      };
+    }
+    function renderCapture() {
+      const record = records.find(item => item.id === editing.id);
+      const slot = editing.slot;
+      const label = slot === 0 ? 'inicio' : 'fin';
+      const work = editing.work;
+      const image = work.selected;
+      const pending = work.changed && image;
+      const removing = work.changed && !image && record.images[slot];
+      const status = pending ? '<span class="status-chip pending">' + icon('clock') + 'Sin asociar</span>' : removing ? '<span class="status-chip removing">' + icon('alert') + 'Se quitará</span>' : image ? '<span class="status-chip associated">' + icon('check') + 'Asociada</span>' : '<span class="status-chip empty">' + icon('image') + 'Sin captura</span>';
+      $('capture-body').innerHTML = `
+        <div class="capture-meta">${status}${work.name ? `<span class="file-note">${esc(work.name)}</span>` : ''}</div>
+        <div class="capture-stage" id="capture-stage">
+          ${image ? `<img src="${image}" alt="Captura de ${label} del bloque ${editing.id}">` : `<button type="button" class="dropzone" id="dropzone" aria-label="Seleccionar captura PNG de ${label}">${'<span class="drop-icon">' + icon('upload') + '</span>'}<strong>Arrastra una captura</strong><span>o selecciona un PNG</span><small>PNG · 10 MB · 4096 px</small></button>`}
+          ${image ? `<div class="stage-actions"><button type="button" class="icon-btn" id="capture-expand" aria-label="Ver imagen completa" data-tip="Ver completa">${icon('expand')}</button><button type="button" class="icon-btn" id="capture-remove" aria-label="Quitar captura" data-tip="Quitar captura">${icon('trash')}</button></div>` : ''}
+        </div>`;
+      const stage = $('capture-stage');
+      const triggerFile = () => { fileTarget = { id:editing.id, slot }; fileInput.value = ''; fileInput.click(); };
+      if ($('dropzone')) $('dropzone').addEventListener('click', triggerFile);
+      if ($('capture-expand')) $('capture-expand').addEventListener('click', () => openPreview(editing.id, slot, $('capture-expand'), image));
+      if ($('capture-remove')) $('capture-remove').addEventListener('click', () => {
+        work.selected = null; work.changed = true; work.name = '';
+        renderCapture();
+      });
+      if (image) {
+        stage.querySelector('img').addEventListener('click', () => openPreview(editing.id, slot, stage.querySelector('img'), image));
+      }
+      ['dragenter','dragover'].forEach(type => stage.addEventListener(type, event => {
+        event.preventDefault(); stage.classList.add('dragover');
+      }));
+      stage.addEventListener('dragleave', event => {
+        if (!stage.contains(event.relatedTarget)) stage.classList.remove('dragover');
+      });
+      stage.addEventListener('drop', event => {
+        event.preventDefault(); stage.classList.remove('dragover');
+      });
+      stage.addEventListener('drop', event => {
+        const file = event.dataTransfer?.files?.[0];
+        if (file) acceptCapture(file);
+      });
+      $('modal-save').disabled = !work.changed;
+    }
+    async function acceptCapture(file) {
+      try {
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith('.png') || (file.type && file.type !== 'image/png')) throw new Error('Selecciona una imagen PNG.');
+        if (!file.size || file.size > 10 * 1024 * 1024) throw new Error('El PNG debe pesar como máximo 10 MB.');
+        const header = await file.slice(0,24).arrayBuffer();
+        const signature = new Uint8Array(header,0,Math.min(8,header.byteLength));
+        if (header.byteLength < 24 || signature.join(',') !== '137,80,78,71,13,10,26,10') throw new Error('El archivo no es un PNG válido.');
+        const view = new DataView(header);
+        const width = view.getUint32(16), height = view.getUint32(20);
+        if (!width || !height || width > 4096 || height > 4096) throw new Error('Máximo 4096 px por lado.');
+        const bitmap = await createImageBitmap(file);
+        bitmap.close();
+        const url = await new Promise((resolve,reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        if (!editing || editing.kind !== 'capture' || !editDialog.open) return;
+        editing.work.selected = url;
+        editing.work.changed = true;
+        editing.work.name = file.name;
+        clearModalError();
+        renderCapture();
+      } catch (error) {
+        if (editing?.kind === 'capture' && editDialog.open) modalError(error.message || 'No se pudo leer el PNG.');
+      }
+    }
+    fileInput.addEventListener('change', () => { const file = fileInput.files?.[0]; if (file) acceptCapture(file); });
+
+    function openPreview(id, slot, trigger, image) {
+      const record = records.find(item => item.id === id);
+      if (!image) { ensureImage(record, slot); image = record.images[slot]; }
+      if (!image) return;
+      previewTrigger = trigger || document.activeElement;
+      $('preview-title').textContent = `${record.course} · ${slot === 0 ? 'inicio' : 'fin'} · ${slot === 0 ? record.start : record.end}`;
+      $('preview-image').src = image;
+      $('preview-image').alt = `Captura de ${slot === 0 ? 'inicio' : 'fin'} del bloque ${record.course}`;
+      previewDialog.showModal();
+    }
+
+    // --- Global actions -----------------------------------------------------------
+    document.addEventListener('click', event => {
+      const action = event.target.closest('[data-action]');
+      if (!action) return;
+      event.preventDefault();
+      const id = Number(action.dataset.id);
+      const slot = Number(action.dataset.slot || 0);
+      if (action.dataset.action === 'hours') openHours(id, action);
+      if (action.dataset.action === 'state') openState(id, action);
+      if (action.dataset.action === 'notes') openNotes(id, action);
+      if (action.dataset.action === 'capture') openCapture(id, slot, action);
+      if (action.dataset.action === 'preview') {
+        const record = records.find(item => item.id === id);
+        const image = imageFor(record, slot).url;
+        openPreview(id, slot, action, image);
+      }
+    });
+
+    function showToast(message) {
+      const toast = $('toast');
+      toast.innerHTML = `${icon('check')}${esc(message)}`;
+      toast.hidden = false;
+      requestAnimationFrame(() => toast.classList.add('show'));
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => { toast.hidden = true; }, 200);
+      }, 2300);
+    }
+
+    $('demo-time').addEventListener('input', () => {
+      if (!$('demo-time').value) return;
+      render();
+    });
+    addEventListener('resize', () => requestAnimationFrame(layoutTimeline));
+    $('board-scroll').addEventListener('scroll', () => requestAnimationFrame(layoutTimeline));
+    if ('ResizeObserver' in window) new ResizeObserver(() => requestAnimationFrame(layoutTimeline)).observe($('board-scroll'));
+
+    // Seed synthetic captures for complete examples before the first render.
+    ensureImage(records[0],0); ensureImage(records[0],1);
+    ensureImage(records[1],0); ensureImage(records[1],1);
+    ensureImage(records[2],0);
+    ensureImage(records[3],0); ensureImage(records[3],1);
+    render();
+  </script>
+</body>
+</html>

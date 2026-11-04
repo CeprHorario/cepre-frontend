@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "healthySeconds": 600,
+  "healthy": {
+    "heartbeats": 24,
+    "snapshots": 1,
+    "connections": 1,
+    "gets": 0
+  },
+  "fallbackSeconds": 600,
+  "fallback": {
+    "gets": 6,
+    "lists": 3
+  },
+  "recoverySeconds": 65,
+  "getsAfterRecovery": 0,
+  "cold": {
+    "ok": true,
+    "rows": 6,
+    "workspace": 1,
+    "thumbnails": 1,
+    "detail": 0,
+    "notifications": 0,
+    "auth": 1,
+    "status": 1,
+    "requests": [
+      "/api/auth/user-info",
+      "/api/system/status",
+      "/api/class-session-records/workspace",
+      "/api/operations/notifications/stream",
+      "/api/class-session-files/thumbnails"
+    ]
+  },
+  "note": "SSE sano y fallback medidos en ejecuciones separadas sobre el mismo harness; el corte de ruta no cierra una conexión ya abierta, por eso el fallback cierra el EventSource explícitamente."
+}

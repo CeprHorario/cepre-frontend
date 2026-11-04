@@ -1,6 +1,44 @@
 # Progreso y evidencias
 
+> Estado vigente2026-11-04 en [enmienda](FINALIZACION_20261104.md) y08-PROGRESO del
+> plan externo. E0–E2 verificados, E3 en ejecución; no hay entrega completa. Los
+> resultados fechados debajo son antecedentes, no pruebas nuevas de esta ejecución.
+
 Actualizado: 2026-11-03. No interpretar autorización total como verificación total.
+
+## Rectificación documental vigente: referencia oficial y Partes congelado
+
+El último encargo es **solo análisis y contratos**, sin código ni funcionalidad.
+La [propuesta oficial y validada](propuestas/monitor.html) elegida por el cliente
+se estudió sin modificarla; el [análisis completo](ANALISIS_PROPUESTA_OFICIAL.md)
+separa sus decisiones visuales de simulaciones y límites técnicos.
+
+Dirección normativa: UX-01–UX-20, economía de texto, color/forma/iconos coherentes,
+tooltips accesibles, modales de tarea y movimiento funcional. Solo se aplica a los
+otros módulos. **Partes será implementado previamente por el usuario y quedará tal
+cual**; CF-13/14 y el cerrojo de MASTER_PLAN prohíben alterarlo directa o
+indirectamente. No se ha implementado Partes ni el nuevo lenguaje en esta revisión.
+
+Se retira el piloto de evidencias; tercero nuevo: modal de Cursos. H8 pasa a control
+de no alteración sin implementación. Floating UI queda previsto para problemas
+flotantes de los otros módulos; no se ha instalado ni se modifican manifiestos.
+
+| ID | Decisión / evidencia documental | Estado |
+|---|---|---|
+| RV-01 | Anatomía, estilos, iconos, ayudas, modales, estado, archivos, foco, responsive y límites en ANALISIS_PROPUESTA_OFICIAL.md; fuente completa y exploración Chromium en cinco tamaños | Analizado; no equivale a integración ni auditoría accesible completa |
+| RV-02 | DESIGN_SYSTEM: reglas comprobables y adopción acotada de recursos/librerías existentes y Floating UI | Contrato actualizado; implementación pendiente fuera de Partes |
+| RV-03 | MASTER_PLAN + CF-13/14: congelación de Partes y prohibición de cambios funcionales; continuidad subordinada al encargo documental | Alcance actualizado; línea base de Partes integrado pendiente de recibir antes del futuro refactor |
+| RV-04 | H3 sustituye evidencias por Cursos; H8 solo conservación; traspaso e inventario reconciliados | Plan actualizado; pilotos/controles no ejecutados por este cambio |
+
+Las verificaciones de H1/H2 que siguen son antecedentes conservados, no resultados
+repetidos ahora. El progreso de implementación no aumenta por modificar contratos.
+
+Verificación de esta revisión documental: ocho documentos revisados; 57 enlaces
+locales/anclas resueltos; `git diff --check` sin errores. Comparación SHA-256 de
+154 archivos protegidos antes/después: idénticos, sin añadidos en `src/`, `public/`,
+`tests/` o `propuestas/`, ni cambios en manifiesto/lock. Navegador exploratorio
+cerrado. No se ejecutaron lint/build/suites de producto al no cambiar código;
+la exploración de maqueta queda delimitada en el análisis, no sustituye esas suites.
 
 ## Decisión vigente de ejecución
 
@@ -11,6 +49,12 @@ commits no cierran la tarea ni requieren otro mensaje del usuario. Los checkpoin
 anteriores conservan su valor histórico, no justifican nuevas pausas por fase.
 Esta modificación no cambia el estado real de los hitos ni elimina verificaciones,
 restricciones de seguridad o bloqueos imprescindibles.
+Ratificación del usuario: ejecución independiente también al reanudar en otra
+ventana; implementar y verificar los pendientes, no solo devolver un plan. Rige la
+[ratificación de autonomía](MASTER_PLAN.md#ratificación-de-autonomía-y-reanudación),
+sin cambiar los estados de verificación por esta actualización documental.
+Rige únicamente ante una futura orden de ejecutar la implementación, con el
+alcance rectificado. No continuar automáticamente desde una tarea de documentación.
 
 ## Versiones iniciales y trabajo protegido
 
@@ -24,14 +68,24 @@ restricciones de seguridad o bloqueos imprescindibles.
 
 ## Hitos
 
+Nueva exigencia de presentación: UX-01–UX-20 en DESIGN_SYSTEM.md. Queda una sola
+referencia, [monitor.html](propuestas/monitor.html), denominada propuesta oficial
+y validada; se eliminaron las alternativas anteriores. Incluye tabla, cabecera de
+jornada, hora real, estados/reemplazos, observaciones, capturas y tooltips. Es una
+maqueta validada con 66 comprobaciones locales, no una implementación: no altera
+`src/`, APIs, permisos ni el estado de los hitos. Las 15 capturas están indexadas en
+[propuestas/README.md](propuestas/README.md). No autoriza RN/RE ni asignaciones
+nuevas del monitor en backend.
+
 | Hito | Estado | Evidencia / límite |
 |---|---|---|
 | H0 | Verificado | Preparación: contratos, mapa de rutas/propietarios, caracterización y fixtures. Fichas exhaustivas/capturas se completan en H2 antes de estética |
 | H1 | Verificado | Matriz F1.0–F1.5 cerrada; contratos reconciliados y línea base funcional posterior en FUNCTIONAL_BASELINE.md |
 | H2 | En ejecución | 32 rutas capturadas a 1920 y 390 px en `baseline/`; fichas en BASELINE_H2.md. Desbordamiento móvil corregido (0/32). Faltan variantes restringidas, estados de error/zoom/teclado y formularios/overlays |
-| H3 | En ejecución | Piloto A aplicado y verificado; B/C pendientes |
+| H3 | En ejecución histórica; aceptación visual nueva pendiente | Avances técnicos de Docentes conservados; revalidación contra referencia, horario del Monitor y modal de Cursos pendientes. Sin piloto de Partes |
 | H4 | En ejecución | Reflow global corregido: 0/32 rutas desbordan a 390 px; contenedores de layout, tarjetas y tablas contienen su ancho. Faltan navegación/acceso/estados globales y validación de teclado/zoom |
-| H4–H10 | Bloqueado | Secuencia contractual, no iniciada |
+| H5–H7/H9–H10 | Bloqueado por puertas previas | No iniciados; futura ejecución solo fuera de Partes |
+| H8 | Preparado en contrato, no ejecutado | Control de no alteración de Partes; no hay lote de rediseño/evidencias. Requiere línea base recibida |
 
 ## Trazabilidad funcional
 
@@ -139,7 +193,9 @@ contraste y estados por pantalla sigue pendiente.
 Pendiente para cerrar H2: variante de coordinación por curso, UI-02/errores de
 ruta, estados vacío/error/carga por pantalla, formularios/overlays, teclado/foco,
 zoom 200 %, capturas móviles de todas las rutas y revisión de contraste. La línea
-base actual permite empezar H3 sin declarar H2 terminado.
+base es un antecedente parcial; no sustituye el cierre de puertas vigentes ni
+la recepción/congelación de Partes antes de extender compartidos. No autoriza
+reanudar el piloto de evidencias retirado.
 
 ## Cierre de H1 y siguiente puerta
 
@@ -152,9 +208,12 @@ del fixture, con valores fijos y validación smoke.
 
 H2 debe completar las fichas exhaustivas del inventario y capturas funcionales/
 visuales por ruta, rol, variante y estado de **todas** las pantallas. La línea base
-H1 no lo sustituye. Después, H3 valida los tres pilotos antes de extender estilos.
+H1 no lo sustituye. Después, H3 valida Docentes, horario del Monitor fuera de
+Partes y modal de Cursos antes de extender estilos, con Partes congelado.
 Faltan accesibilidad integral, zoom/reflow completo, presupuestos medidos y los
 hitos visuales H3–H10. No se ha iniciado reconstrucción visual ni desplegado nada.
 La autorización integral sigue vigente; este checkpoint no es una solicitud de
 nueva aprobación ni la entrega final del plan. La ejecución debe continuar desde
-H2 hasta H10 sin detenerse en estos entregables intermedios.
+H2 hasta H10 sin detenerse en estos entregables intermedios **cuando se solicite
+ejecutar la implementación**, respetando H8 solo de no alteración. El encargo
+documental actual no ejecuta esa continuidad.

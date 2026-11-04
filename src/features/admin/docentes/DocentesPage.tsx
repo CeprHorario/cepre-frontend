@@ -15,7 +15,7 @@ import { DataTable, Pagination, type Column } from "@/components/ui/DataTable";
 import { SearchInput, Select } from "@/components/ui/Field";
 import { RowActions } from "@/components/ui/Menu";
 import { SelectionBar, SelectionToggle, useSelectionMode } from "@/components/ui/Selection";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { Alert, EmptyState } from "@/components/ui/EmptyState";
 import { downloadBlob, fullName, JOB_STATUS_LABEL } from "@/lib/format";
 import { useDebounced } from "@/lib/useDebounced";
 import { useRemoval } from "@/features/admin/personas/useRemoval";
@@ -152,6 +152,7 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
                 Asignar salones
               </Button>
               <RowActions
+                help
                 label={`Acciones para ${fullName(t)}`}
                 items={[
                   { label: "Ver detalle", icon: <FiEye />, onSelect: () => setDetail(t) },
@@ -240,7 +241,8 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
           </SelectionBar>
         )}
 
-        <DataTable
+        {(searching ? search.isError : list.isError) ? <Alert tone="danger">No se pudieron cargar los docentes. <Button variant="secondary" onClick={() => { void (searching ? search.refetch() : list.refetch()); }}>Reintentar docentes</Button></Alert> : <DataTable
+          appearance="operational"
           columns={columns}
           rows={rows}
           rowKey={(t) => t.id}
@@ -254,7 +256,7 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
               description={searching ? `No encontramos docentes para «${debounced}».` : "Agrega docentes o impórtalos desde un archivo."}
             />
           }
-        />
+        />}
         {data && (
           <Pagination
             page={page}

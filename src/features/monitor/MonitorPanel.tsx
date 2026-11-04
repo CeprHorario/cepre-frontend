@@ -23,11 +23,11 @@ export function MonitorPanel() {
 
   return (
     <SimpleLayout greeting subtitle={info.data ? `Monitor · ${info.data.salon}` : "Monitor"}>
-      <section className="bg-marino-900 px-4 py-6 text-white sm:px-10">
-        <div className="mx-auto flex max-w-[1100px] flex-wrap items-end justify-between gap-4">
+      <section className="border-b border-line bg-white px-4 py-4 text-marino-900 sm:px-8">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <span className="text-[13px] text-white/80">Mi salón</span>
-            <strong className="font-display text-2xl font-extrabold">{info.data?.salon ?? "Sin salón asignado"}</strong>
+            <h1 className="font-display text-2xl font-bold">{info.data?.salon ?? "Sin salón asignado"}</h1>
+            <span className="text-xs text-ink-500">Horario del salón</span>
           </div>
           {info.data && (
             <div className="flex items-center gap-2">
@@ -40,7 +40,7 @@ export function MonitorPanel() {
         </div>
       </section>
 
-      <main className="mx-auto flex w-full max-w-[1100px] flex-col gap-4 px-4 py-5 sm:px-10">
+      <main className="mx-auto flex w-full max-w-[1600px] flex-col gap-4 px-4 py-5 sm:px-8">
         <div className="flex flex-wrap gap-3"><ButtonLink variant="secondary" to="/monitor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/monitor/partes">Registrar parte diario</ButtonLink></div>
         {info.data && (!info.data.urlMeet || !info.data.urlClassroom) && (
           <Alert
@@ -52,7 +52,7 @@ export function MonitorPanel() {
               </Button>
             }
           >
-            Registra el enlace de Meet y de Classroom para que docentes y supervisores puedan entrar.
+            Meet y Classroom aún no están disponibles para el salón.
           </Alert>
         )}
         {pendingToday.length > 0 && (
@@ -64,6 +64,7 @@ export function MonitorPanel() {
         <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="min-w-0">
             <ScheduleView
+              appearance="operational"
               tone="navy"
               entries={merged}
               rows={rows}

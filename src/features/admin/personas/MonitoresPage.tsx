@@ -20,6 +20,7 @@ import { splitPhones } from "@/lib/validators";
 import { emptyPerson, PersonForm } from "./PersonForm";
 import { useRemoval } from "./useRemoval";
 import { DniIncidenceNotice, DniIncidenceWarning } from "@/features/incidencias/DniIncidenceWarning";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
 
 export function MonitoresPage() {
   const [params, setParams] = useSearchParams();
@@ -102,6 +103,7 @@ export function MonitoresPage() {
       align: "right",
       cell: (m) => (
         <RowActions
+          help
           label={`Acciones para ${m.className}`}
           items={[
             { label: "Editar datos", icon: <FiEdit2 />, onSelect: () => setEditing(m) },
@@ -130,10 +132,11 @@ export function MonitoresPage() {
           </Button>
         }
       />
-      <Alert tone="info">
+      <details className="rounded-xl border border-line bg-white p-3 text-sm"><summary className="cursor-pointer font-semibold text-marino-900">Cómo se registra un monitor</summary><div className="pt-3"><Alert tone="info">
         Cada monitor pertenece a un salón. Al agregar uno se crea el siguiente salón del área y turno elegidos, con su horario base. Si no indicas
         un correo se usa el automático (por ejemplo <strong>101b@cepr.unsa.pe</strong>).
-      </Alert>
+      </Alert></div></details>
+      <QueryFeedback query={monitors} label="monitores" />
       <Card>
         <div className="flex flex-wrap items-center gap-2.5 p-4">
           <SearchInput className="min-w-[220px] flex-1" placeholder="Buscar en esta página" aria-label="Buscar monitor" value={query} onChange={(e) => setQuery(e.target.value)} />
@@ -164,7 +167,7 @@ export function MonitoresPage() {
         )}
         {incidenceSummary.error && <Alert tone="danger">No se pudo consultar el historial de incidencias. {apiErrorMessage(incidenceSummary.error)}</Alert>}
         {incidenceSummary.loading && <p role="status" className="px-4 text-xs text-ink-500">Consultando antecedentes de los DNI…</p>}
-        <DataTable columns={columns} rows={rows} rowKey={(m) => m.id} loading={monitors.isLoading} selection={selection.tableSelection} />
+        {(!monitors.isError || monitors.data !== undefined) && <DataTable appearance="operational" columns={columns} rows={rows} rowKey={(m) => m.id} loading={monitors.isLoading} selection={selection.tableSelection} />}
         {monitors.data && (
           <Pagination
             page={page}
@@ -186,6 +189,7 @@ export function MonitoresPage() {
           required={["firstName", "lastName"]}
           submitLabel="Guardar cambios"
           saving={update.isPending}
+          error={update.error ? apiErrorMessage(update.error) : null}
           onClose={() => setEditing(null)}
           onSubmit={async (v) => {
             try {
@@ -209,6 +213,7 @@ export function MonitoresPage() {
           required={["firstName", "lastName"]}
           submitLabel="Crear monitor y salón"
           saving={create.isPending}
+          error={create.error ? apiErrorMessage(create.error) : null}
           extraValid={Boolean(areaId && newShiftId)}
           extra={() => (
             <>

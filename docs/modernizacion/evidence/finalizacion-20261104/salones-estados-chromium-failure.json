@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "respuesta tardía de candidatos: locator.waitFor: Timeout 30000ms exceeded.\n",
+  "date": "2026-11-04T18:11:05.697Z"
+}

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "suite": "BE-01/02 HTTP real",
+  "results": [
+    "BA-08 teacher prohibido: 403",
+    "BA-08 monitor prohibido: 403",
+    "BA-08 supervisor prohibido: 403",
+    "BA-08 coordinator prohibido: 403",
+    "BE-02 ruta retirada con sesión: 404",
+    "BA-03 validación HTTP {\"courseId\":0}",
+    "BA-03 validación HTTP {\"teacherId\":\"invalid\"}",
+    "BA-03 validación HTTP {\"expectedTeacherId\":\"invalid\"}",
+    "BA-03 validación HTTP {\"classId\":\"invalid\"}",
+    "BE-01 conserva 409, no catch genérico: 409",
+    "BE-02 no éxito sin sesión"
+  ],
+  "date": "2026-11-04T18:19:49.308Z",
+  "engine": "chromium",
+  "browserVersion": "156.0.8078.79"
+}

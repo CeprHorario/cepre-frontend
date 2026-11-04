@@ -1,0 +1,31 @@
+{
+  "id": "UI-17",
+  "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+  "email": "e3-ui-17-1793828707930@test.invalid",
+  "name": "Curso sintético 1793828707930",
+  "phase": "success-confirmed",
+  "payload": {
+    "email": "e3-ui-17-1793828707930@test.invalid",
+    "dni": "98708256",
+    "firstName": "Persona",
+    "lastName": "Sintetica",
+    "phone": "999999991",
+    "phonesAdditional": [],
+    "personalEmail": "personal-e3-ui-17-1793828707930@test.invalid"
+  },
+  "status": 201,
+  "response": {
+    "id": "01a1a885-e2a6-7896-b599-75ba829ab8e0",
+    "email": "e3-ui-17-1793828707930@test.invalid",
+    "role": "coordinador",
+    "courseId": null,
+    "courseName": null,
+    "dni": "98708256",
+    "firstName": "Persona",
+    "lastName": "Sintetica",
+    "phone": "999999991",
+    "phonesAdditional": [],
+    "personalEmail": "personal-e3-ui-17-1793828707930@test.invalid",
+    "isActive": true
+  }
+}

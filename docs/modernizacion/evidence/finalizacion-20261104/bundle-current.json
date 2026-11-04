@@ -1,0 +1,1273 @@
+{
+  "date": "2026-11-04T20:07:09.266Z",
+  "baseline": {
+    "source": "frontend-baseline.log, mismo API3109 y fixtures sintéticos",
+    "entryJs": 824210,
+    "entryGzipApprox": 246720,
+    "css": 103020,
+    "warning": true
+  },
+  "routes": {
+    "index.html": {
+      "files": [
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        }
+      ],
+      "js": 656917,
+      "jsGzip": 201159,
+      "css": 100684
+    },
+    "src/assets/LOGO_UNSA.png": {
+      "files": [
+        {
+          "file": "assets/LOGO_UNSA-CAFxLKng.png",
+          "bytes": 182869,
+          "gzip": 180850
+        }
+      ],
+      "js": 0,
+      "jsGzip": 0,
+      "css": 0
+    },
+    "src/assets/classroom.png": {
+      "files": [
+        {
+          "file": "assets/classroom-DPm4VWzU.png",
+          "bytes": 52552,
+          "gzip": 50217
+        }
+      ],
+      "js": 0,
+      "jsGzip": 0,
+      "css": 0
+    },
+    "src/assets/logo-light.png": {
+      "files": [
+        {
+          "file": "assets/logo-light-Cxe8wEJC.png",
+          "bytes": 77092,
+          "gzip": 67881
+        }
+      ],
+      "js": 0,
+      "jsGzip": 0,
+      "css": 0
+    },
+    "src/assets/meet.png": {
+      "files": [
+        {
+          "file": "assets/meet-BGiCdsAn.png",
+          "bytes": 10767,
+          "gzip": 10196
+        }
+      ],
+      "js": 0,
+      "jsGzip": 0,
+      "css": 0
+    },
+    "src/features/admin/AdminHub.tsx": {
+      "files": [
+        {
+          "file": "assets/AdminHub-JXW6hYJt.js",
+          "bytes": 10034,
+          "gzip": 3307
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/IncidencesPage-CcnZ3ejt.js",
+          "bytes": 12538,
+          "gzip": 4281
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        }
+      ],
+      "js": 683146,
+      "jsGzip": 210530,
+      "css": 101701
+    },
+    "src/features/admin/configuracion/ConfiguracionPage.tsx": {
+      "files": [
+        {
+          "file": "assets/ConfiguracionPage-CHrdSj2P.js",
+          "bytes": 7556,
+          "gzip": 2951
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        }
+      ],
+      "js": 666778,
+      "jsGzip": 205000,
+      "css": 101701
+    },
+    "src/features/admin/cursos/CursosPage.tsx": {
+      "files": [
+        {
+          "file": "assets/CursosPage-DqNG7EJh.js",
+          "bytes": 4242,
+          "gzip": 1825
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/HelpIconButton-DuWy5eoj.js",
+          "bytes": 48857,
+          "gzip": 17704
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        }
+      ],
+      "js": 716255,
+      "jsGzip": 223242,
+      "css": 101291
+    },
+    "src/features/admin/docentes/AsignarSalonesPage.tsx": {
+      "files": [
+        {
+          "file": "assets/AsignarSalonesPage-1SvqADHc.js",
+          "bytes": 15070,
+          "gzip": 5359
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/AvailabilityWorkbookPanel-Cl5mhuvh.js",
+          "bytes": 3785,
+          "gzip": 1691
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Selection-ChzWX0En.js",
+          "bytes": 975,
+          "gzip": 594
+        }
+      ],
+      "js": 685909,
+      "jsGzip": 213058,
+      "css": 100684
+    },
+    "src/features/admin/docentes/DocentesPage.tsx": {
+      "files": [
+        {
+          "file": "assets/DocentesPage-Ki051DH2.js",
+          "bytes": 12986,
+          "gzip": 4853
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/PersonForm-BcitQP74.js",
+          "bytes": 7911,
+          "gzip": 3232
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/HelpIconButton-DuWy5eoj.js",
+          "bytes": 48857,
+          "gzip": 17704
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/Selection-ChzWX0En.js",
+          "bytes": 975,
+          "gzip": 594
+        },
+        {
+          "file": "assets/useDebounced-BsncOB6v.js",
+          "bytes": 214,
+          "gzip": 182
+        }
+      ],
+      "js": 736765,
+      "jsGzip": 231804,
+      "css": 101291
+    },
+    "src/features/admin/docentes/HorarioDocentePage.tsx": {
+      "files": [
+        {
+          "file": "assets/HorarioDocentePage-C5YWcmv5.js",
+          "bytes": 3268,
+          "gzip": 1688
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/ScheduleView-BOaLGzHn.js",
+          "bytes": 4399,
+          "gzip": 2073
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        },
+        {
+          "file": "assets/LinkButtons-BFn1_eG5.js",
+          "bytes": 1155,
+          "gzip": 637
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        }
+      ],
+      "js": 675504,
+      "jsGzip": 210243,
+      "css": 100684
+    },
+    "src/features/admin/generar/GenerarProcesoPage.tsx": {
+      "files": [
+        {
+          "file": "assets/GenerarProcesoPage-BeWU8jWl.js",
+          "bytes": 14468,
+          "gzip": 5078
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        }
+      ],
+      "js": 674054,
+      "jsGzip": 207376,
+      "css": 100684
+    },
+    "src/features/admin/importar/ImportarPage.tsx": {
+      "files": [
+        {
+          "file": "assets/ImportarPage-CMohhssJ.js",
+          "bytes": 12435,
+          "gzip": 4424
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/DniIncidenceWarning-CxjOCH8C.js",
+          "bytes": 4259,
+          "gzip": 1881
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        }
+      ],
+      "js": 676481,
+      "jsGzip": 208668,
+      "css": 101701
+    },
+    "src/features/admin/personas/CoordinadoresPage.tsx": {
+      "files": [
+        {
+          "file": "assets/CoordinadoresPage-CyF5C7LO.js",
+          "bytes": 5203,
+          "gzip": 2340
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/PersonForm-BcitQP74.js",
+          "bytes": 7911,
+          "gzip": 3232
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/HelpIconButton-DuWy5eoj.js",
+          "bytes": 48857,
+          "gzip": 17704
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/Selection-ChzWX0En.js",
+          "bytes": 975,
+          "gzip": 594
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        }
+      ],
+      "js": 729191,
+      "jsGzip": 229439,
+      "css": 101291
+    },
+    "src/features/admin/personas/MonitoresPage.tsx": {
+      "files": [
+        {
+          "file": "assets/MonitoresPage-kSRotnqI.js",
+          "bytes": 7938,
+          "gzip": 3260
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/PersonForm-BcitQP74.js",
+          "bytes": 7911,
+          "gzip": 3232
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/HelpIconButton-DuWy5eoj.js",
+          "bytes": 48857,
+          "gzip": 17704
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/DniIncidenceWarning-CxjOCH8C.js",
+          "bytes": 4259,
+          "gzip": 1881
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/Selection-ChzWX0En.js",
+          "bytes": 975,
+          "gzip": 594
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        }
+      ],
+      "js": 734687,
+      "jsGzip": 231459,
+      "css": 101291
+    },
+    "src/features/admin/personas/SupervisorMonitoresPage.tsx": {
+      "files": [
+        {
+          "file": "assets/SupervisorMonitoresPage-CfqitmfH.js",
+          "bytes": 4050,
+          "gzip": 1749
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        }
+      ],
+      "js": 669127,
+      "jsGzip": 206573,
+      "css": 101291
+    },
+    "src/features/admin/personas/SupervisoresPage.tsx": {
+      "files": [
+        {
+          "file": "assets/SupervisoresPage-BsKmSS5K.js",
+          "bytes": 4844,
+          "gzip": 2190
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/PersonForm-BcitQP74.js",
+          "bytes": 7911,
+          "gzip": 3232
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        },
+        {
+          "file": "assets/HelpIconButton-DuWy5eoj.js",
+          "bytes": 48857,
+          "gzip": 17704
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/Selection-ChzWX0En.js",
+          "bytes": 975,
+          "gzip": 594
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        }
+      ],
+      "js": 727334,
+      "jsGzip": 228508,
+      "css": 101291
+    },
+    "src/features/admin/salones/SalonDetallePage.tsx": {
+      "files": [
+        {
+          "file": "assets/SalonDetallePage-DTZV15qV.js",
+          "bytes": 11973,
+          "gzip": 4488
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/ScheduleView-BOaLGzHn.js",
+          "bytes": 4399,
+          "gzip": 2073
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        }
+      ],
+      "js": 683054,
+      "jsGzip": 212406,
+      "css": 100684
+    },
+    "src/features/admin/salones/SalonesPage.tsx": {
+      "files": [
+        {
+          "file": "assets/SalonesPage-cZk94q_N.js",
+          "bytes": 8977,
+          "gzip": 3517
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/LinkButtons-BFn1_eG5.js",
+          "bytes": 1155,
+          "gzip": 637
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/DataTable-BFngzfgc.js",
+          "bytes": 3934,
+          "gzip": 1664
+        },
+        {
+          "file": "assets/DataTable-D3ovvQ5O.css",
+          "bytes": 607,
+          "gzip": 318
+        },
+        {
+          "file": "assets/QueryFeedback-ChvgkP6A.js",
+          "bytes": 423,
+          "gzip": 330
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        }
+      ],
+      "js": 676947,
+      "jsGzip": 210110,
+      "css": 101291
+    },
+    "src/features/docente/DocentePanel.tsx": {
+      "files": [
+        {
+          "file": "assets/DocentePanel-C2oMRvTa.js",
+          "bytes": 3745,
+          "gzip": 1697
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/AvailabilityWorkbookPanel-Cl5mhuvh.js",
+          "bytes": 3785,
+          "gzip": 1691
+        },
+        {
+          "file": "assets/LinkButtons-BFn1_eG5.js",
+          "bytes": 1155,
+          "gzip": 637
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/ScheduleView-BOaLGzHn.js",
+          "bytes": 4399,
+          "gzip": 2073
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        }
+      ],
+      "js": 679766,
+      "jsGzip": 211943,
+      "css": 100684
+    },
+    "src/features/incidencias/IncidencesPage.tsx": {
+      "files": [
+        {
+          "file": "assets/IncidencesPage-CcnZ3ejt.js",
+          "bytes": 12538,
+          "gzip": 4281
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/service-PT5kx4B1.js",
+          "bytes": 565,
+          "gzip": 314
+        }
+      ],
+      "js": 672325,
+      "jsGzip": 206644,
+      "css": 101701
+    },
+    "src/features/monitor/MonitorPanel.tsx": {
+      "files": [
+        {
+          "file": "assets/MonitorPanel-D_3JSsBB.js",
+          "bytes": 3065,
+          "gzip": 1468
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/LinkButtons-BFn1_eG5.js",
+          "bytes": 1155,
+          "gzip": 637
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/ScheduleView-BOaLGzHn.js",
+          "bytes": 4399,
+          "gzip": 2073
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        },
+        {
+          "file": "assets/useClassroomSchedule-BetjjrC-.js",
+          "bytes": 4610,
+          "gzip": 1744
+        },
+        {
+          "file": "assets/SalonDetallePage-DTZV15qV.js",
+          "bytes": 11973,
+          "gzip": 4488
+        }
+      ],
+      "js": 691884,
+      "jsGzip": 216255,
+      "css": 100684
+    },
+    "src/features/operations/ReportsPage.tsx": {
+      "files": [
+        {
+          "file": "assets/ReportsPage-G-Bud2p1.js",
+          "bytes": 5109,
+          "gzip": 2202
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        }
+      ],
+      "js": 662026,
+      "jsGzip": 203361,
+      "css": 101701
+    },
+    "src/features/operations/RequestsPage.tsx": {
+      "files": [
+        {
+          "file": "assets/RequestsPage-B4mrKeYt.js",
+          "bytes": 11004,
+          "gzip": 3938
+        },
+        {
+          "file": "assets/task-workspace-C_RX6Xq-.css",
+          "bytes": 1017,
+          "gzip": 472
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/useDebounced-BsncOB6v.js",
+          "bytes": 214,
+          "gzip": 182
+        }
+      ],
+      "js": 668135,
+      "jsGzip": 205279,
+      "css": 101701
+    },
+    "src/features/supervisor/SupervisorPanel.tsx": {
+      "files": [
+        {
+          "file": "assets/SupervisorPanel-CWcQQU6P.js",
+          "bytes": 6695,
+          "gzip": 2494
+        },
+        {
+          "file": "assets/index-CsYssBA9.js",
+          "bytes": 338552,
+          "gzip": 99889
+        },
+        {
+          "file": "assets/index-YiNfhwka.css",
+          "bytes": 100684,
+          "gzip": 19495
+        },
+        {
+          "file": "assets/react-runtime-DhnfYPGF.js",
+          "bytes": 318365,
+          "gzip": 101270
+        },
+        {
+          "file": "assets/LinkButtons-BFn1_eG5.js",
+          "bytes": 1155,
+          "gzip": 637
+        },
+        {
+          "file": "assets/validators-C9IknDs3.js",
+          "bytes": 603,
+          "gzip": 431
+        },
+        {
+          "file": "assets/ScheduleView-BOaLGzHn.js",
+          "bytes": 4399,
+          "gzip": 2073
+        },
+        {
+          "file": "assets/Card-BmtMz-dC.js",
+          "bytes": 2305,
+          "gzip": 890
+        },
+        {
+          "file": "assets/Segmented-BJXZaZcR.js",
+          "bytes": 1135,
+          "gzip": 701
+        },
+        {
+          "file": "assets/Badge-C_ZcMxvK.js",
+          "bytes": 1134,
+          "gzip": 532
+        },
+        {
+          "file": "assets/areas-Ca4D900e.js",
+          "bytes": 364,
+          "gzip": 249
+        },
+        {
+          "file": "assets/WeekGrid-CcgrxFJu.js",
+          "bytes": 4224,
+          "gzip": 1883
+        },
+        {
+          "file": "assets/useClassroomSchedule-BetjjrC-.js",
+          "bytes": 4610,
+          "gzip": 1744
+        }
+      ],
+      "js": 683541,
+      "jsGzip": 212793,
+      "css": 100684
+    }
+  },
+  "note": "Todos los imports transitivos se suman, incluido react-runtime descargado al iniciar. No se cuenta solo el nombre/index. Partes conserva montaje y carga estática."
+}

@@ -1,5 +1,5 @@
-async page => {
-  const api = 'http://127.0.0.1:3000', origin = 'http://127.0.0.1:5174';
+async (page, config = {}) => {
+  const api = config.api ?? 'http://127.0.0.1:3000', origin = config.origin ?? 'http://127.0.0.1:5174';
   const f = await (await page.request.get(api + '/__test/fixtures')).json();
   const results = [], errors = [], writes = [];
   let stage = 'preparación';
@@ -12,14 +12,15 @@ async page => {
   const dialog = () => page.getByRole('dialog').last();
   const row = id => page.locator(`[data-record="${id}"]`);
   const observe = async text => {
-    await row(5).getByRole('button', { name: /^Observaciones/ }).click();
+    await config.parts.openEditor(5, 'observations');
     const editor = dialog();
-    if (!await editor.locator('fieldset').count()) await editor.getByRole('button', { name: 'Agregar observación' }).click();
-    await editor.getByLabel('Tipo de observación').selectOption('TEACHER');
+    if (await editor.getByRole('button', { name: 'Editar observación', exact: true }).count()) await editor.getByRole('button', { name: 'Editar observación', exact: true }).first().click();
+    else await editor.getByRole('button', { name: 'Añadir observación', exact: true }).click();
+    await editor.getByRole('radio', { name: 'Docente', exact: true }).check();
     await editor.getByLabel('Descripción de la observación').fill(text);
-    await editor.getByRole('button', { name: 'Aplicar al borrador' }).click();
+    await editor.getByRole('button', { name: 'Confirmar observación en el borrador', exact: true }).click();
     const saved = page.waitForResponse(r => r.url().endsWith('/class-session-records/5') && r.request().method() === 'PATCH');
-    await row(5).getByRole('button', { name: 'Guardar cambios', exact: true }).click();
+    await editor.getByRole('button', { name: 'Guardar', exact: true }).click();
     const response = await saved; check(response.ok(), 'Observación: ' + await response.text());
     await page.locator('main.parts-view[aria-busy="false"]').waitFor();
     return response.json();
@@ -40,8 +41,7 @@ async page => {
     await control('process?process=a&audience=both'); await control('replacement-dni?present=false');
     stage = 'R-I01: reemplazante sin DNI conserva observación y avisa';
     await goto('monitor', 'partes');
-    await page.getByRole('button', { name: /^Abrir jornada / }).first().click(); await row(5).waitFor();
-    await row(5).getByRole('button', { name: 'Curso ficticio', exact: true }).click();
+    await page.locator('.official-parts').waitFor(); await config.parts.openJournal(); await row(5).waitFor();
     const noDni = await observe('Observación del reemplazante sin DNI');
     check(noDni.observationWarning?.includes('DNI'), 'Aviso explícito sin DNI');
     await page.getByText(noDni.observationWarning, { exact: true }).waitFor();
@@ -51,10 +51,26 @@ async page => {
     results.push('R-I01: reemplazante autorizado sin DNI conserva observación, muestra aviso y no crea antecedente del titular');
 
     stage = 'R-I01: DNI del efectivo, edición auditada y texto original inmutable';
-    await control('replacement-dni?present=true'); await login('monitor');
-    await row(5).getByLabel('Inicio real del parte #5 (Lima)', { exact: true }).fill('00:00');
-    await row(5).getByLabel('Estado del parte #5', { exact: true }).selectOption('RN');
-    const effective = await observe('Antecedente original del docente reemplazante');
+    await login('monitor');
+    // La hoja oficial persiste cada editor por separado. Retirar primero la nota
+    // sinDNI evita atribuirla retrospectivamente al completar el DNI después.
+    await config.parts.openEditor(5, 'observations');
+    await dialog().getByRole('button', { name: 'Quitar observación del borrador', exact: true }).click();
+    await dialog().getByRole('button', { name: 'Guardar', exact: true }).click();
+    await dialog().waitFor({ state: 'hidden' });
+    await control('replacement-dni?present=true');
+    await config.parts.openEditor(5, 'hours');
+    await dialog().getByLabel('Inicio', { exact: true }).fill('00:00');
+    await dialog().getByRole('button', { name: 'Guardar', exact: true }).click();
+    await dialog().waitFor({ state: 'hidden' });
+    await config.parts.openEditor(5, 'state');
+    await dialog().getByRole('radio', { name: 'Reemplazo normal RN', exact: true }).check();
+    if (await dialog().getByRole('button', { name: 'Guardar', exact: true }).isEnabled()) {
+      await dialog().getByRole('button', { name: 'Guardar', exact: true }).click();
+      await dialog().waitFor({ state: 'hidden' });
+    } else await config.parts.closeEditor(); // RN ya estaba persistido en el fixture.
+    await observe('Antecedente original del docente reemplazante');
+    const effective = await (await page.request.get(api + '/api/class-session-records/5', { headers: headers('monitor') })).json();
     check(effective.effectiveTeacherId === f.ids.replacementTeacher, 'Servidor establece efectivo autorizado');
     await observe('Corrección auditada del docente reemplazante');
     await login('admin');

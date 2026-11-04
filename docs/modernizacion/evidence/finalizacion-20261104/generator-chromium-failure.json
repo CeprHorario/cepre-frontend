@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "generator: locator.selectOption: Timeout 30000ms exceeded.\n",
+  "stack": "locator.selectOption: Timeout 30000ms exceeded.\n",
+  "date": "2026-11-04T20:09:42.193Z"
+}

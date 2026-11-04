@@ -6,6 +6,9 @@ import type {
   Area,
   AvailableClassroom,
   AvailableTeacher,
+  CandidatePage,
+  ReplaceTeacherPayload,
+  ReplaceTeacherResult,
   Classroom,
   ClassScheduleItem,
   ClassTeacher,
@@ -162,8 +165,8 @@ export const TeachersApi = {
   /** Eliminación lógica en bloque (todos o ninguno) */
   deactivate: (ids: string[]) => patch<DeactivateResult>("/teachers/deactivate", { ids }),
   schedules: (id: string) => get<TeacherClassSchedule[]>(`/teachers/${id}/schedules`),
-  available: (body: { courseId: number; hourSessions: Slot[] }, page = 1, limit = 20) =>
-    post<Paginated<AvailableTeacher>>(`/teachers/available${qs({ page, limit })}`, body),
+  available: async (body: { courseId: number; hourSessions: Slot[] }, page = 1, limit = 20, signal?: AbortSignal) =>
+    (await api.post<CandidatePage<AvailableTeacher>>(`/teachers/available${qs({ page, limit })}`, body, { signal })).data,
   importFile: (file: File) => upload<unknown>(file.name.endsWith(".csv") ? "/teachers/csv" : "/teachers/json", file),
   exportExcel: async () => {
     const response = await api.get<Blob>("/teachers/export", { responseType: "blob" });
@@ -172,6 +175,8 @@ export const TeachersApi = {
 };
 
 export const SchedulesApi = {
+  replaceTeacher: (data: ReplaceTeacherPayload) =>
+    patch<ReplaceTeacherResult>("/schedules/reemplazar/profesor", data),
   assignTeacherMany: (teacherId: string, classroomIds: string[]) =>
     patch<unknown>("/schedules/asignar/profesor", { teacherId, classroomIds }),
   unassignTeacherMany: (teacherId: string, classroomIds: string[]) =>

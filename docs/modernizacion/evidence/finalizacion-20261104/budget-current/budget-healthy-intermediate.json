@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "healthySeconds": 600,
+  "cold": [
+    {
+      "at": 1793832641816,
+      "method": "GET",
+      "path": "/api/auth/user-info"
+    },
+    {
+      "at": 1793832641816,
+      "method": "GET",
+      "path": "/api/system/status"
+    },
+    {
+      "at": 1793832641878,
+      "method": "GET",
+      "path": "/api/class-session-records/workspace"
+    },
+    {
+      "at": 1793832641920,
+      "method": "GET",
+      "path": "/api/operations/notifications/stream"
+    },
+    {
+      "at": 1793832642223,
+      "method": "GET",
+      "path": "/api/class-session-files/thumbnails"
+    }
+  ],
+  "stream": {
+    "snapshots": 1,
+    "heartbeats": 24,
+    "connections": 1
+  },
+  "healthyGets": 0,
+  "date": "2026-11-04T23:00:42.365Z"
+}

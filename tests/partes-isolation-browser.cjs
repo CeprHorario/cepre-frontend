@@ -1,6 +1,6 @@
 async (page, h) => {
  try {
-  const api='http://127.0.0.1:3000', origin='http://127.0.0.1:5174', out='/home/joel/git/cepr/frontend/docs/partes-evidence';
+  const {api,origin}=h;const out='/home/joel/git/cepr/frontend/docs/partes-evidence';
   const results=[],errors=[]; page.on('pageerror',e=>errors.push(e.message)); page.on('dialog',d=>{void d.accept().catch(()=>{});});
   const check=(value,message)=>{if(!value)throw Error(message);};
   const stage=value=>page.evaluate(value=>window.__partesTestStage=value,value);
@@ -11,15 +11,13 @@ async (page, h) => {
    const route=h.route;
   const row=id=>page.locator('[data-record="'+id+'"]'); const dialog=()=>page.getByRole('dialog').last();
   const refocus=()=>page.evaluate(()=>{
-    Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});window.dispatchEvent(new Event('visibilitychange'));
-    delete document.visibilityState;window.dispatchEvent(new Event('visibilitychange'));
+    Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));
+    delete document.visibilityState;document.dispatchEvent(new Event('visibilitychange'));window.dispatchEvent(new Event('focus'));
   });
-  const select=async id=>{await row(id).getByRole('button',{name:'Curso ficticio',exact:true}).click();await page.locator('.parts-selection').filter({hasText:'Parte #'+id+' ·'}).waitFor();};
+  const select=h.select;
   await control('process?process=a&audience=both');await control('maintenance?enabled=false');await route('admin');
-  await select(5);await row(5).getByRole('button',{name:'Más opciones',exact:true}).click();
-   await h.observations(5,'BORRADOR AISLADO DEL PROCESO A',true);
-  await dialog().getByLabel('Motivo de la corrección administrativa').fill('Comprobar precondición de proceso');
-  await dialog().getByRole('button',{name:'Volver a la jornada',exact:true}).click();
+  await select(5);await h.observations(5,'BORRADOR AISLADO DEL PROCESO A');
+  await h.openEditor(5,'observations');await dialog().getByLabel('Motivo de esta operación').fill('Comprobar precondición de proceso');await h.closeEditor();
   const bBefore=await page.request.get(api+'/api/class-session-records/5',{headers:{'X-Class-Session-Context':f.processes.a.process,'X-Class-Session-Account':f.accounts.admin.accountId}});
   const base=await bBefore.json();
   await control('process?process=b&audience=admin');
@@ -27,42 +25,39 @@ async (page, h) => {
   await refocus();
   const guard=await page.request.post(api+'/api/class-session-records/5/corrections',{headers:{...headers,'X-Class-Session-Context':f.processes.a.process,'X-Class-Session-Account':f.accounts.admin.accountId},data:{expectedVersion:base.version,reason:'No ejecutar sobre proceso distinto',incidents:'NO DEBE GUARDARSE'}});
   check(guard.status()===409 && (await guard.json()).code==='CLASS_SESSION_CONTEXT_CHANGED','Precondición proceso409');
-   await page.locator('.parts-document-header p').filter({hasText:f.processes.b.process.replaceAll('_',' ')}).waitFor({timeout:25000});
+   await page.locator('.part-context-item.room').filter({hasText:'Aula ficticia B'}).waitFor({timeout:35000});
   check(await page.getByText('BORRADOR AISLADO DEL PROCESO A',{exact:true}).count()===0,'No trasladar borrador aB');
-  check((await row(5).textContent()).includes('Aula ficticia B'),'Sin datos cacheados deA con mismosIDs');
+  check((await page.locator('.part-context-bar').textContent()).includes('Aula ficticia B'),'Sin datos cacheados deA con mismosIDs');
   await page.screenshot({path:out+'/aislamiento-proceso-b.png',fullPage:true});
   await control('process?process=a&audience=admin');
   await stage('volver proceso A');
   await refocus();
-   await page.locator('.parts-document-header p').filter({hasText:f.processes.a.process.replaceAll('_',' ')}).waitFor({timeout:25000});
+   await page.locator('.part-context-item.room').filter({hasText:'Aula ficticia A'}).waitFor({timeout:35000});
    check(await h.draftText(5)==='BORRADOR AISLADO DEL PROCESO A','Recuperar borrador solo al volveraA');
-  await row(5).getByRole('button',{name:'Descartar cambios',exact:true}).click();
+  await h.discard(5);
   results.push('Proceso administrativo cambia sin renovar JWTcore; precondición409, mismosIDs aislados y borrador cuarentenado recuperable');
 
-  await select(5);await row(5).getByRole('button',{name:'Más opciones',exact:true}).click();
-   await h.observations(5,'BORRADOR DE CUENTA ADMIN NO TRANSFERIBLE',true);
-  await dialog().getByLabel('Motivo de la corrección administrativa').fill('Aislar cuenta ante cambio en otra pestaña');
-  await dialog().getByRole('button',{name:'Volver a la jornada',exact:true}).click();
+  await select(5);await h.observations(5,'BORRADOR DE CUENTA ADMIN NO TRANSFERIBLE');
   await login('monitor');
   await stage('cambiar cuenta monitor');
   const accountGuard=await page.request.get(api+'/api/class-session-records/5',{headers:{'X-Class-Session-Context':f.processes.a.process,'X-Class-Session-Account':f.accounts.admin.accountId}});
   check(accountGuard.status()===409,'Cuenta distinta mismo proceso409');
-  await page.getByRole('button',{name:'Actualizar',exact:true}).click();
+  await h.refresh();
   await page.waitForURL('**/monitor');
-   await page.goto(origin+'/monitor/partes'); await page.getByRole('heading',{name:'Partes por fecha',exact:true}).waitFor();await h.openJournal();
+   await page.goto(origin+'/monitor/partes');await h.openJournal();
   check(await page.getByText('BORRADOR DE CUENTA ADMIN NO TRANSFERIBLE',{exact:true}).count()===0,'No filtrar borradoradminamonitor');
   results.push('Cambio de cuenta en otra pestaña: bloqueo409, autenticación actualizada, sin mezclar roles ni borradores');
 
    await select(5);await h.observations(5,'BORRADOR CON SESIÓN VENCIDA');
   await stage('revocar sesión');
   const logout=await page.request.post(api+'/api/auth/logout',{headers});check(logout.ok(),'Revocar sesión real');
-  await row(5).getByRole('button',{name:'Guardar cambios',exact:true}).click({noWaitAfter:true});
+  await h.openEditor(5,'observations');await dialog().getByRole('button',{name:'Guardar',exact:true}).click({noWaitAfter:true});
   await page.getByRole('button',{name:'Continuar con Google',exact:true}).waitFor({timeout:10000});
   await login('monitor');await refocus();
   await stage('renovar sesión misma cuenta');
-   await page.locator('.parts-selection').filter({hasText:'Parte #5'}).waitFor({timeout:25000});
+   await row(5).waitFor({timeout:35000});
    check(await h.draftText(5)==='BORRADOR CON SESIÓN VENCIDA','Borrador de misma cuenta tras renovación');
-  await row(5).getByRole('button',{name:'Descartar cambios',exact:true}).click();
+  await h.discard(5);
   results.push('401 y revocación reales: login sin exponer datos; borrador de misma cuenta conservado en memoria');
 
   check(errors.length===0,errors.join('\n'));

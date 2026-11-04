@@ -1,0 +1,48 @@
+async (page, config) => {
+  const results = [];
+  const check = (condition, name) => { if (!condition) throw new Error(name); results.push(name); };
+  await page.request.get(config.api + '/__test/session?role=admin');
+  await page.goto(config.origin + '/admin/configuracion');
+  const read = async () => (await page.request.get(config.api + '/api/system/runtime-config')).json();
+  const before = await read();
+  const message = page.getByLabel('Mensaje para los usuarios', { exact: false });
+  const reason = page.getByLabel('Motivo del cambio', { exact: false });
+  const save = page.getByRole('button', { name: 'Guardar configuración', exact: true });
+  await message.waitFor();
+  check(await save.isDisabled(), 'UI10 no guarda sin cambios/motivo');
+  await message.fill('Mensaje sintético E3 de configuración');
+  check(await save.isDisabled(), 'UI10 cambio requiere motivo');
+  await reason.fill('Caracterización sintética de versión y persistencia del harness');
+  check(await save.isEnabled(), 'UI10 cambio con motivo habilitado');
+  let release;
+  let arrived;
+  const pending = new Promise(resolve => { release = resolve; });
+  const started = new Promise(resolve => { arrived = resolve; });
+  let payload;
+  await page.route(config.api + '/api/system/runtime-config', async route => {
+    if (route.request().method() !== 'PATCH') return route.continue();
+    payload = route.request().postDataJSON(); arrived(); await pending;
+    await route.fulfill({ status: 409, contentType: 'application/json', body: '{"message":"Conflicto sintético de configuración"}' }).catch(() => {});
+  });
+  await save.click(); await started;
+  await page.waitForFunction(node => node.disabled, await save.elementHandle());
+  check(await save.isDisabled(), 'UI10 guardando excluye doble escritura');
+  await page.screenshot({ path: config.output + '/UI-10-config-saving.png' });
+  release();
+  await page.getByRole('alert').filter({ hasText: 'Conflicto sintético' }).waitFor();
+  check(await reason.inputValue() === payload.changeReason, 'UI10 conflicto conserva motivo');
+  await page.unrouteAll({ behavior: 'wait' });
+  const responsePromise = page.waitForResponse(response => response.url() === config.api + '/api/system/runtime-config' && response.request().method() === 'PATCH');
+  await save.click();
+  const response = await responsePromise;
+  check(response.ok(), 'UI10 controlador real guarda en runtime sintético');
+  const after = await read();
+  check(after.version === before.version + 1 && after.maintenance.message === payload.maintenance.message && after.changeReason === payload.changeReason, 'UI10 versión/motivo/estado persistidos en sustituto explícito');
+  await page.getByRole('button', { name: 'Restaurar', exact: true }).first().click();
+  const dialog = page.getByRole('dialog').last();
+  await dialog.getByRole('button', { name: 'Restaurar', exact: true }).click();
+  await dialog.waitFor({ state: 'hidden' });
+  const restored = await read();
+  check(restored.version === after.version + 1 && JSON.stringify(restored.maintenance) === JSON.stringify(before.maintenance), 'UI10 restaurar crea versión nueva, no borra historia');
+  return { ok: true, suite: 'E3 configuración versionada', results, before, after, restored, date: new Date().toISOString(), limits: ['Runtime/Firestore sustituido por memoria de harness declarado. Controlador, guards, validación, UI e invalidaciones reales; no acredita Firestore/IAM/ADC.'] };
+}

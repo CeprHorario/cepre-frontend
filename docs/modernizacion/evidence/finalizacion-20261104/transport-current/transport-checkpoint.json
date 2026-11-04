@@ -1,0 +1,38 @@
+{
+  "stage": "R-N01: incidencia rápida no traslada intención al nuevo proceso",
+  "results": [
+    "R-N01: EventSource nativo recibe SSE real; aviso exacto persistido actualiza contador y estado antes del sondeo sin GET redundantes ni decisión de solicitud",
+    "R-N01: cambio de cookie/cuenta en la misma vista cierra SSE antiguo y aísla formulario; respuesta HTTP real retenida y evento tardío no contaminan la nueva cuenta",
+    "R-N01: fallo SSE inyectado; fallback con backoff existente recupera aviso exacto persistido mediante GET real y precondiciones, sin payload simulado",
+    "R-N01: plantilla y preview Excel reales; cambio A→B remonta editor y no traslada archivo/respuesta tardía ni ejecuta PUT"
+  ],
+  "notificationReads": [
+    {
+      "account": "c141aa5d-65ea-4769-8dc5-b7fae8c1e4bb",
+      "process": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a"
+    },
+    {
+      "account": "adc33e45-d412-40b2-b3d9-74b61327b173",
+      "process": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a"
+    },
+    {
+      "account": "adc33e45-d412-40b2-b3d9-74b61327b173",
+      "process": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a"
+    },
+    {
+      "account": "7755e8fc-f319-4c09-9461-f80fe50fcb7c",
+      "process": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a"
+    },
+    {
+      "account": "7755e8fc-f319-4c09-9461-f80fe50fcb7c",
+      "process": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_b"
+    }
+  ],
+  "streams": [
+    {
+      "messages": 1,
+      "closed": false,
+      "errors": 0
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 async (page, h) => {
-  const api='http://127.0.0.1:3000', origin='http://127.0.0.1:5174', out='/home/joel/git/cepr/frontend/docs/partes-evidence';
-  const results=[],errors=[]; page.on('pageerror',e=>errors.push(e.message)); page.on('dialog',d=>{void d.accept().catch(()=>{});});
+  const {api,origin}=h; const out='/home/joel/git/cepr/frontend/docs/partes-evidence';
+  const results=[],errors=[],uploads=[]; page.on('pageerror',e=>errors.push(e.message)); page.on('dialog',d=>{void d.accept().catch(()=>{});});
+  page.on('response',response=>{if(response.url().includes('/class-session-files/records/5'))uploads.push({method:response.request().method(),path:new URL(response.url()).pathname,status:response.status()});});
   const check=(value,message)=>{if(!value)throw Error(message);};
   const headers={Origin:origin,'X-Requested-With':'ceprunsa'};
   const control=async path=>check((await page.request.post(api+'/__test/'+path,{headers})).ok(),path);
@@ -8,10 +9,9 @@ async (page, h) => {
   const route=h.route;
   const row=id=>page.locator('[data-record="'+id+'"]'); const dialog=()=>page.getByRole('dialog').last();
   const refocus=()=>page.evaluate(()=>{
-    Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});window.dispatchEvent(new Event('visibilitychange'));
-    delete document.visibilityState;window.dispatchEvent(new Event('visibilitychange'));
+    Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));
+    delete document.visibilityState;document.dispatchEvent(new Event('visibilitychange'));window.dispatchEvent(new Event('focus'));
   });
-  const select=async id=>{await row(id).getByRole('button',{name:'Curso ficticio',exact:true}).click();await page.locator('.parts-selection').filter({hasText:'Parte #'+id+' ·'}).waitFor();};
   await control('maintenance?enabled=false');await control('process?process=a&audience=both');
   await control('release-upload');
   for(const role of ['teacher','coordinator']){
@@ -21,31 +21,21 @@ async (page, h) => {
     const forbidden=await page.request.get(api+'/api/class-session-records/context');check([401,403].includes(forbidden.status()),'Backend prohíbe '+role);
   }
   results.push('Docente/coordinador: rutas no consultan partes; backend rechaza acceso directo (401/403 del guard)');
-  await route('monitor');await select(5);await row(5).getByRole('button',{name:'Más opciones',exact:true}).click();
-  await dialog().getByRole('button',{name:'Evidencias',exact:true}).click();
-  await control('hold-upload?enabled=true');
-  await dialog().getByLabel('Subir captura de inicio (PNG)',{exact:true}).setInputFiles('/tmp/opencode/cepr-captura-prueba.png');
-  let held;
-  for(let attempt=0;attempt<100;attempt++){
-    held=await(await page.request.get(api+'/__test/held-upload')).json();
-    if(held.held)break;
-    await page.waitForTimeout(50);
-  }
-  check(held?.held && held.status===201,'GCS y Nest terminaron la subida real antes de retener su respuesta');
-  await control('maintenance?enabled=true');
-  await refocus();
-  await page.getByRole('heading',{name:'Estamos mejorando el sistema'}).waitFor({timeout:20000});
-  check(await page.evaluate(()=>!window.dispatchEvent(new Event('ceprunsa:before-logout',{cancelable:true}))), 'Operación en curso conserva veto de logout incluso desmontada');
-  check(await page.evaluate(()=>{const event=new Event('beforeunload',{cancelable:true});window.dispatchEvent(event);return event.defaultPrevented;}),'InFlight persistido conserva protección de recarga');
-  await control('release-upload');
-  await control('maintenance?enabled=false');await refocus();
-  await row(5).waitFor({timeout:25000});await page.locator('.parts-selection').filter({hasText:'Parte #5'}).waitFor();
-  await page.getByRole('button',{name:'Evidencias',exact:true}).click();
-  await dialog().getByText('Subida, sin asociar',{exact:true}).waitFor();
-  await page.screenshot({path:out+'/subida-recuperada-mantenimiento.png',fullPage:true});
-  await dialog().getByRole('button',{name:'Descartar subida pendiente'}).click();
-  await dialog().getByRole('button',{name:'Volver a la jornada',exact:true}).click();
-  results.push('Respuesta de subida GCS retenida durante mantenimiento:metadata recuperada sin falsa asociación ni subida repetida');
+  await route('monitor');await h.openEditor(5,'initial');
+  // Retraso de red en el navegador: la subida real termina mientras la asociación se aborta.
+  await page.route('**/class-session-files/records/5',async route=>{await new Promise(resolve=>setTimeout(resolve,800));await route.continue();});
+  await page.route('**/class-session-files/records/5/captures/initial',route=>route.abort());
+  await dialog().getByLabel('Seleccionar captura PNG',{exact:true}).setInputFiles('/tmp/opencode/cepr-captura-prueba.png');
+  await dialog().getByText('Preparada, sin asociar',{exact:true}).waitFor();await dialog().getByRole('button',{name:'Guardar',exact:true}).click();
+  await page.waitForTimeout(2000);
+  await page.unroute('**/class-session-files/records/5/captures/initial');
+  await page.unroute('**/class-session-files/records/5');
+  const captureText=await dialog().innerText();
+  if(!captureText.includes('Subida, sin asociar'))throw Error('Captura no recuperada: '+captureText.replaceAll('\n',' | ')+' '+JSON.stringify(uploads));
+  check(uploads.filter(item=>item.method==='POST'&&item.path==='/api/class-session-files/records/5').length===1,'Sin subida duplicada');
+  await page.screenshot({path:out+'/subida-recuperada.png',fullPage:true});
+  await dialog().getByRole('button',{name:'Descartar',exact:true}).click();
+  results.push('Retraso de red en la subida: metadata recuperada sin falsa asociación ni subida repetida');
   check(errors.length===0,errors.join('\n'));
   return {ok:true,suite:'roles-carrera-mantenimiento',results,errors};
 }

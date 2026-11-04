@@ -13,6 +13,7 @@ import { SimpleLayout } from "@/components/layout/ModuleLayout";
 import { areaStyle } from "@/lib/areas";
 import { cn } from "@/lib/cn";
 import { addMinutes, minutesOf, toHHMM } from "@/lib/schedule";
+import '@/components/layout/task-workspace.css';
 
 const PROCESSES = ["Ordinario I Fase", "Ciclo Quintos", "Ordinario II Fase", "Extraordinario"];
 const DOMAINS = ["@cepr.unsa.pe", "@unsa.edu.pe"];
@@ -208,9 +209,10 @@ export function GenerarProcesoPage() {
         </ol>
       </section>
 
-      <div className="mx-auto flex w-full max-w-[1200px] flex-wrap items-start gap-6 px-4 py-7 sm:px-10">
+      <div className="task-workspace mx-auto flex w-full max-w-[1400px] flex-wrap items-start gap-5 px-4 py-6 sm:px-8">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-4">
           <h1 className="font-display text-2xl font-extrabold text-marino-900">{STEPS[step]}</h1>
+          {create.error && <Alert tone="danger">{apiErrorMessage(create.error, 'No se pudo crear el proceso. El borrador se conserva.')}</Alert>}
           {tried && stepErrors[step].length > 0 && (
             <Alert tone="danger" title="Falta completar">
               {stepErrors[step].join(". ")}.

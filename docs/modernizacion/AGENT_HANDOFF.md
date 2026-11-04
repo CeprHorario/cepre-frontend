@@ -3,9 +3,32 @@
 Actualizado: 2026-11-03. Trabajo autorizado integralmente; no pedir de nuevo
 autorización para lotes del alcance. No declarar terminado sin puertas cumplidas.
 
+## Instrucción prioritaria del cliente: documentación y Partes intocable
+
+**El último encargo es analizar la propuesta oficial y validada y ajustar contratos,
+no implementar el refactor ahora.** Se ha documentado el lenguaje visual en
+[ANALISIS_PROPUESTA_OFICIAL.md](ANALISIS_PROPUESTA_OFICIAL.md) y
+[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). No activar las instrucciones históricas de
+continuidad mientras la tarea siga siendo documental.
+
+La futura ejecución mantiene funcionalidad y aplica esa dirección **solo fuera
+de Partes**. El usuario implementará Partes antes por separado; recibir esa versión
+y congelarla, no implementarla/alinearla desde este plan. Prohibido tocar la
+maqueta/capturas `propuestas/**`, UI-04/24/27, `src/features/partes/**`, sus APIs,
+contratos especializados y tests, o alterarlos indirectamente con tokens, fuentes,
+layout, controles, toasts, foco/scroll o portales compartidos. Rige
+[CF-13/14](FUNCTIONAL_CONTRACT.md) y el [cerrojo completo](MASTER_PLAN.md#cerrojo-de-partes-obligatorio).
+
+Pilotos futuros: Docentes, horario del Monitor **fuera de Partes**, modal de Cursos.
+**Retirado el piloto de evidencias. H8 es exclusivamente no alteración**, no rediseño.
+No arreglar hallazgos de Partes en un lote visual ni cambiar sus capturas/tests
+para pasar la regresión. Esta instrucción prevalece sobre los checkpoints antiguos.
+
 ## Mandato de continuidad
 
 El usuario exige **completar todas las fases sin detenerse por entregable**.
+Se conserva para una futura orden expresa de implementación, con el alcance
+rectificado anterior; no autoriza código en este análisis ni reapertura de H1.
 Continuar desde H2 hasta H10: al verificar cada hito, registrar el checkpoint y
 ejecutar el siguiente, sin esperar otro «continúa» ni emitir un cierre parcial de
 la ejecución. Las aprobaciones de pilotos/capturas son validaciones técnicas
@@ -17,13 +40,37 @@ usuario o límite técnico real; agotar antes las tareas independientes. Si un l
 interrumpe la ejecución, este traspaso permite reanudarla sin reautorizar fases.
 No rebajar las puertas de calidad ni presentar como final lo que siga pendiente.
 
+En una ventana nueva, aplicar la [ratificación de autonomía](MASTER_PLAN.md#ratificación-de-autonomía-y-reanudación):
+revisar el estado real, reconciliar discrepancias y ejecutar, no solo resumir o
+proponer. Cerrar primero las verificaciones pendientes de H2 y de los pilotos H3
+antes de extender H4–H9, conservando el trabajo ya iniciado. No pedir «continúa»
+ni terminar con pendientes ejecutables; completar H10 salvo bloqueo imprescindible
+o límite técnico real documentado.
+
 ## Estado
+
+**Propuesta oficial y validada:** [monitor.html](propuestas/monitor.html) es la única
+propuesta visual conservada; se eliminaron las alternativas anteriores. Incluye
+tabla, cabecera de jornada, hora real, estados/reemplazos, observaciones, capturas,
+tooltips y línea de tiempo lateral. Maqueta validada con 66 comprobaciones locales;
+no es implementación ni valida app/backend/permisos. Las 15 capturas están indexadas
+en [propuestas/README.md](propuestas/README.md). No cierra H2/H3/H8 ni acredita
+integración; tampoco autoriza intervenir Partes en la ejecución futura hasta H10.
+
+La revisión documental actual analizó la fuente completa y exploró en Chromium
+tabla, tooltip, horas, estado, notas, capturas y foco. Detectó límites del motor
+manual de ayudas/ARIA/Escape, radiogroups y reducción de movimiento: se registran
+en el análisis, sin corregir la referencia ni encargar correcciones en Partes.
+La dirección exige color/icono/forma, texto mínimo suficiente y movimiento funcional,
+no una interfaz sin etiquetas/errores. Floating UI queda previsto puntualmente
+para ayudas de los otros módulos; no se instalaron ni cambiaron dependencias.
 
 **H1 funcional verificado**: F1.0–F1.5 y D-05 tienen evidencia vigente; cinco suites
 de partes reconciliadas y 21 recorridos adicionales. H2 en ejecución: 32 rutas
 capturadas y auditadas a 390 px con 0 desbordamientos; faltan variantes/estados y
-teclado/zoom. H3 en ejecución: piloto Docentes aplicado (avatar, horas, detalle por
-teclado y reflow); faltan horario del Monitor y evidencias. H4 iniciado con el
+teclado/zoom. H3 en ejecución histórica: Docentes tiene avances técnicos (avatar,
+horas, detalle por teclado y reflow), pendientes de puerta visual actual; faltan
+horario del Monitor y modal de Cursos, no evidencias de Partes. H4 iniciado con el
 reflow global de layout, tarjetas y tablas. Consultar [progreso](MIGRATION_PROGRESS.md), [línea base funcional H1](FUNCTIONAL_BASELINE.md),
 [línea base H2](BASELINE_H2.md), [pilotos](H3_PILOTS.md) y [plan](MASTER_PLAN.md). Esto no es la entrega integral del plan.
 
@@ -72,24 +119,36 @@ del plazo. D-05 fue un defecto real de comparación, corregido sin rebajar prueb
 Todavía no hay H2 integral, verificación de todas las pantallas, Firefox/WebKit/
 lector de pantalla ni cierre visual/entrega integral.
 
-## Continuación exacta
+## Continuación exacta (solo ante una orden posterior de implementación)
 
-1. Revisar Git de ambos repositorios y leer pendientes exactos de MIGRATION_PROGRESS.
+La tarea documental termina tras comprobar coherencia/enlaces e inmutabilidad de
+archivos; **no ejecutar estos pasos de producto automáticamente en este encargo**.
+Los resultados de build/integración de secciones anteriores son checkpoints
+históricos, no comandos repetidos por actualizar los planes.
+
+1. Revisar Git de ambos repositorios y pendientes de MIGRATION_PROGRESS. Recibir
+   Partes implementado en el trabajo previo del usuario y registrar su línea base
+   congelada por rol/estado y dependencias compartidas. Sin ella no extender globals.
 2. Seguir `backend/test/records-browser.md`: iniciar solo DB/GCS aislados y harness;
    frontend `127.0.0.1:5174` con API `127.0.0.1:3000`. No tocar puerto 5173 ajeno.
-3. **H2/H3:** cerrar estados/variantes faltantes y ejecutar pilotos B (horario del
-   Monitor, revisando consumidores de ScheduleView) y C (evidencias en dos zonas),
-   con capturas/teclado/móvil. Después H4: navegación/acceso/estados globales,
-   foco y zoom. El reflow ya está corregido (0/32 desbordamientos).
+3. **H2/H3:** cerrar estados/variantes de pantallas elegibles; Partes se inspecciona
+   en lectura para conservación. Revalidar Docentes contra UX-01–UX-20 y ejecutar
+   pilotos de horario del Monitor (ScheduleView/consumidores) y modal de Cursos.
+   Capturas/teclado/táctil/zoom y ayudas dentro/fuera de diálogo. Después H4:
+   navegación/acceso/estados globales con adopción aislada fuera de Partes.
+   El checkpoint anterior registra 0/32 desbordamientos; no equivale a validación nueva.
 4. Ampliar fixtures/composición local solo donde falten para H2, sin presentar
    endpoints simulados como integración ni modificar servicios productivos para
    acomodar pruebas. El harness aún no compone todas las pantallas/controladores.
 5. K-01 ya caracterizado: dos solicitudes independientes; no introducir atomicidad
    nueva dentro de estética. Defectos funcionales nuevos se registran aparte.
-6. Después de H2: tres pilotos H3 (Docentes/horario Monitor/evidencias), validar antes
+6. Después de H2: tres pilotos H3 (Docentes/horario Monitor/modal de Cursos), validar antes
    de extender estilos H4–H9 y regresión integral H10. Mantener contratos/payloads/
    permisos/persistencia. Ejecutar esta secuencia sin detenerse en cada hito;
    actualizar progreso/traspaso como control interno, no como cierre parcial.
+   En cada lote comprobar Partes intacto. H8 solo coteja esa conservación;
+   si un compartido lo altera, aislar el cambio externo o bloquearlo, no compensar
+   editando el módulo o sus expectativas.
 
 Comandos ejecutados: `git status --short`, `git log -1 --oneline` por repo;
 `git diff --no-ext-diff --no-textconv --stat` backend;

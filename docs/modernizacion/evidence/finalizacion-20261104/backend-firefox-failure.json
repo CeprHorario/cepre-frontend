@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "backend: browserType.launch: Executable doesn't exist at /home/joel/.cache/ms-playwright/firefox-1549/firefox/firefox\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝",
+  "date": "2026-11-04T18:19:57.638Z"
+}

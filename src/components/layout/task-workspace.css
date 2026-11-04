@@ -1,0 +1,15 @@
+/* Superficies elegibles únicamente: nunca la hoja, avisos ni overlays de Partes. */
+.task-workspace { color:#191b28; }
+.task-workspace > h1, .task-workspace h1 { font-family:Montserrat,"Open Sans",sans-serif; color:#1c2140; }
+.task-workspace table { border-collapse:collapse; }
+.task-workspace table thead { background:#f8f9fc; color:#444a60; }
+.task-workspace table th { font-size:12px; font-weight:700; border-color:#e2e3ea; text-align:left; }
+.task-workspace table td { border-color:#e2e3ea; }
+.task-workspace table :is(th,td) { padding:12px 14px; }
+.task-workspace table tbody tr:hover { background:#f8f9fc; }
+.task-workspace :is(button,a,input,select,textarea,summary):focus-visible { outline:3px solid #661124; outline-offset:3px; }
+.task-workspace [role=alert] { border-radius:8px; }
+.task-workspace details > summary { cursor:pointer; }
+@media (pointer:coarse) { .task-workspace :is(button,input,select) { min-height:44px; } }
+@media (prefers-reduced-motion:reduce) { .task-workspace *, .task-workspace *::before, .task-workspace *::after { transition:none!important; animation:none!important; } }
+@media (forced-colors:active) { .task-workspace :focus-visible { outline-color:Highlight; } }

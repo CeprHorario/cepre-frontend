@@ -1,5 +1,5 @@
-async page => {
-  const api = 'http://127.0.0.1:3000', origin = 'http://127.0.0.1:5174';
+async (page, config = {}) => {
+  const api = config.api ?? 'http://127.0.0.1:3000', origin = config.origin ?? 'http://127.0.0.1:5174';
   const fixture = await (await page.request.get(api + '/__test/fixtures')).json();
   const results = [], errors = [];
   let stage = 'preparación';

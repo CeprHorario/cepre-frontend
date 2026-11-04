@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "navigation: Navegación móvil foco contenido 9",
+  "stack": "Error: Navegación móvil foco contenido 9\n    at check (eval at <anonymous> (file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:58:20), <anonymous>:5:62)\n    at eval (eval at <anonymous> (file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:58:20), <anonymous>:15:5)\n    at async file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:80:18",
+  "date": "2026-11-04T20:04:32.068Z"
+}

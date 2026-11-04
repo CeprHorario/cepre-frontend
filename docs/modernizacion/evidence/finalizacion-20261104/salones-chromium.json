@@ -1,0 +1,86 @@
+{
+  "ok": true,
+  "suite": "E2 salón integrado",
+  "results": [
+    "FE-02 0: página 1 completa (0)",
+    "FE-02 8: página 1 completa (8)",
+    "FE-02 9: página 1 completa (9)",
+    "BA-09 asignación posterior a posición 8",
+    "FE-01 una escritura, sin desasignación previa",
+    "BA-09 titular nuevo persistido",
+    "BA-09 cargas PostgreSQL persistidas exactas",
+    "FE-02 20: página 1 completa (20)",
+    "FE-02 20: página 2 completa (0)",
+    "FE-02 lote exacto: página siguiente vacía válida",
+    "FE-02 anterior conserva contexto",
+    "FE-02 21: página 1 completa (20)",
+    "FE-02 21: página 2 completa (1)",
+    "FE-02 50: página 1 completa (20)",
+    "FE-02 50: página 2 completa (20)",
+    "FE-02 50: página 3 completa (10)",
+    "FE-02 61: página 1 completa (20)",
+    "FE-02 61: página 2 completa (20)",
+    "FE-02 61: página 3 completa (20)",
+    "BA-09 asignación posterior a posición 50",
+    "FE-01 una escritura, sin desasignación previa",
+    "BA-09 titular nuevo persistido",
+    "BA-09 cargas PostgreSQL persistidas exactas",
+    "X-02 fallo conserva docente persistido",
+    "FE-01 fallo no reenvía escritura",
+    "FE-02 fallo de página no ofrece candidatos anteriores",
+    "FE-02 reintento recupera página2 real",
+    "FE-03 fallo salón no es inexistencia",
+    "FE-03 recuperación real salón",
+    "FE-03 fallo horario no es inexistencia",
+    "FE-03 horario conserva sección independiente de enlaces",
+    "FE-03 recuperación real horario",
+    "FE-03 fallo docentes no es inexistencia",
+    "FE-03 docentes desconocidos no son faltantes",
+    "FE-03 docentes conserva sección independiente de enlaces",
+    "FE-03 recuperación real docentes",
+    "FE-03 fallo cursos no es inexistencia",
+    "FE-03 cursos conserva sección independiente de enlaces",
+    "FE-03 recuperación real cursos",
+    "FE-03 fallo periodos no es inexistencia",
+    "FE-03 periodos conserva sección independiente de enlaces",
+    "FE-03 recuperación real periodos",
+    "FE-03 sin desbordamiento a320",
+    "FE-01 coordinación solo lectura",
+    "Sin errores JavaScript"
+  ],
+  "writes": [
+    {
+      "path": "/api/schedules/reemplazar/profesor",
+      "body": {
+        "teacherId": "01a1a7bc-b89d-7aff-87dd-b537c175b023",
+        "classId": "c7be3f0c-aba6-4320-b14c-a9af9b7aebc9",
+        "courseId": 1,
+        "expectedTeacherId": "9afea4a6-95d2-4030-92f3-bc0e7e28e89e"
+      }
+    },
+    {
+      "path": "/api/schedules/reemplazar/profesor",
+      "body": {
+        "teacherId": "01a1a7bc-b89f-7e08-b90e-4459bacd4ece",
+        "classId": "c7be3f0c-aba6-4320-b14c-a9af9b7aebc9",
+        "courseId": 1,
+        "expectedTeacherId": "9afea4a6-95d2-4030-92f3-bc0e7e28e89e"
+      }
+    },
+    {
+      "path": "/api/schedules/reemplazar/profesor",
+      "body": {
+        "teacherId": "01a1a7bc-b89d-70b6-91e5-69a5c9bba971",
+        "classId": "c7be3f0c-aba6-4320-b14c-a9af9b7aebc9",
+        "courseId": 1,
+        "expectedTeacherId": "9afea4a6-95d2-4030-92f3-bc0e7e28e89e"
+      }
+    }
+  ],
+  "date": "2026-11-04T18:16:44.334Z",
+  "limits": [
+    "Fallos UI inyectados se declaran; lecturas y persistencia contra Nest/PostgreSQL reales."
+  ],
+  "engine": "chromium",
+  "browserVersion": "156.0.8078.79"
+}

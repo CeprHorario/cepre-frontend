@@ -14,7 +14,7 @@ export function usePartsSessionProtection() {
   useEffect(() => {
     const pending = () => client.getQueriesData<Workspace>({ queryKey: ["parts"], predicate: query => query.queryKey[3] === "workspace" })
       .map(([, data]) => data).filter((data): data is Workspace => Boolean(data))
-      .filter(s => s.inFlight || s.reviewDirty || s.operation || Object.keys(s.pendingFiles).length || (s.base && s.draft && JSON.stringify(toDraft(s.base)) !== JSON.stringify(s.draft)))
+      .filter(s => s.inFlight || s.reviewDirty || s.operation || s.noteComposer || s.followupDraft?.text || s.followupDraft?.reason || Object.keys(s.pendingFiles).length || Object.keys(s.captureDrafts ?? {}).length || (s.base && s.draft && JSON.stringify(toDraft(s.base)) !== JSON.stringify(s.draft)))
       .map(s => ({ inFlight: s.inFlight })).concat(client.getQueriesData<{ dirty: boolean; busy: boolean }>({ queryKey: ['incidences', 'draft'] }).filter(([, s]) => s?.dirty || s?.busy).map(([, s]) => ({ inFlight: Boolean(s?.busy) })));
     const beforeUnload = (event: BeforeUnloadEvent) => { if (pending().length) { event.preventDefault(); event.returnValue = ""; } };
     const beforeLogout = (event: Event) => {
@@ -39,6 +39,7 @@ export function usePartsSessionProtection() {
         if (!workspace) continue;
         client.setQueryData<Workspace>(key, { ...workspace, draft: workspace.base ? toDraft(workspace.base) : null,
           review: { result: "CONFORMING", comments: "", confirmed: false }, reviewDirty: false, pendingFiles: {},
+          captureDrafts: {}, noteComposer: null, followupDraft: {text:'',reason:'',editing:null},
           operation: null, operationBase: null, operationTargets: [], targets: [], conflict: false });
       }
       window.dispatchEvent(new Event('cepre:discard-incidence-draft'));

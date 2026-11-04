@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "fallbackSeconds": 600,
+  "recoverySeconds": 65,
+  "stream": {
+    "snapshots": 1,
+    "heartbeats": 0,
+    "connections": 1
+  },
+  "fallbackGets": 6,
+  "fallbackLists": 3,
+  "getsAfterRecovery": 0
+}

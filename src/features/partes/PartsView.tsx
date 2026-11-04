@@ -1,7 +1,5 @@
-import { ObservationsEditor } from './ObservationsEditor';
-import documentLogo from "@/assets/logo-light.png";
-import { FiFileText, FiInbox, FiRefreshCw } from "react-icons/fi";
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
+import { OfficialPartsSheet } from './OfficialPartsSheet';
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Checkbox, Field, Input, Select, Textarea } from "@/components/ui/Field";
 import { Dialog } from "@/components/ui/Overlay";
@@ -10,9 +8,6 @@ import type { ClassState, Operation, OperationDraft, PartFilters, PartRecord, Pa
 import "./partes.css";
 
 const CLASS_STATES: Record<ClassState, string> = {N:'N · Normal',T:'T · Tardanza',SD:'SD · Sin docente',RN:'RN · Reemplazo normal',RE:'RE · Reemplazo de emergencia'};
-function StatePicker({p, record, value}: {p:PartsViewProps; record:PartRecord; value:ClassState|''}) {
-  return <Select aria-label={`Estado del parte #${record.id}`} value={value} disabled={p.busy || !p.writable || Boolean(p.operation) || (p.role === 'monitor' && record.classState === 'RE')} onChange={e=>p.onDraft({classState:e.target.value as ClassState|''})}><option value="">Sin registrar</option>{Object.entries(CLASS_STATES).filter(([key])=>key!=='RE'||p.role==='administrador'||record.classState==='RE').map(([key,label])=><option key={key} value={key}>{label}</option>)}</Select>;
-}
 const TEACHING: Record<PartRecord["teachingStatus"], string> = {
   UNCONFIRMED: "Por confirmar", TAUGHT: "Dictada", NOT_TAUGHT: "No dictada", INTERRUPTED: "Interrumpida",
 };
@@ -148,7 +143,7 @@ function PeoplePicker({ p, kind, value, onChange, disabled, label, empty = "Sin 
 
 function SaveActions({ p }: { p: PartsViewProps }) {
   return <div className="parts-actions">
-    {p.writable && <Button size="sm" disabled={p.busy || p.conflict || Boolean(p.operation) || !p.dirty || (p.role === "administrador" && (p.draft?.reason.trim().length ?? 0) < 3)} onClick={p.onSave}>Guardar cambios</Button>}
+    {p.writable && <Button size="sm" disabled={p.busy || p.conflict || Boolean(p.operation) || !p.dirty || (p.role === "administrador" && (p.draft?.reason.trim().length ?? 0) < 3)} onClick={() => void p.onSave()}>Guardar cambios</Button>}
     <Button size="sm" variant="secondary" disabled={p.busy || (!p.dirty && !p.conflict && !p.unavailable)} onClick={p.onDiscard}>{p.unavailable ? "Descartar borrador y subidas pendientes" : p.conflict ? "Cargar servidor y descartar borrador" : "Descartar cambios"}</Button>
     {p.unavailable && <span className="parts-help">El parte no está disponible. El descarte retira sus pendientes locales, no borra archivos del servidor.</span>}
   </div>;
@@ -190,7 +185,7 @@ function Conflict({ p }: { p: PartsViewProps }) {
 function RecordDetails({ p }: { p: PartsViewProps }) {
   const record = p.selected;
   if (!record) return null;
-  const disabled = p.busy || !p.writable || Boolean(p.operation) || p.role === "supervisor";
+  const disabled = p.busy || !p.writable || Boolean(p.operation);
   return <div className="parts-content">
     <dl className="parts-facts">
       <div><dt>Aula / turno</dt><dd>{record.snapshot.className} / {record.snapshot.shift || "—"}</dd></div>
@@ -203,20 +198,14 @@ function RecordDetails({ p }: { p: PartsViewProps }) {
     </dl>
     {record.deletedAt && <p className="parts-warning">Anulado el {instant(record.deletedAt)}. {record.deletionReason}</p>}
     {p.writeLimit && <p className="parts-help">{p.writeLimit}</p>}
-    {p.role === "supervisor" || !p.draft ? <dl className="parts-facts">
+    <dl className="parts-facts">
       <div><dt>Inicio / fin real</dt><dd>{limaTime(record.actualStart) || "Sin registrar"} / {limaTime(record.actualEnd) || "Sin registrar"}</dd></div>
       <div><dt>Estado</dt><dd>{record.classState ? CLASS_STATES[record.classState] : 'Sin registrar'}</dd></div>
       <div><dt>Docente asignado</dt><dd>{record.effectiveSnapshot.TEACHER?.name || record.effectiveSnapshot.TEACHER?.email || "Sin registrar"}</dd></div>
       <div><dt>Monitor asignado</dt><dd>{record.effectiveSnapshot.MONITOR?.name || record.effectiveSnapshot.MONITOR?.email || "Sin registrar"}</dd></div>
       <div className="parts-span"><dt>Observaciones</dt><dd className="parts-prewrap">{record.incidents || "Sin observaciones"}</dd></div>
-    </dl> : <fieldset className="parts-grid parts-grid-two" disabled={disabled}>
-      <Control label="Inicio real (Lima)" hint={`Programado: ${limaTime(record.scheduledStart)}`}>{(id, describedBy) => <><Input id={id} aria-describedby={describedBy} type="time" list={`${id}-suggestion`} step={60} value={p.draft!.actualStart} onChange={e => p.onDraft({ actualStart: e.target.value })} /><datalist id={`${id}-suggestion`}><option value={limaTime(record.scheduledStart)} /></datalist></>}</Control>
-      <Control label="Fin real (Lima)" hint={`Programado: ${limaTime(record.scheduledEnd)}`}>{(id, describedBy) => <><Input id={id} aria-describedby={describedBy} type="time" list={`${id}-suggestion`} step={60} value={p.draft!.actualEnd} onChange={e => p.onDraft({ actualEnd: e.target.value })} /><datalist id={`${id}-suggestion`}><option value={limaTime(record.scheduledEnd)} /></datalist></>}</Control>
-      <div className="parts-span"><span className="parts-field-label">Estado</span><StatePicker p={p} record={record} value={p.draft.classState ?? ''} /></div>
-      {p.role === 'administrador' ? <><PeoplePicker p={p} kind="TEACHER" label="Docente efectivo" value={p.draft.effectiveTeacherId} onChange={effectiveTeacherId => p.onDraft({ effectiveTeacherId })} disabled={disabled} /><PeoplePicker p={p} kind="MONITOR" label="Monitor efectivo" value={p.draft.effectiveMonitorId} onChange={effectiveMonitorId => p.onDraft({ effectiveMonitorId })} disabled={disabled} /></> : <dl className="parts-facts parts-span"><div><dt>Docente asignado</dt><dd>{record.effectiveSnapshot.TEACHER?.name || record.snapshot.teacher?.name || record.snapshot.teacher?.email || 'Sin asignar'}</dd></div><div><dt>Monitor asignado</dt><dd>{record.effectiveSnapshot.MONITOR?.name || record.snapshot.monitor?.name || record.snapshot.monitor?.email || 'Sin datos registrados'}</dd></div></dl>}
-      <div className="parts-span"><Control label="Observaciones">{id => <span id={id}><ObservationsEditor value={p.draft!.structuredObservations} onChange={value=>p.onDraft({structuredObservations:value})} /></span>}</Control></div>
-      {p.role === "administrador" && <div className="parts-span"><Control label="Motivo de la corrección administrativa" required hint="Entre 3 y 2000 caracteres. No modifica el cierre original.">{(id, describedBy) => <Textarea id={id} aria-describedby={describedBy} required minLength={3} maxLength={2000} value={p.draft!.reason} onChange={e => p.onDraft({ reason: e.target.value })} />}</Control></div>}
-    </fieldset>}
+    </dl>
+    {p.role === 'administrador' && p.draft && <fieldset className="parts-grid parts-grid-two" disabled={disabled}><legend>Rectificación explícita de efectivos</legend><PeoplePicker p={p} kind="TEACHER" label="Docente efectivo" value={p.draft.effectiveTeacherId} onChange={effectiveTeacherId => p.onDraft({ effectiveTeacherId })} disabled={disabled} /><PeoplePicker p={p} kind="MONITOR" label="Monitor efectivo" value={p.draft.effectiveMonitorId} onChange={effectiveMonitorId => p.onDraft({ effectiveMonitorId })} disabled={disabled} /><div className="parts-span"><Control label="Motivo de la corrección administrativa" required>{id => <Textarea id={id} required minLength={3} maxLength={2000} value={p.draft!.reason} onChange={event => p.onDraft({reason:event.target.value})} />}</Control></div></fieldset>}
     {p.role === 'administrador' ? <CoverageList p={p} /> : <ButtonLink variant="secondary" to={`/${p.role==='supervisor'?'supervisor':'monitor'}/solicitudes`}>Solicitudes y reemplazos</ButtonLink>}
     <ReviewSection p={p} />
   </div>;
@@ -280,34 +269,18 @@ function Capture({ p, slot, onZoom }: { p: PartsViewProps; slot: Slot; onZoom: (
   const associatedAt = slot === "initial" ? r.initialAssociatedAt : r.finalAssociatedAt;
   const pending = p.pendingFiles[slot];
   const label = slot === "initial" ? "Inicio" : "Fin";
-  const locked = p.busy || Boolean(p.operation) || p.role === "supervisor" || !p.writable;
+  const preview = id ? p.thumbnails[id] || p.images[id] : null;
   return <section className="parts-capture" aria-label={`Captura de ${label.toLowerCase()}`}>
     <h3>{label}</h3>
     {id ? <>
       <button className="parts-thumbnail" type="button" disabled={p.busy} onClick={() => { if (!p.images[id]) p.onLoadImage(id); onZoom(id); }} aria-label={`Ampliar captura de ${label.toLowerCase()}`}>
-        {p.images[id] ? <img src={p.images[id]} alt={`Captura completa de ${label.toLowerCase()}`} /> : <span>Ver captura</span>}
+        {preview ? <img src={preview} alt={`Captura de ${label.toLowerCase()}`} /> : <span>Ver captura</span>}
       </button>
-      {!p.images[id] && <Button size="sm" variant="secondary" disabled={p.busy} onClick={() => p.onLoadImage(id)}>Cargar miniatura</Button>}
-      <p>Asociada: {instant(associatedAt)}</p><p className="parts-help">Fecha de subida no incluida en los datos de esta evidencia.</p>
+      <p>Asociada: {instant(associatedAt)}</p>
+      <p className="parts-help">La miniatura se carga en lote. El PNG original se solicita solo al ampliar.</p>
       <details><summary>Identificador de evidencia</summary><span className="parts-break">{id}</span></details>
     </> : <p className="parts-muted">Sin captura asociada.</p>}
-    {p.role !== "supervisor" && <>
-      <Control label={`${id ? "Nueva captura" : "Subir captura"} de ${label.toLowerCase()} (PNG)`} hint="Hasta 10 MiB y 4096 px por eje; el servidor valida el archivo.">{(inputId, describedBy) =>
-        <Input id={inputId} aria-describedby={describedBy} className="parts-file" type="file" accept="image/png,.png" disabled={locked || Boolean(pending)} onChange={e => {
-          const file = e.target.files?.[0];
-          if (file) p.onUpload(slot, file);
-          e.target.value = "";
-        }} />}</Control>
-      {pending && <div className="parts-pending" role="status">
-        <strong>Subida, sin asociar</strong><span className="parts-break">{pending.originalName}</span><span>Subida: {instant(pending.uploadedAt)}</span>
-        <span>No forma parte del registro hasta asociarla.</span>
-        <div className="parts-actions">
-          <Button size="sm" disabled={locked || p.conflict} onClick={() => p.onAssociate(slot)}>Asociar captura</Button>
-          <Button size="sm" variant="secondary" disabled={p.busy} onClick={() => p.onDiscardUpload(slot)}>Descartar subida pendiente</Button>
-        </div>
-        <small>Descartar retira los metadatos pendientes; no borra el archivo.</small>
-      </div>}
-    </>}
+    {pending && <p role="status">Hay una subida pendiente. Continúa en el editor de captura de la tabla; no se ha asociado.</p>}
   </section>;
 }
 
@@ -328,7 +301,7 @@ function History({ p }: { p: PartsViewProps }) {
 
 function OperationDialog({ p }: { p: PartsViewProps }) {
   const op = p.operation;
-  if (!op || p.role === "monitor" || (p.role === "supervisor" && op.action !== "replacement")) return null;
+  if (!op || p.role === "monitor" || (p.role === "supervisor" && !['replacement','resolve'].includes(op.action))) return null;
   const record = p.selected;
   const patch = p.onOperationDraft;
   const targets = p.selectedIds.length ? p.selectedIds : record ? [record.id] : [];
@@ -340,10 +313,10 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
     (action !== "grant" || Boolean(record?.monitorAccountId && op.expiresAt)) && (action !== "revoke" || Boolean(op.grantId));
   const input = (key: keyof OperationDraft, label: string, type = "text", required = false, hint?: string) => <Control key={key} label={label} required={required} hint={hint}>{(id, describedBy) =>
     <Input id={id} aria-describedby={describedBy} type={type} required={required} value={String(op[key])} onChange={e => patch({ [key]: e.target.value })} {...(type === "number" ? { min: 0, max: 1440, step: 1 } : {})} />}</Control>;
-  return <Dialog open={p.operationOpen} onClose={() => { if (!p.busy) p.onCloseOperation(); }} title={p.role === "supervisor" && action === "replacement" ? "Registrar reemplazo de emergencia" : OPERATIONS[action]} size="lg" description={action === "configuration" ? `Versión de configuración ${p.config?.version ?? "no disponible"}` : `Parte seleccionado #${record?.id ?? "—"}`} footer={<>
+  return <Dialog open={p.operationOpen} onClose={() => { if (!p.busy) p.onCloseOperation(); }} title={p.role === "supervisor" && action === "replacement" ? "Registrar sustitución de monitor" : OPERATIONS[action]} size="lg" description={action === "configuration" ? `Versión de configuración ${p.config?.version ?? "no disponible"}` : `Parte seleccionado #${record?.id ?? "—"}`} footer={<>
     <Button variant="ghost" disabled={p.busy} onClick={p.onCloseOperation}>Cerrar y conservar borrador</Button>
     <Button variant="secondary" disabled={p.busy} onClick={p.onDiscardOperation}>Descartar operación</Button>
-    <Button type="submit" form="parts-operation-form" disabled={!canSubmit}>{action === "replacement" && p.role === "supervisor" ? "Registrar reemplazo" : "Confirmar operación"}</Button>
+    <Button type="submit" form="parts-operation-form" disabled={!canSubmit}>{action === "replacement" && p.role === "supervisor" ? "Registrar sustitución" : "Confirmar operación"}</Button>
   </>}>
     <form id="parts-operation-form" className="parts-content" onSubmit={e => { e.preventDefault(); if (canSubmit) p.onSubmitOperation(); }}>
       {p.error && <p className="parts-message parts-error" role="alert">{p.error}</p>}
@@ -353,26 +326,26 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
           <strong>{targets.length} parte{targets.length !== 1 ? "s" : ""} de destino</strong><p className="parts-break">{targets.map(id => `#${id}`).join(", ") || "Selecciona al menos un parte."}</p><p>La selección de la tabla admite hasta 200 partes.</p>
         </div>}
         {action === "replacement" && <>
-          <Control label="Tipo de persona" required>{id => <Select id={id} value={op.kind} disabled={p.role === "supervisor"} onChange={e => { const kind = e.target.value as PersonKind; patch({ kind, personId: "" }); p.onPeople(kind, "", 1); }}>
-            <option value="TEACHER">Docente</option><option value="MONITOR">Monitor</option>
+          <Control label="Tipo de persona" required>{id => <Select id={id} value={p.role === "supervisor" ? "MONITOR" : op.kind} disabled={p.role === "supervisor"} onChange={e => { const kind = e.target.value as PersonKind; patch({ kind, personId: "" }); p.onPeople(kind, "", 1); }}>
+            {p.role !== "supervisor" && <option value="TEACHER">Docente</option>}<option value="MONITOR">Monitor</option>
           </Select>}</Control>
-          <PeoplePicker p={p} label="Persona reemplazante" kind={op.kind} value={op.personId} empty="Selecciona una persona" onChange={personId => patch({ personId })} disabled={p.busy || p.conflict} />
-          <Control label="Modalidad" required>{id => <Select id={id} value={op.mode} disabled={p.role === "supervisor"} onChange={e => patch({ mode: e.target.value as "PLANNED" | "EMERGENCY" })}>
-            {p.role !== "supervisor" && <option value="PLANNED">RN · Reemplazo normal</option>}<option value="EMERGENCY">RE · Reemplazo de emergencia (última hora)</option>
+          <PeoplePicker p={p} label={p.role === "supervisor" ? "Monitor sustituto" : "Persona reemplazante"} kind={p.role === "supervisor" ? "MONITOR" : op.kind} value={op.personId} empty="Selecciona una persona" onChange={personId => patch({ personId })} disabled={p.busy || p.conflict} />
+          <Control label="Modalidad" required>{id => <Select id={id} value={op.mode} onChange={e => patch({ mode: e.target.value as "PLANNED" | "EMERGENCY" })}>
+            <option value="PLANNED">RN · Reemplazo normal</option><option value="EMERGENCY">RE · Reemplazo de emergencia</option>
           </Select>}</Control>
-          <p className="parts-help">El reemplazo no confirma que hubo dictado ni cambia la persona efectiva del parte.</p>
+          <p className="parts-help">{p.role === "supervisor" ? "Registra quién ejerce como monitor en el bloque. No cambia la cuenta autenticada, el aula, la contraseña ni la asignación semanal." : "El reemplazo no confirma que hubo dictado ni cambia la persona efectiva del parte."}</p>
         </>}
         {action === "resolve" && <>
           <Control label="Cobertura a resolver" required>{id => <Select id={id} required value={op.coverageId} onChange={e => patch({ coverageId: e.target.value })}>
-            <option value="">Selecciona una cobertura</option>{record?.coverages.map(c => <option key={c.id} value={c.id}>#{c.id} · {c.kind === "TEACHER" ? "Docente" : "Monitor"} · {c.personSnapshot.name || c.personSnapshot.email} · {COVERAGE[c.status]}</option>)}
+            <option value="">Selecciona una cobertura</option>{record?.coverages.filter(c => p.role === 'administrador' || c.kind === 'MONITOR').map(c => <option key={c.id} value={c.id}>#{c.id} · {c.kind === "TEACHER" ? "Docente" : "Monitor"} · {c.personSnapshot.name || c.personSnapshot.email} · {COVERAGE[c.status]}</option>)}
           </Select>}</Control>
           <Control label="Resolución" required>{id => <Select id={id} value={op.status} onChange={e => patch({ status: e.target.value as OperationDraft["status"] })}>
-            <option value="AUTHORIZED">Autorizar</option><option value="REJECTED">Rechazar</option><option value="REVOKED">Revocar</option>
+            {p.role === 'administrador' && <><option value="AUTHORIZED">Autorizar</option><option value="REJECTED">Rechazar</option></>}<option value="REVOKED">Revocar</option>
           </Select>}</Control>
           <p className="parts-help">Autorizar cobertura no confirma ejecución. El dictado y las personas efectivas se registran por separado.</p>
         </>}
         {action === "grant" && <>
-          <Control label="Cuenta habilitada (fija)">{id => <Input id={id} readOnly value={record?.monitorAccountId ?? ""} placeholder="Este parte no tiene cuenta de monitor" />}</Control>
+          <Control label="Cuenta habilitada" required>{id => <Select id={id} value={op.accountId} onChange={event => patch({ accountId:event.target.value })}>{(record?.eligibleGrantAccounts ?? (record?.monitorAccountId ? [{id:record.monitorAccountId,email:'Cuenta del monitor',role:'monitor'}] : [])).map(account => <option key={account.id} value={account.id}>{account.email} · {account.role}</option>)}</Select>}</Control>
           {input("expiresAt", "Vencimiento (hora de Lima)", "datetime-local", true, "Se interpreta en America/Lima (UTC−05:00), no en la zona horaria del dispositivo.")}
           <p className="parts-help">El cierre original sigue siendo {instant(record?.editDeadline)}. La habilitación no modifica dicho cierre.</p>
         </>}
@@ -392,7 +365,8 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
               <option key={period.id} value={period.id}>Período {period.period} · {period.startTime.includes("T") ? period.startTime.slice(11, 16) : period.startTime.slice(0, 5)}–{period.endTime.includes("T") ? period.endTime.slice(11, 16) : period.endTime.slice(0, 5)} · {period.shift.name}</option>)}
           </Select>}</Control>
         </>}
-        {action === "configuration" && <>
+        {action === "configuration" && !p.config && <p role="status">Cargando configuración operativa…</p>}
+        {action === "configuration" && p.config && <>
           <Checkbox label="Habilitar generación de partes" checked={op.enabled} onChange={e => patch({ enabled: e.target.checked })} />
           <div className="parts-grid parts-grid-two">{input("startsOn", "Fecha de inicio", "date", op.enabled)}{input("endsOn", "Fecha de fin", "date", op.enabled)}</div>
           <p className="parts-help">Los parámetros vacíos quedan sin definir (nulos), no equivalen a cero. Valores enteros entre 0 y 1440 minutos.</p>
@@ -400,6 +374,7 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
             {input("latenessToleranceMinutes", "Tolerancia de tardanza (minutos)", "number")}
             {input("replacementWaitMinutes", "Espera de reemplazo (minutos)", "number")}
             {input("alertThresholdMinutes", "Umbral de alerta (minutos)", "number")}
+            {input("escalationDelayMinutes", "Demora de escalado tras el aviso (minutos)", "number", false, "Vacío desactiva el escalado. No existe un valor institucional predeterminado.")}
             {input("continuityGapMinutes", "Separación de continuidad (minutos)", "number")}
           </div>
         </>}
@@ -442,112 +417,77 @@ function Report({ p }: { p: PartsViewProps }) {
   </Dialog>;
 }
 
+function FollowupDialog({ p }: { p: PartsViewProps }) {
+  const {text,reason,editing} = p.followupDraft;
+  const setText = (text:string) => p.onFollowupDraft({text});
+  const setReason = (reason:string) => p.onFollowupDraft({reason});
+  const setEditing = (editing:PartsViewProps['followupDraft']['editing']) => p.onFollowupDraft({editing});
+  const [tab, setTab] = useState<'notes'|'substitutions'>('notes');
+  const close = () => { if (!p.busy) p.onFollowup(false); };
+  return <Dialog open={p.followupOpen} onClose={close} title="Seguimiento del monitor" description="Privado de supervisión y administración; fuera de la tabla y de las observaciones de clase." footer={<Button variant="secondary" disabled={p.busy} onClick={close}>Cerrar y conservar borrador</Button>}>
+    {p.error && <p role="alert" className="parts-message parts-error">{p.error}</p>}
+    <nav className="parts-actions" aria-label="Seguimiento privado"><Button variant={tab === 'notes' ? 'primary' : 'secondary'} onClick={() => setTab('notes')}>Observaciones</Button><Button variant={tab === 'substitutions' ? 'primary' : 'secondary'} onClick={() => setTab('substitutions')}>Sustituciones</Button></nav>
+    {tab === 'substitutions' ? <div className="parts-content"><Control label="Bloque a sustituir o rectificar">{id => <Select id={id} value={p.selected?.id ?? ''} onChange={event => p.onSelect(Number(event.target.value), true)}><option value="">Selecciona un bloque</option>{p.rows.map(row => <option key={row.id} value={row.id}>Bloque {row.period} · {limaTime(row.scheduledStart)}</option>)}</Select>}</Control><p className="parts-help">La cuenta sigue siendo la oficial. Una cobertura no confirma trabajo ni reescribe efectivos ya registrados.</p>{p.selected?.coverages.filter(coverage => coverage.kind === 'MONITOR').map(coverage => <p key={coverage.id}>{coverage.personSnapshot.name || coverage.personSnapshot.email} · {COVERAGE[coverage.status]}</p>)}<div className="parts-actions"><Button disabled={!p.base || p.busy} onClick={() => p.onOperation('replacement')}>Registrar sustitución</Button><Button variant="secondary" disabled={!p.base || p.busy || !p.selected?.coverages.some(coverage => coverage.kind === 'MONITOR' && coverage.status === 'AUTHORIZED')} onClick={() => p.onOperation('resolve')}>Revocar sustitución</Button></div></div> :
+    <div className="parts-content">
+      <p className="parts-help">Estas notas no crean antecedentes personales, no se envían al monitor y no modifican el parte. La autoría y la hora son del servidor.</p>
+      <Control label="Nueva nota privada">{(id, describedBy) => <Textarea id={id} aria-describedby={describedBy} maxLength={2000} value={text} onChange={event => setText(event.target.value)} />}</Control>
+      <div className="parts-actions"><Button size="sm" disabled={p.busy || text.trim().length < 3} onClick={async () => { const saved = editing ? await p.onFollowupUpdate(editing.id,editing.version,text.trim()) : await p.onFollowupCreate(text.trim()); if (saved) { setText(''); setEditing(null); } }}>{editing ? 'Guardar corrección' : 'Agregar nota'}</Button><Button size="sm" variant="secondary" disabled={p.busy || !text} onClick={() => { setText(''); setEditing(null); }}>Descartar borrador de nota</Button></div>
+      <Control label="Motivo de retirada" hint="Se exige antes de retirar una nota; queda en auditoría.">{(id) => <Input id={id} maxLength={2000} value={reason} onChange={event => setReason(event.target.value)} />}</Control>
+      {p.followupLoading ? <p role="status">Cargando seguimiento…</p> : p.followup.length === 0 ? <p className="parts-muted">Sin notas privadas en esta jornada.</p> : <ol className="parts-list">
+        {p.followup.map(note => <li key={note.id}>
+          <strong className="parts-prewrap">{note.text}</strong>
+          <span>{note.author?.email || "Autor no disponible"} · {instant(note.created_at)} · versión {note.version}</span>
+          <Button size="sm" variant="secondary" disabled={p.busy || !!text} onClick={() => { setEditing({id:note.id,version:note.version}); setText(note.text); }}>Editar nota</Button>
+          <Button size="sm" variant="danger" disabled={p.busy || reason.trim().length < 3} onClick={async () => { if (await p.onFollowupWithdraw(note.id, note.version, reason.trim())) setReason(''); }}>Retirar nota</Button>
+        </li>)}
+      </ol>}
+      <Pagination label="Notas privadas de jornada" page={p.followupPage} hasNext={p.followupPage * 25 < p.followupTotal} disabled={p.busy} onPage={p.onFollowupPage} />
+    </div>}
+  </Dialog>;
+}
+
 export function PartsView(props: PartsViewProps) {
   const p = props;
   const [panel, setPanel] = useState<"detail" | "evidence" | "history" | null>(null);
   const [zoomId, setZoomId] = useState<string | null>(null);
   const [fullSize, setFullSize] = useState(false);
-  const tableRef = useRef<HTMLDivElement>(null);
-  const selectedId = p.selected?.id;
-  useEffect(() => { if (!selectedId && !p.loading) { setPanel(null); setZoomId(null); } }, [selectedId, p.loading]);
-  useEffect(() => {
-    if (selectedId && p.role !== "supervisor" && p.writable) tableRef.current?.querySelector<HTMLInputElement>(`[data-record="${selectedId}"] input[type=time]`)?.focus();
-  }, [selectedId, p.role, p.writable]);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const openPanel = (id: number, next: "detail" | "evidence" | "history") => {
-    if (p.selected?.id !== id) p.onSelect(id);
+    if (p.selected?.id !== id) p.onSelect(id, next !== "evidence");
+    else if (next !== "evidence") p.onSelect(id, true);
     setPanel(next);
     if (next === "history" && p.selected?.id === id) p.onHistory(1);
   };
   const selected = p.selected;
-  const editable = p.role !== "supervisor" && p.writable;
-  const rowNumber = (index: number) => (p.filters.page - 1) * p.filters.limit + index + 1;
-  const documentValue = (key: 'className' | 'shift') => {
-    const values = [...new Set(p.rows.map(row => row.snapshot[key]).filter(Boolean))];
-    return values.length === 1 ? values[0] : values.length ? 'Varios (según filtros)' : '—';
-  };
-  const monitors = [...new Set(p.rows.map(row => row.snapshot.monitor?.name || row.snapshot.monitor?.email).filter(Boolean))];
-  const documentMonitors = monitors.length === 1 ? monitors[0] : monitors.length ? 'Varios (según filtros)' : 'Sin datos registrados';
-  return <main className="parts-view" aria-busy={p.busy || p.loading}>
-    <div className="parts-heading">
-  <div>
-    <h1>Parte diario</h1>
-  </div>
-  <div className="parts-actions">
-    <Button variant="secondary" disabled={p.busy || p.loading} onClick={p.onRefresh}><FiRefreshCw className="parts-btn-icon" aria-hidden="true" />Actualizar</Button>
-    {p.role === "administrador" && <Button variant="secondary" disabled={p.busy} onClick={() => p.onReport(1)}><FiFileText className="parts-btn-icon" aria-hidden="true" />Ver reporte</Button>}
-  </div>
-</div>
-    {p.error && <p className="parts-message parts-error" role="alert">{p.error}</p>}
-    {p.notice && <p className="parts-message parts-notice" role="status">{p.notice}</p>}
-    {p.busy && <p className="parts-help" role="status">Procesando operación…</p>}
-    <Filters p={p} />
-    <Conflict p={p} />
+  const editable = p.writable;
+  // Un descarte o una anulación concurrente que retira el recurso no debe dejar un diálogo vacío.
+  useEffect(() => { if (panel && !selected && !p.loading) setPanel(null); }, [panel, selected, p.loading]);
+  return <main className="parts-view parts-official-view" aria-busy={p.busy || p.loading}>
+    <OfficialPartsSheet p={p} onMore={id => openPanel(id, 'detail')} onFollowup={() => p.onFollowup(true)} onTools={() => setToolsOpen(true)} />
+    <Dialog open={toolsOpen} onClose={() => setToolsOpen(false)} title="Opciones de Partes" footer={<Button onClick={() => setToolsOpen(false)}>Volver a la jornada</Button>}>
+      <div className="parts-actions"><Button variant="secondary" disabled={p.busy} onClick={p.onRefresh}>Actualizar jornada</Button><Button variant="secondary" disabled={p.busy} onClick={p.onRetryThumbnails}>Reintentar miniaturas</Button>{p.role === 'monitor' && <Button variant="secondary" onClick={() => { setToolsOpen(false); p.onShowJournals(true); }}>Histórico de jornadas</Button>}{p.role === 'administrador' && <Button variant="secondary" onClick={() => { setToolsOpen(false); p.onReport(1); }}>Ver reporte</Button>}</div>
+      <Filters p={p} />
+      <Conflict p={p} />
     {p.role === "administrador" && <details className="parts-section"><summary>Operaciones administrativas</summary>
       <p className="parts-help">Selecciona partes con las casillas de la tabla (máximo 200). Para cobertura o recuperación, abre primero el parte correspondiente.</p>
-      <div className="parts-actions">{(Object.keys(OPERATIONS) as Operation[]).filter(action => action !== 'grant' && action !== 'revoke').map(action => <Button key={action} size="sm" variant="secondary" disabled={p.busy || p.conflict || (action === "configuration" ? !p.config : action === "cancel" || action === "restore" ? !selected && !p.selectedIds.length : !selected)} onClick={() => p.onOperation(action)}>{OPERATIONS[action]}</Button>)}</div>
+      <div className="parts-actions">{(Object.keys(OPERATIONS) as Operation[]).filter(action => action !== 'grant' && action !== 'revoke').map(action => <Button key={action} size="sm" variant="secondary" disabled={p.busy || p.conflict || (action === "configuration" ? false : action === "cancel" || action === "restore" ? !selected && !p.selectedIds.length : !selected)} onClick={() => p.onOperation(action)}>{OPERATIONS[action]}</Button>)}</div>
       <p className="parts-help">{p.selectedIds.length} partes seleccionados.</p>
     </details>}
     {p.operation && !p.operationOpen && (p.role === "administrador" || (p.role === "supervisor" && p.operation.action === "replacement")) && <div className="parts-draft-bar"><span>Borrador conservado: {OPERATIONS[p.operation.action]}</span><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => p.onOperation(p.operation!.action)}>Continuar operación</Button><Button size="sm" variant="ghost" disabled={p.busy} onClick={p.onDiscardOperation}>Descartar operación</Button></div>}
-    <div className="parts-sheet">
-      <header className="parts-document-header">
-        <img src={documentLogo} alt="CEPRUNSA" />
-        <div><h2>PARTE DIARIO DE CLASES</h2><p>{p.process.replaceAll('_', ' ')}</p></div>
-        <div className="parts-document-date"><span>Fecha</span><strong>{date(p.filters.from)}{p.filters.from !== p.filters.to && ` – ${date(p.filters.to)}`}</strong></div>
-      </header>
-      <dl className="parts-document-meta">
-        <div><dt>Aula</dt><dd>{documentValue('className')}</dd></div>
-        <div><dt>Turno</dt><dd>{documentValue('shift')}</dd></div>
-        <div><dt>Monitor/a</dt><dd>{documentMonitors}</dd></div>
-      </dl>
-      <div ref={tableRef} className="parts-scroll" tabIndex={0} role="region" aria-label="Parte diario, tabla con desplazamiento horizontal">
-        <table className="parts-table parts-daily"><caption className="sr-only">Registro de clases. Selecciona una fila para editar sus horas y observaciones. Las horas se registran en Lima.</caption>
-          <colgroup>{[32, 68, 68, 100, 100, 115, 170, 105, 135, 185, 82, 82, 120].map((width, index) => <col key={index} style={{ width }} />)}</colgroup>
-          <thead><tr className="parts-column-groups"><th colSpan={3} scope="colgroup">HORAS PROGRAMADAS</th><th colSpan={2} scope="colgroup">CONTROL DE HORAS</th><th colSpan={5} scope="colgroup">CONTROL DEL PROFESOR</th><th colSpan={2} scope="colgroup">CAPTURAS DE PANTALLA</th><th rowSpan={2} scope="col">Acciones</th></tr><tr className="parts-column-labels">{['N.º', 'Hora inicio', 'Hora fin', 'Inicio de clase', 'Fin de clase', 'Curso', 'Profesor oficial', 'Estado', 'Profesor reemplazante', 'Observaciones', 'Inicio de clase', 'Fin de clase'].map((label, index) => <th key={index} scope="col">{label}</th>)}</tr></thead>
-          <tbody>{p.rows.map((listed, index) => {
-            const active = selected?.id === listed.id;
-            const row = active ? selected : listed;
-            const draft = active ? p.draft : null;
-            const inline = active && editable && draft;
-            const missing = p.incompleteRecordIds.includes(row.id);
-            const coverage = row.coverages.find(c => c.kind === 'TEACHER' && (c.status === 'PENDING' || c.status === 'AUTHORIZED'));
-            const replacement = row.effectiveSnapshot.TEACHER && row.effectiveTeacherId !== row.titularTeacherId ? row.effectiveSnapshot.TEACHER : coverage?.personSnapshot;
-            return <tr key={row.id} data-record={row.id} className={`${active ? "is-selected" : ""} ${row.deletedAt ? "is-deleted" : ""} ${missing ? 'has-missing-data' : ''}`}>
-              <td className="parts-index">{p.role === "administrador" && <Checkbox aria-label={`Seleccionar parte #${row.id} para operación`} checked={p.selectedIds.includes(row.id)} disabled={p.busy || Boolean(p.operation) || (!p.selectedIds.includes(row.id) && p.selectedIds.length >= 200)} onChange={() => p.onToggleTarget(row.id)} />}<span title={`Parte #${row.id}`}>{rowNumber(index)}</span></td>
-              <td className="parts-schedule" data-label="Hora programada de inicio"><strong>{limaTime(row.scheduledStart)}</strong>{p.filters.from !== p.filters.to && <span>{date(row.date)}</span>}</td>
-              <td className="parts-schedule" data-label="Hora programada de fin"><strong>{limaTime(row.scheduledEnd)}</strong></td>
-              <td data-label="Inicio real">{inline ? <><Input type="time" list={`parts-start-${row.id}`} step={60} aria-label={`Inicio real del parte #${row.id} (Lima)`} value={draft.actualStart} disabled={p.busy || Boolean(p.operation)} onChange={e => p.onDraft({ actualStart: e.target.value })} /><datalist id={`parts-start-${row.id}`}><option value={limaTime(row.scheduledStart)} /></datalist></> : <span className="parts-time">{limaTime(row.actualStart) || '—'}</span>}</td>
-              <td data-label="Fin real">{inline ? <><Input type="time" list={`parts-end-${row.id}`} step={60} aria-label={`Fin real del parte #${row.id} (Lima)`} value={draft.actualEnd} disabled={p.busy || Boolean(p.operation)} onChange={e => p.onDraft({ actualEnd: e.target.value })} /><datalist id={`parts-end-${row.id}`}><option value={limaTime(row.scheduledEnd)} /></datalist></> : <span className="parts-time">{limaTime(row.actualEnd) || '—'}</span>}</td>
-              <td className="parts-course" data-label="Curso"><button type="button" disabled={p.busy || p.loading} className="parts-row-select" aria-pressed={active} onClick={() => p.onSelect(row.id)}>{row.snapshot.course || 'Curso sin nombre'}</button><small>{row.snapshot.className} · {row.snapshot.shift}</small>{row.deletedAt && <span className="parts-status is-danger">Anulado</span>}</td>
-              <td className="parts-person-cell" data-label="Profesor oficial"><strong>{row.snapshot.teacher?.name || 'Sin asignar'}</strong>{row.snapshot.teacher?.email && <span>{row.snapshot.teacher.email}</span>}</td>
-              <td className="parts-condition" data-label="Estado">{inline ? <StatePicker p={p} record={row} value={draft.classState ?? ''} /> : <span>{row.classState ? CLASS_STATES[row.classState] : '—'}</span>}{missing && <span className="parts-missing" title="El bloque terminó y aún faltan datos obligatorios o capturas por guardar.">Falta completar</span>}</td>
-              <td className="parts-person-cell parts-replacement" data-label="Profesor reemplazante"><strong>{replacement?.name || '—'}</strong>{replacement?.email && <span>{replacement.email}</span>}{coverage?.status === 'PENDING' && <small>Solicitado · por autorizar</small>}</td>
-              <td className="parts-observations" data-label="Observaciones">{inline ? <ObservationsEditor value={draft.structuredObservations} disabled={p.busy || Boolean(p.operation)} onChange={value=>p.onDraft({structuredObservations:value})} /> : <span className="parts-clamp">{row.incidents || '—'}</span>}</td>
-              {([['initial', row.initialFileId], ['final', row.finalFileId]] as const).map(([slot, id]) => <td key={slot} data-label={`Captura de ${slot === 'initial' ? 'inicio' : 'fin'}`}><button type="button" className="parts-capture-link" disabled={p.busy || p.loading} onClick={() => openPanel(row.id, 'evidence')} aria-label={`Ver captura de ${slot === 'initial' ? 'inicio' : 'fin'} del parte #${row.id}: ${id ? 'asociada' : 'pendiente'}`}><span className="parts-capture-chip">{id && p.images[id] && <img src={p.images[id]} alt="" />}<span>{id ? 'Ver captura' : '—'}</span></span></button></td>)}
-              <td><div className="parts-row-actions">{!active && <Button size="sm" variant="secondary" disabled={p.busy || p.loading} onClick={() => p.onSelect(row.id)}>{p.role === 'supervisor' ? 'Seleccionar' : p.editableRecordIds.includes(row.id) ? 'Editar' : 'Ver parte'}</Button>}<Button size="sm" variant="ghost" disabled={p.busy || p.loading} onClick={() => openPanel(row.id, 'detail')}>{p.role === 'supervisor' ? 'Revisar' : 'Más opciones'}</Button>{active && p.role !== 'supervisor' && (inline || p.dirty || p.conflict || p.unavailable) && <SaveActions p={p} />}</div></td>
-            </tr>;
-          })}</tbody>
-        </table>
-      </div>
-      {!p.rows.length && <div className="parts-empty" role="status">
-  {p.loading ? <p>Cargando partes…</p> : <>
-    <FiInbox aria-hidden="true" />
-    <strong>No hay partes para estos filtros.</strong>
-    <p>Cambia el rango o actualiza la jornada.</p>
-  </>}
-</div>}
-      <div className="parts-sheet-footer"><span>Horas de Lima. Las horas programadas no se copian automáticamente.</span>{p.role !== 'monitor' && <Pagination label="Partes diarios" page={p.filters.page} hasNext={p.filters.page * p.filters.limit < p.total} disabled={p.busy || p.loading} onPage={page => p.onFilters({ ...p.filters, page })} />}</div>
-    </div>
-    {selected && <section className="parts-selection" aria-label="Parte seleccionado"><div><strong>Parte #{selected.id} · versión {selected.version}</strong><span>{p.writeLimit || (editable ? "Seleccionado para edición" : "Solo lectura")}{p.dirty ? " · cambios sin guardar" : ""}{p.reviewDirty ? " · revisión pendiente" : ""}</span></div><div className="parts-actions"><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => setPanel("detail")}>Detalle{p.role === "supervisor" ? " y revisión" : ""}</Button><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => setPanel("evidence")}>Evidencias</Button>{p.role === "administrador" && <Button size="sm" variant="secondary" disabled={p.busy} onClick={() => { p.onHistory(1); setPanel("history"); }}>Historial</Button>}<Button size="sm" variant="ghost" disabled={p.busy} onClick={() => p.onSelect(null)}>Cerrar selección</Button></div></section>}
-    {p.role !== "monitor" && <Alerts p={p} />}
+    {p.role !== 'monitor' && <Alerts p={p} />}
+    {!p.sheet && <Pagination label="Partes diarios" page={p.filters.page} hasNext={p.filters.page * p.filters.limit < p.total} disabled={p.busy || p.loading} onPage={page => p.onFilters({ ...p.filters, page })} />}
+    {p.role === 'administrador' && <fieldset className="parts-content"><legend>Destinos de operación (máximo 200)</legend>{p.rows.map(row => <Checkbox key={row.id} label={`Parte #${row.id} · ${date(row.date)} · bloque ${row.period}`} checked={p.selectedIds.includes(row.id)} disabled={p.busy || Boolean(p.operation)} onChange={() => p.onToggleTarget(row.id)} />)}</fieldset>}
+    {selected && <section className="parts-selection" aria-label="Parte seleccionado"><div><strong>Parte #{selected.id} · versión {selected.version}</strong><span>{p.writeLimit || (editable ? "Seleccionado para edición" : "Solo lectura")}{p.dirty ? " · cambios sin guardar" : ""}{p.reviewDirty ? " · revisión pendiente" : ""}</span></div><div className="parts-actions"><Button size="sm" variant="secondary" disabled={p.busy} onClick={() => { p.onSelect(selected.id, true); setPanel("detail"); }}>Detalle{p.role === "supervisor" ? " y revisión" : ""}</Button>{p.role === "administrador" && <Button size="sm" variant="secondary" disabled={p.busy} onClick={() => { p.onSelect(selected.id, true); p.onHistory(1); setPanel("history"); }}>Historial</Button>}<Button size="sm" variant="ghost" disabled={p.busy} onClick={() => p.onSelect(null)}>Cerrar selección</Button></div></section>}
+    </Dialog>
     <Dialog open={Boolean(panel && selected)} size="lg" onClose={() => { if (!p.busy) setPanel(null); }} title={`${panel === "evidence" ? "Evidencias" : panel === "history" ? "Historial" : "Detalle del parte"} #${selected?.id ?? ""}`} description={selected ? `${selected.snapshot.course || "Clase"} · ${selected.snapshot.className} · ${date(selected.date)}` : undefined} footer={<>
-      <Button variant="secondary" disabled={p.busy} onClick={() => setPanel(null)}>Volver a la jornada</Button>{panel === "detail" && p.role !== "supervisor" && (editable || p.dirty || p.conflict || p.unavailable) && <SaveActions p={p} />}
+      <Button variant="secondary" disabled={p.busy} onClick={() => setPanel(null)}>Volver a la jornada</Button>{panel === "detail" && (editable || p.dirty || p.conflict || p.unavailable) && <SaveActions p={p} />}
     </>}>
       <div className="parts-dialog-content">
         {p.error && <p role="alert" className="parts-message parts-error">{p.error}</p>}{p.notice && <p role="status" className="parts-message parts-notice">{p.notice}</p>}
         {p.conflict && <Conflict p={p} />}
         <nav className="parts-actions parts-tabs" aria-label="Secciones del parte">{([['detail', 'Detalle'], ['evidence', 'Evidencias'], ['history', 'Historial']] as const).filter(([key])=>key!=='history'||p.role==='administrador').map(([key, label]) => <Button key={key} size="sm" variant={panel === key ? "primary" : "secondary"} aria-pressed={panel === key} disabled={p.busy} onClick={() => { setPanel(key); if (key === "history") p.onHistory(1); }}>{label}</Button>)}</nav>
         {panel === "detail" && <RecordDetails p={p} />}
-        {panel === "evidence" && <><p className="parts-help">La imagen se amplía completa, sin recortar. Subir y asociar son pasos separados. Las evidencias asociadas no se eliminan desde esta vista.</p><div className="parts-captures">{(["initial", "final"] as const).map(slot => <Capture key={slot} p={p} slot={slot} onZoom={id => { setZoomId(id); setFullSize(false); }} />)}</div></>}
+        {panel === "evidence" && <><p className="parts-help">La miniatura se carga en lote; la imagen completa solo al ampliar. Subir y asociar son pasos separados. Retirar una captura es lógico y conserva el archivo y el historial.</p><div className="parts-captures">{(["initial", "final"] as const).map(slot => <Capture key={slot} p={p} slot={slot} onZoom={id => { setZoomId(id); setFullSize(false); }} />)}</div></>}
         {panel === "history" && p.role === "administrador" && <History p={p} />}
       </div>
     </Dialog>
@@ -556,6 +496,7 @@ export function PartsView(props: PartsViewProps) {
       <div className={`parts-zoom ${fullSize ? "is-full" : ""}`} tabIndex={0} role="region" aria-label="Imagen completa con desplazamiento">{zoomId && p.images[zoomId] ? <img src={p.images[zoomId]} alt="Evidencia de clase completa, sin recorte" /> : <p role="status">Cargando imagen…</p>}</div>
       {zoomId && !p.images[zoomId] && <Button variant="secondary" disabled={p.busy} onClick={() => p.onLoadImage(zoomId)}>Volver a cargar imagen</Button>}
     </Dialog>
+    <FollowupDialog p={p} />
     <OperationDialog p={p} />
     {p.role === "administrador" && <Report p={p} />}
   </main>;

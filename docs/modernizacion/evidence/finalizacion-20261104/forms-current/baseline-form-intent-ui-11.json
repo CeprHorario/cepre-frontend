@@ -1,0 +1,63 @@
+{
+  "id": "UI-11",
+  "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+  "email": "e3-ui-11-1793828701173@test.invalid",
+  "name": "Curso sintético 1793828701173",
+  "phase": "success-confirmed",
+  "payload": {
+    "dni": "98701654",
+    "firstName": "Persona",
+    "lastName": "Sintetica",
+    "email": "e3-ui-11-1793828701173@test.invalid",
+    "personalEmail": "personal-e3-ui-11-1793828701173@test.invalid",
+    "phone": "999999991",
+    "phonesAdditional": [],
+    "courseId": 1,
+    "jobStatus": "PartTime",
+    "isCoordinator": false,
+    "scheduledHours": 0,
+    "maxHours": 20
+  },
+  "status": 201,
+  "response": {
+    "id": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+    "email": "e3-ui-11-1793828701173@test.invalid",
+    "password": null,
+    "isActive": true,
+    "createdAt": "2026-11-04T21:45:02.845Z",
+    "updatedAt": "2026-11-04T21:45:02.845Z",
+    "lastLogin": null,
+    "googleId": null,
+    "role": "profesor",
+    "userProfile": {
+      "id": "01a1a885-ca81-7466-b853-9657014bce16",
+      "userId": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+      "dni": "98701654",
+      "firstName": "Persona",
+      "lastName": "Sintetica",
+      "phone": "999999991",
+      "phonesAdditional": [],
+      "personalEmail": "personal-e3-ui-11-1793828701173@test.invalid",
+      "isActive": true,
+      "createdAt": "2026-11-04T21:45:02.845Z",
+      "updatedAt": "2026-11-04T21:45:02.845Z"
+    },
+    "teacher": {
+      "id": "01a1a885-ca84-71f0-99c4-ce4657b70ebb",
+      "userId": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+      "courseId": 1,
+      "maxHours": 20,
+      "scheduledHours": 0,
+      "createdAt": "2026-11-04T21:45:02.845Z",
+      "updatedAt": "2026-11-04T21:45:02.845Z",
+      "isCoordinator": false,
+      "jobStatus": "PartTime",
+      "courses": {
+        "id": 1,
+        "name": "Course",
+        "color": null,
+        "description": null
+      }
+    }
+  }
+}

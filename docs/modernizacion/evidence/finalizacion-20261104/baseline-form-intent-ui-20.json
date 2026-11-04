@@ -1,0 +1,19 @@
+{
+  "id": "UI-20",
+  "fixture": "sr_7b203f31a38841989b43091d863b5268_a",
+  "email": "e3-ui-20-1793819070663@test.invalid",
+  "name": "Curso sintético 1793819070663",
+  "phase": "success-confirmed",
+  "payload": {
+    "description": "Sin descripción",
+    "name": "Curso sintético 1793819070663",
+    "color": "#661124"
+  },
+  "status": 201,
+  "response": {
+    "id": 103,
+    "name": "Curso sintético 1793819070663",
+    "color": "#661124",
+    "description": "Sin descripción"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "legacy-transports: R-N01: SSE real invalida GET autorizado, no decide solicitudes: locator.waitFor: Timeout 30000ms exceeded.\n",
+  "stack": "Error: R-N01: SSE real invalida GET autorizado, no decide solicitudes: locator.waitFor: Timeout 30000ms exceeded.\n",
+  "date": "2026-11-04T20:11:03.259Z"
+}

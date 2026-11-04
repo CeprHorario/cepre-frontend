@@ -1,0 +1,1133 @@
+{
+  "routes": [
+    {
+      "id": "UI-01",
+      "role": "public",
+      "path": "/",
+      "width": 1920,
+      "screenshot": "current-UI-01-public-1920.png",
+      "http": [
+        {
+          "path": "/api/auth/user-info",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "id": "UI-01",
+      "role": "public",
+      "path": "/",
+      "width": 390,
+      "screenshot": "current-UI-01-public-390.png",
+      "http": [
+        {
+          "path": "/api/auth/user-info",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "id": "UI-01",
+      "role": "public",
+      "path": "/",
+      "width": 320,
+      "screenshot": "current-UI-01-public-320.png",
+      "http": [
+        {
+          "path": "/api/auth/user-info",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "id": "UI-03",
+      "role": "admin",
+      "path": "/admin",
+      "width": 1920,
+      "screenshot": "current-UI-03-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-03",
+      "role": "admin",
+      "path": "/admin",
+      "width": 390,
+      "screenshot": "current-UI-03-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-03",
+      "role": "admin",
+      "path": "/admin",
+      "width": 320,
+      "screenshot": "current-UI-03-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-04",
+      "role": "admin",
+      "path": "/admin/partes",
+      "width": 1920,
+      "screenshot": "current-UI-04-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-04",
+      "role": "admin",
+      "path": "/admin/partes",
+      "width": 390,
+      "screenshot": "current-UI-04-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-04",
+      "role": "admin",
+      "path": "/admin/partes",
+      "width": 320,
+      "screenshot": "current-UI-04-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-05",
+      "role": "admin",
+      "path": "/admin/solicitudes",
+      "width": 1920,
+      "screenshot": "current-UI-05-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-05",
+      "role": "admin",
+      "path": "/admin/solicitudes",
+      "width": 390,
+      "screenshot": "current-UI-05-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-05",
+      "role": "admin",
+      "path": "/admin/solicitudes",
+      "width": 320,
+      "screenshot": "current-UI-05-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-06",
+      "role": "admin",
+      "path": "/admin/incidencias",
+      "width": 1920,
+      "screenshot": "current-UI-06-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-06",
+      "role": "admin",
+      "path": "/admin/incidencias",
+      "width": 390,
+      "screenshot": "current-UI-06-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-06",
+      "role": "admin",
+      "path": "/admin/incidencias",
+      "width": 320,
+      "screenshot": "current-UI-06-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-08",
+      "role": "admin",
+      "path": "/admin/generar",
+      "width": 1920,
+      "screenshot": "current-UI-08-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-08",
+      "role": "admin",
+      "path": "/admin/generar",
+      "width": 390,
+      "screenshot": "current-UI-08-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-08",
+      "role": "admin",
+      "path": "/admin/generar",
+      "width": 320,
+      "screenshot": "current-UI-08-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-09",
+      "role": "admin",
+      "path": "/admin/importar",
+      "width": 1920,
+      "screenshot": "current-UI-09-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-09",
+      "role": "admin",
+      "path": "/admin/importar",
+      "width": 390,
+      "screenshot": "current-UI-09-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-09",
+      "role": "admin",
+      "path": "/admin/importar",
+      "width": 320,
+      "screenshot": "current-UI-09-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-11",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes",
+      "width": 1920,
+      "screenshot": "current-UI-11-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-11",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes",
+      "width": 390,
+      "screenshot": "current-UI-11-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-11",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes",
+      "width": 320,
+      "screenshot": "current-UI-11-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-12",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/asignar",
+      "width": 1920,
+      "screenshot": "current-UI-12-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-12",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/asignar",
+      "width": 390,
+      "screenshot": "current-UI-12-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-12",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/asignar",
+      "width": 320,
+      "screenshot": "current-UI-12-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-13",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 1920,
+      "screenshot": "current-UI-13-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-13",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 390,
+      "screenshot": "current-UI-13-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-13",
+      "role": "admin",
+      "path": "/admin/gestionar/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 320,
+      "screenshot": "current-UI-13-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-14",
+      "role": "admin",
+      "path": "/admin/gestionar/monitores",
+      "width": 1920,
+      "screenshot": "current-UI-14-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-14",
+      "role": "admin",
+      "path": "/admin/gestionar/monitores",
+      "width": 390,
+      "screenshot": "current-UI-14-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-14",
+      "role": "admin",
+      "path": "/admin/gestionar/monitores",
+      "width": 320,
+      "screenshot": "current-UI-14-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-15",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores",
+      "width": 1920,
+      "screenshot": "current-UI-15-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-15",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores",
+      "width": 390,
+      "screenshot": "current-UI-15-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-15",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores",
+      "width": 320,
+      "screenshot": "current-UI-15-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-16",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores/b76122b4-fba3-4183-9c3d-ed5fd159f493/monitores",
+      "width": 1920,
+      "screenshot": "current-UI-16-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-16",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores/b76122b4-fba3-4183-9c3d-ed5fd159f493/monitores",
+      "width": 390,
+      "screenshot": "current-UI-16-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-16",
+      "role": "admin",
+      "path": "/admin/gestionar/supervisores/b76122b4-fba3-4183-9c3d-ed5fd159f493/monitores",
+      "width": 320,
+      "screenshot": "current-UI-16-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-17",
+      "role": "admin",
+      "path": "/admin/gestionar/coordinadores",
+      "width": 1920,
+      "screenshot": "current-UI-17-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-17",
+      "role": "admin",
+      "path": "/admin/gestionar/coordinadores",
+      "width": 390,
+      "screenshot": "current-UI-17-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-17",
+      "role": "admin",
+      "path": "/admin/gestionar/coordinadores",
+      "width": 320,
+      "screenshot": "current-UI-17-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-18",
+      "role": "admin",
+      "path": "/admin/gestionar/salones",
+      "width": 1920,
+      "screenshot": "current-UI-18-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-18",
+      "role": "admin",
+      "path": "/admin/gestionar/salones",
+      "width": 390,
+      "screenshot": "current-UI-18-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-18",
+      "role": "admin",
+      "path": "/admin/gestionar/salones",
+      "width": 320,
+      "screenshot": "current-UI-18-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-19",
+      "role": "admin",
+      "path": "/admin/gestionar/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 1920,
+      "screenshot": "current-UI-19-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-19",
+      "role": "admin",
+      "path": "/admin/gestionar/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 390,
+      "screenshot": "current-UI-19-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-19",
+      "role": "admin",
+      "path": "/admin/gestionar/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 320,
+      "screenshot": "current-UI-19-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-20",
+      "role": "admin",
+      "path": "/admin/gestionar/cursos",
+      "width": 1920,
+      "screenshot": "current-UI-20-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-20",
+      "role": "admin",
+      "path": "/admin/gestionar/cursos",
+      "width": 390,
+      "screenshot": "current-UI-20-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-20",
+      "role": "admin",
+      "path": "/admin/gestionar/cursos",
+      "width": 320,
+      "screenshot": "current-UI-20-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-22",
+      "role": "teacher",
+      "path": "/docente/solicitudes",
+      "width": 1920,
+      "screenshot": "current-UI-22-teacher-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-22",
+      "role": "teacher",
+      "path": "/docente/solicitudes",
+      "width": 390,
+      "screenshot": "current-UI-22-teacher-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-22",
+      "role": "teacher",
+      "path": "/docente/solicitudes",
+      "width": 320,
+      "screenshot": "current-UI-22-teacher-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-23",
+      "role": "monitor",
+      "path": "/monitor",
+      "width": 1920,
+      "screenshot": "current-UI-23-monitor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-23",
+      "role": "monitor",
+      "path": "/monitor",
+      "width": 390,
+      "screenshot": "current-UI-23-monitor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-23",
+      "role": "monitor",
+      "path": "/monitor",
+      "width": 320,
+      "screenshot": "current-UI-23-monitor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-24",
+      "role": "monitor",
+      "path": "/monitor/partes",
+      "width": 1920,
+      "screenshot": "current-UI-24-monitor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-24",
+      "role": "monitor",
+      "path": "/monitor/partes",
+      "width": 390,
+      "screenshot": "current-UI-24-monitor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-24",
+      "role": "monitor",
+      "path": "/monitor/partes",
+      "width": 320,
+      "screenshot": "current-UI-24-monitor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-25",
+      "role": "monitor",
+      "path": "/monitor/solicitudes",
+      "width": 1920,
+      "screenshot": "current-UI-25-monitor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-25",
+      "role": "monitor",
+      "path": "/monitor/solicitudes",
+      "width": 390,
+      "screenshot": "current-UI-25-monitor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-25",
+      "role": "monitor",
+      "path": "/monitor/solicitudes",
+      "width": 320,
+      "screenshot": "current-UI-25-monitor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-26",
+      "role": "supervisor",
+      "path": "/supervisor",
+      "width": 1920,
+      "screenshot": "current-UI-26-supervisor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-26",
+      "role": "supervisor",
+      "path": "/supervisor",
+      "width": 390,
+      "screenshot": "current-UI-26-supervisor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-26",
+      "role": "supervisor",
+      "path": "/supervisor",
+      "width": 320,
+      "screenshot": "current-UI-26-supervisor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-27",
+      "role": "supervisor",
+      "path": "/supervisor/partes",
+      "width": 1920,
+      "screenshot": "current-UI-27-supervisor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-27",
+      "role": "supervisor",
+      "path": "/supervisor/partes",
+      "width": 390,
+      "screenshot": "current-UI-27-supervisor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-27",
+      "role": "supervisor",
+      "path": "/supervisor/partes",
+      "width": 320,
+      "screenshot": "current-UI-27-supervisor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-28",
+      "role": "supervisor",
+      "path": "/supervisor/solicitudes",
+      "width": 1920,
+      "screenshot": "current-UI-28-supervisor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-28",
+      "role": "supervisor",
+      "path": "/supervisor/solicitudes",
+      "width": 390,
+      "screenshot": "current-UI-28-supervisor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-28",
+      "role": "supervisor",
+      "path": "/supervisor/solicitudes",
+      "width": 320,
+      "screenshot": "current-UI-28-supervisor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-07",
+      "role": "admin",
+      "path": "/admin/reportes",
+      "width": 1920,
+      "screenshot": "current-UI-07-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-07",
+      "role": "admin",
+      "path": "/admin/reportes",
+      "width": 390,
+      "screenshot": "current-UI-07-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-07",
+      "role": "admin",
+      "path": "/admin/reportes",
+      "width": 320,
+      "screenshot": "current-UI-07-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-10",
+      "role": "admin",
+      "path": "/admin/configuracion",
+      "width": 1920,
+      "screenshot": "current-UI-10-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-10",
+      "role": "admin",
+      "path": "/admin/configuracion",
+      "width": 390,
+      "screenshot": "current-UI-10-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-10",
+      "role": "admin",
+      "path": "/admin/configuracion",
+      "width": 320,
+      "screenshot": "current-UI-10-admin-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-21",
+      "role": "teacher",
+      "path": "/docente",
+      "width": 1920,
+      "screenshot": "current-UI-21-teacher-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-21",
+      "role": "teacher",
+      "path": "/docente",
+      "width": 390,
+      "screenshot": "current-UI-21-teacher-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-21",
+      "role": "teacher",
+      "path": "/docente",
+      "width": 320,
+      "screenshot": "current-UI-21-teacher-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-29",
+      "role": "supervisor",
+      "path": "/supervisor/incidencias",
+      "width": 1920,
+      "screenshot": "current-UI-29-supervisor-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-29",
+      "role": "supervisor",
+      "path": "/supervisor/incidencias",
+      "width": 390,
+      "screenshot": "current-UI-29-supervisor-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-29",
+      "role": "supervisor",
+      "path": "/supervisor/incidencias",
+      "width": 320,
+      "screenshot": "current-UI-29-supervisor-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-30",
+      "role": "coordinator",
+      "path": "/coordinador/docentes",
+      "width": 1920,
+      "screenshot": "current-UI-30-coordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-30",
+      "role": "coordinator",
+      "path": "/coordinador/docentes",
+      "width": 390,
+      "screenshot": "current-UI-30-coordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-30",
+      "role": "coordinator",
+      "path": "/coordinador/docentes",
+      "width": 320,
+      "screenshot": "current-UI-30-coordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-31",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes",
+      "width": 1920,
+      "screenshot": "current-UI-31-courseCoordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-31",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes",
+      "width": 390,
+      "screenshot": "current-UI-31-courseCoordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-31",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes",
+      "width": 320,
+      "screenshot": "current-UI-31-courseCoordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "coordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 1920,
+      "screenshot": "current-UI-32-coordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "coordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 390,
+      "screenshot": "current-UI-32-coordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "coordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 320,
+      "screenshot": "current-UI-32-coordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 1920,
+      "screenshot": "current-UI-32-courseCoordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 390,
+      "screenshot": "current-UI-32-courseCoordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-32",
+      "role": "courseCoordinator",
+      "path": "/coordinador/docentes/122bd765-ffff-4864-a5dd-00a4bc2acf9c/horario",
+      "width": 320,
+      "screenshot": "current-UI-32-courseCoordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-33",
+      "role": "coordinator",
+      "path": "/coordinador/salones",
+      "width": 1920,
+      "screenshot": "current-UI-33-coordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-33",
+      "role": "coordinator",
+      "path": "/coordinador/salones",
+      "width": 390,
+      "screenshot": "current-UI-33-coordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-33",
+      "role": "coordinator",
+      "path": "/coordinador/salones",
+      "width": 320,
+      "screenshot": "current-UI-33-coordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-34",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones",
+      "width": 1920,
+      "screenshot": "current-UI-34-courseCoordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-34",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones",
+      "width": 390,
+      "screenshot": "current-UI-34-courseCoordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-34",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones",
+      "width": 320,
+      "screenshot": "current-UI-34-courseCoordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "coordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 1920,
+      "screenshot": "current-UI-35-coordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "coordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 390,
+      "screenshot": "current-UI-35-coordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "coordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 320,
+      "screenshot": "current-UI-35-coordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 1920,
+      "screenshot": "current-UI-35-courseCoordinator-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 390,
+      "screenshot": "current-UI-35-courseCoordinator-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-35",
+      "role": "courseCoordinator",
+      "path": "/coordinador/salones/70c30223-97d4-4467-a5de-e0c0bbda368c",
+      "width": 320,
+      "screenshot": "current-UI-35-courseCoordinator-320.png",
+      "http": []
+    },
+    {
+      "id": "UI-02",
+      "role": "admin",
+      "path": "/admin/ruta-inexistente",
+      "width": 1920,
+      "screenshot": "current-UI-02-admin-1920.png",
+      "http": []
+    },
+    {
+      "id": "UI-02",
+      "role": "admin",
+      "path": "/admin/ruta-inexistente",
+      "width": 390,
+      "screenshot": "current-UI-02-admin-390.png",
+      "http": []
+    },
+    {
+      "id": "UI-02",
+      "role": "admin",
+      "path": "/admin/ruta-inexistente",
+      "width": 320,
+      "screenshot": "current-UI-02-admin-320.png",
+      "http": []
+    }
+  ],
+  "results": [
+    "UI-01/public/1920:sin overflow",
+    "UI-01/public/1920:sin HTTP inesperados",
+    "UI-01/public/390:sin overflow",
+    "UI-01/public/390:sin HTTP inesperados",
+    "UI-01/public/320:sin overflow",
+    "UI-01/public/320:sin HTTP inesperados",
+    "UI-03/admin/1920:sin overflow",
+    "UI-03/admin/1920:sin HTTP inesperados",
+    "UI-03/admin/390:sin overflow",
+    "UI-03/admin/390:sin HTTP inesperados",
+    "UI-03/admin/320:sin overflow",
+    "UI-03/admin/320:sin HTTP inesperados",
+    "UI-04/admin/1920:sin overflow",
+    "UI-04/admin/1920:sin HTTP inesperados",
+    "UI-04/admin/390:sin overflow",
+    "UI-04/admin/390:sin HTTP inesperados",
+    "UI-04/admin/320:sin overflow",
+    "UI-04/admin/320:sin HTTP inesperados",
+    "UI-05/admin/1920:sin overflow",
+    "UI-05/admin/1920:sin HTTP inesperados",
+    "UI-05/admin/390:sin overflow",
+    "UI-05/admin/390:sin HTTP inesperados",
+    "UI-05/admin/320:sin overflow",
+    "UI-05/admin/320:sin HTTP inesperados",
+    "UI-06/admin/1920:sin overflow",
+    "UI-06/admin/1920:sin HTTP inesperados",
+    "UI-06/admin/390:sin overflow",
+    "UI-06/admin/390:sin HTTP inesperados",
+    "UI-06/admin/320:sin overflow",
+    "UI-06/admin/320:sin HTTP inesperados",
+    "UI-08/admin/1920:sin overflow",
+    "UI-08/admin/1920:sin HTTP inesperados",
+    "UI-08/admin/390:sin overflow",
+    "UI-08/admin/390:sin HTTP inesperados",
+    "UI-08/admin/320:sin overflow",
+    "UI-08/admin/320:sin HTTP inesperados",
+    "UI-09/admin/1920:sin overflow",
+    "UI-09/admin/1920:sin HTTP inesperados",
+    "UI-09/admin/390:sin overflow",
+    "UI-09/admin/390:sin HTTP inesperados",
+    "UI-09/admin/320:sin overflow",
+    "UI-09/admin/320:sin HTTP inesperados",
+    "UI-11/admin/1920:sin overflow",
+    "UI-11/admin/1920:sin HTTP inesperados",
+    "UI-11/admin/390:sin overflow",
+    "UI-11/admin/390:sin HTTP inesperados",
+    "UI-11/admin/320:sin overflow",
+    "UI-11/admin/320:sin HTTP inesperados",
+    "UI-12/admin/1920:sin overflow",
+    "UI-12/admin/1920:sin HTTP inesperados",
+    "UI-12/admin/390:sin overflow",
+    "UI-12/admin/390:sin HTTP inesperados",
+    "UI-12/admin/320:sin overflow",
+    "UI-12/admin/320:sin HTTP inesperados",
+    "UI-13/admin/1920:sin overflow",
+    "UI-13/admin/1920:sin HTTP inesperados",
+    "UI-13/admin/390:sin overflow",
+    "UI-13/admin/390:sin HTTP inesperados",
+    "UI-13/admin/320:sin overflow",
+    "UI-13/admin/320:sin HTTP inesperados",
+    "UI-14/admin/1920:sin overflow",
+    "UI-14/admin/1920:sin HTTP inesperados",
+    "UI-14/admin/390:sin overflow",
+    "UI-14/admin/390:sin HTTP inesperados",
+    "UI-14/admin/320:sin overflow",
+    "UI-14/admin/320:sin HTTP inesperados",
+    "UI-15/admin/1920:sin overflow",
+    "UI-15/admin/1920:sin HTTP inesperados",
+    "UI-15/admin/390:sin overflow",
+    "UI-15/admin/390:sin HTTP inesperados",
+    "UI-15/admin/320:sin overflow",
+    "UI-15/admin/320:sin HTTP inesperados",
+    "UI-16/admin/1920:sin overflow",
+    "UI-16/admin/1920:sin HTTP inesperados",
+    "UI-16/admin/390:sin overflow",
+    "UI-16/admin/390:sin HTTP inesperados",
+    "UI-16/admin/320:sin overflow",
+    "UI-16/admin/320:sin HTTP inesperados",
+    "UI-17/admin/1920:sin overflow",
+    "UI-17/admin/1920:sin HTTP inesperados",
+    "UI-17/admin/390:sin overflow",
+    "UI-17/admin/390:sin HTTP inesperados",
+    "UI-17/admin/320:sin overflow",
+    "UI-17/admin/320:sin HTTP inesperados",
+    "UI-18/admin/1920:sin overflow",
+    "UI-18/admin/1920:sin HTTP inesperados",
+    "UI-18/admin/390:sin overflow",
+    "UI-18/admin/390:sin HTTP inesperados",
+    "UI-18/admin/320:sin overflow",
+    "UI-18/admin/320:sin HTTP inesperados",
+    "UI-19/admin/1920:sin overflow",
+    "UI-19/admin/1920:sin HTTP inesperados",
+    "UI-19/admin/390:sin overflow",
+    "UI-19/admin/390:sin HTTP inesperados",
+    "UI-19/admin/320:sin overflow",
+    "UI-19/admin/320:sin HTTP inesperados",
+    "UI-20/admin/1920:sin overflow",
+    "UI-20/admin/1920:sin HTTP inesperados",
+    "UI-20/admin/390:sin overflow",
+    "UI-20/admin/390:sin HTTP inesperados",
+    "UI-20/admin/320:sin overflow",
+    "UI-20/admin/320:sin HTTP inesperados",
+    "UI-22/teacher/1920:sin overflow",
+    "UI-22/teacher/1920:sin HTTP inesperados",
+    "UI-22/teacher/390:sin overflow",
+    "UI-22/teacher/390:sin HTTP inesperados",
+    "UI-22/teacher/320:sin overflow",
+    "UI-22/teacher/320:sin HTTP inesperados",
+    "UI-23/monitor/1920:sin overflow",
+    "UI-23/monitor/1920:sin HTTP inesperados",
+    "UI-23/monitor/390:sin overflow",
+    "UI-23/monitor/390:sin HTTP inesperados",
+    "UI-23/monitor/320:sin overflow",
+    "UI-23/monitor/320:sin HTTP inesperados",
+    "UI-24/monitor/1920:sin overflow",
+    "UI-24/monitor/1920:sin HTTP inesperados",
+    "UI-24/monitor/390:sin overflow",
+    "UI-24/monitor/390:sin HTTP inesperados",
+    "UI-24/monitor/320:sin overflow",
+    "UI-24/monitor/320:sin HTTP inesperados",
+    "UI-25/monitor/1920:sin overflow",
+    "UI-25/monitor/1920:sin HTTP inesperados",
+    "UI-25/monitor/390:sin overflow",
+    "UI-25/monitor/390:sin HTTP inesperados",
+    "UI-25/monitor/320:sin overflow",
+    "UI-25/monitor/320:sin HTTP inesperados",
+    "UI-26/supervisor/1920:sin overflow",
+    "UI-26/supervisor/1920:sin HTTP inesperados",
+    "UI-26/supervisor/390:sin overflow",
+    "UI-26/supervisor/390:sin HTTP inesperados",
+    "UI-26/supervisor/320:sin overflow",
+    "UI-26/supervisor/320:sin HTTP inesperados",
+    "UI-27/supervisor/1920:sin overflow",
+    "UI-27/supervisor/1920:sin HTTP inesperados",
+    "UI-27/supervisor/390:sin overflow",
+    "UI-27/supervisor/390:sin HTTP inesperados",
+    "UI-27/supervisor/320:sin overflow",
+    "UI-27/supervisor/320:sin HTTP inesperados",
+    "UI-28/supervisor/1920:sin overflow",
+    "UI-28/supervisor/1920:sin HTTP inesperados",
+    "UI-28/supervisor/390:sin overflow",
+    "UI-28/supervisor/390:sin HTTP inesperados",
+    "UI-28/supervisor/320:sin overflow",
+    "UI-28/supervisor/320:sin HTTP inesperados",
+    "UI-07/admin/1920:sin overflow",
+    "UI-07/admin/1920:sin HTTP inesperados",
+    "UI-07/admin/390:sin overflow",
+    "UI-07/admin/390:sin HTTP inesperados",
+    "UI-07/admin/320:sin overflow",
+    "UI-07/admin/320:sin HTTP inesperados",
+    "UI-10/admin/1920:sin overflow",
+    "UI-10/admin/1920:sin HTTP inesperados",
+    "UI-10/admin/390:sin overflow",
+    "UI-10/admin/390:sin HTTP inesperados",
+    "UI-10/admin/320:sin overflow",
+    "UI-10/admin/320:sin HTTP inesperados",
+    "UI-21/teacher/1920:sin overflow",
+    "UI-21/teacher/1920:sin HTTP inesperados",
+    "UI-21/teacher/390:sin overflow",
+    "UI-21/teacher/390:sin HTTP inesperados",
+    "UI-21/teacher/320:sin overflow",
+    "UI-21/teacher/320:sin HTTP inesperados",
+    "UI-29/supervisor/1920:sin overflow",
+    "UI-29/supervisor/1920:sin HTTP inesperados",
+    "UI-29/supervisor/390:sin overflow",
+    "UI-29/supervisor/390:sin HTTP inesperados",
+    "UI-29/supervisor/320:sin overflow",
+    "UI-29/supervisor/320:sin HTTP inesperados",
+    "UI-30/coordinator/1920:sin overflow",
+    "UI-30/coordinator/1920:sin HTTP inesperados",
+    "UI-30/coordinator/390:sin overflow",
+    "UI-30/coordinator/390:sin HTTP inesperados",
+    "UI-30/coordinator/320:sin overflow",
+    "UI-30/coordinator/320:sin HTTP inesperados",
+    "UI-31/courseCoordinator/1920:sin overflow",
+    "UI-31/courseCoordinator/1920:sin HTTP inesperados",
+    "UI-31/courseCoordinator/390:sin overflow",
+    "UI-31/courseCoordinator/390:sin HTTP inesperados",
+    "UI-31/courseCoordinator/320:sin overflow",
+    "UI-31/courseCoordinator/320:sin HTTP inesperados",
+    "UI-32/coordinator/1920:sin overflow",
+    "UI-32/coordinator/1920:sin HTTP inesperados",
+    "UI-32/coordinator/390:sin overflow",
+    "UI-32/coordinator/390:sin HTTP inesperados",
+    "UI-32/coordinator/320:sin overflow",
+    "UI-32/coordinator/320:sin HTTP inesperados",
+    "UI-32/courseCoordinator/1920:sin overflow",
+    "UI-32/courseCoordinator/1920:sin HTTP inesperados",
+    "UI-32/courseCoordinator/390:sin overflow",
+    "UI-32/courseCoordinator/390:sin HTTP inesperados",
+    "UI-32/courseCoordinator/320:sin overflow",
+    "UI-32/courseCoordinator/320:sin HTTP inesperados",
+    "UI-33/coordinator/1920:sin overflow",
+    "UI-33/coordinator/1920:sin HTTP inesperados",
+    "UI-33/coordinator/390:sin overflow",
+    "UI-33/coordinator/390:sin HTTP inesperados",
+    "UI-33/coordinator/320:sin overflow",
+    "UI-33/coordinator/320:sin HTTP inesperados",
+    "UI-34/courseCoordinator/1920:sin overflow",
+    "UI-34/courseCoordinator/1920:sin HTTP inesperados",
+    "UI-34/courseCoordinator/390:sin overflow",
+    "UI-34/courseCoordinator/390:sin HTTP inesperados",
+    "UI-34/courseCoordinator/320:sin overflow",
+    "UI-34/courseCoordinator/320:sin HTTP inesperados",
+    "UI-35/coordinator/1920:sin overflow",
+    "UI-35/coordinator/1920:sin HTTP inesperados",
+    "UI-35/coordinator/390:sin overflow",
+    "UI-35/coordinator/390:sin HTTP inesperados",
+    "UI-35/coordinator/320:sin overflow",
+    "UI-35/coordinator/320:sin HTTP inesperados",
+    "UI-35/courseCoordinator/1920:sin overflow",
+    "UI-35/courseCoordinator/1920:sin HTTP inesperados",
+    "UI-35/courseCoordinator/390:sin overflow",
+    "UI-35/courseCoordinator/390:sin HTTP inesperados",
+    "UI-35/courseCoordinator/320:sin overflow",
+    "UI-35/courseCoordinator/320:sin HTTP inesperados",
+    "UI-02/admin/1920:sin overflow",
+    "UI-02/admin/1920:sin HTTP inesperados",
+    "UI-02/admin/390:sin overflow",
+    "UI-02/admin/390:sin HTTP inesperados",
+    "UI-02/admin/320:sin overflow",
+    "UI-02/admin/320:sin HTTP inesperados"
+  ],
+  "errors": [],
+  "fixture": "sr_cdcfe9e4b5154b06b50c597ed59b4dca_a"
+}

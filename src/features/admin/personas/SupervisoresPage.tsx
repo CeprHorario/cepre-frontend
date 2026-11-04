@@ -17,6 +17,7 @@ import { formatPhone, fullName } from "@/lib/format";
 import { splitPhones } from "@/lib/validators";
 import { emptyPerson, PersonForm } from "./PersonForm";
 import { useRemoval } from "./useRemoval";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
 
 export function SupervisoresPage({ basePath }: { basePath: string }) {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
             Monitores
           </Button>
           <RowActions
+            help
             label={`Acciones para ${fullName(s)}`}
             items={[
               { label: "Editar datos", icon: <FiEdit2 />, onSelect: () => openForm(s) },
@@ -96,6 +98,7 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
           </Button>
         }
       />
+      <QueryFeedback query={supervisors} label="supervisores" />
       <Card>
         <div className="flex justify-end p-4">
           <SelectionToggle active={selection.active} onStart={selection.start} onStop={selection.stop} />
@@ -107,7 +110,8 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
             </Button>
           </SelectionBar>
         )}
-        <DataTable
+        {(!supervisors.isError || supervisors.data !== undefined) && <DataTable
+          appearance="operational"
           columns={columns}
           rows={rows}
           selection={selection.tableSelection}
@@ -125,7 +129,7 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
               }
             />
           }
-        />
+        />}
         {supervisors.data && supervisors.data.total > 0 && (
           <Pagination
             page={page}
@@ -151,6 +155,7 @@ export function SupervisoresPage({ basePath }: { basePath: string }) {
           required={editing ? ["email", "firstName", "lastName"] : ["email", "dni", "firstName", "lastName"]}
           submitLabel={editing ? "Guardar cambios" : "Crear supervisor"}
           saving={create.isPending || update.isPending}
+          error={create.error || update.error ? apiErrorMessage(create.error ?? update.error) : null}
           extraValid={Boolean(shiftId)}
           extra={() => (
             <Field label="Turno que supervisa" required error={!shiftId ? "Selecciona el turno" : null}>

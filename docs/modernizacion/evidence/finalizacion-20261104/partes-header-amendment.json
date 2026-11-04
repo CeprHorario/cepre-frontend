@@ -1,0 +1,368 @@
+{
+  "date": "2026-11-04T22:45:59.808Z",
+  "originalManifest": "backend/docs/partes-congelacion.json",
+  "requirements": [
+    "HDR-01",
+    "HDR-02",
+    "P-03"
+  ],
+  "allowedFiles": [
+    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/components/layout/ModuleLayout.tsx",
+    "frontend/src/features/partes/official-parts.css"
+  ],
+  "changed": [
+    "frontend/src/features/partes/official-parts.css",
+    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/components/layout/ModuleLayout.tsx"
+  ],
+  "files": {
+    "backend/src/modules/class-session-records/class-session-records.service.ts": {
+      "before": "0abd9830bb651c3a02f3249528c6eaaf815978e9c10d62701b89615cee2d9b4a",
+      "after": "0abd9830bb651c3a02f3249528c6eaaf815978e9c10d62701b89615cee2d9b4a",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/class-session-records.controller.ts": {
+      "before": "37b606707f46466ac8ed6b2522a0e139ab327443c3514e8926a6ec23934251f1",
+      "after": "37b606707f46466ac8ed6b2522a0e139ab327443c3514e8926a6ec23934251f1",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/session-journal.service.ts": {
+      "before": "36ba604a64fb6128da3444ff2470844402d74fc72d5468d16a5c094125d13a50",
+      "after": "36ba604a64fb6128da3444ff2470844402d74fc72d5468d16a5c094125d13a50",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/session-followup.service.ts": {
+      "before": "f4ea2608b24752a653ec21fbe9a170f49667503d05909158f4b5f17e0ef6aea2",
+      "after": "f4ea2608b24752a653ec21fbe9a170f49667503d05909158f4b5f17e0ef6aea2",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/session.dto.ts": {
+      "before": "49ea24cdbbe448093d9d1e0d157a67304dcba3ae14518d9f52e8d2779beffc7c",
+      "after": "49ea24cdbbe448093d9d1e0d157a67304dcba3ae14518d9f52e8d2779beffc7c",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/session-workspace.ts": {
+      "before": "c871e7dc11c1f26777ac96b3b58bf13e2903549297477e10629cbf71120dd598",
+      "after": "c871e7dc11c1f26777ac96b3b58bf13e2903549297477e10629cbf71120dd598",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/class-session-records/part-observations.ts": {
+      "before": "0313234a18ecf8d6d9d0f159ae7c4eca5de8f3fe9ee6feeeb02949f91df025f4",
+      "after": "0313234a18ecf8d6d9d0f159ae7c4eca5de8f3fe9ee6feeeb02949f91df025f4",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/operations/operations.service.ts": {
+      "before": "94e2ecf8d934f978ddc0f88f438b034dfbd0bca9c522b8f0dadd3e5823420d86",
+      "after": "94e2ecf8d934f978ddc0f88f438b034dfbd0bca9c522b8f0dadd3e5823420d86",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/operations/operations.controller.ts": {
+      "before": "6e6ec715d1e477c5c152f0489c17bc19524e463b97e579e220fc2d21f9c8ac8d",
+      "after": "6e6ec715d1e477c5c152f0489c17bc19524e463b97e579e220fc2d21f9c8ac8d",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/operations/teacher-availability.ts": {
+      "before": "c293f517d46761f1c21478444897ef1319613bb873efcdf7662f7a91968e3c47",
+      "after": "c293f517d46761f1c21478444897ef1319613bb873efcdf7662f7a91968e3c47",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/session-files/session-files.service.ts": {
+      "before": "a390d2e8265371aeffff2c125e65b7bf385b483505ec888c653cb6e7c121591e",
+      "after": "a390d2e8265371aeffff2c125e65b7bf385b483505ec888c653cb6e7c121591e",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/session-files/session-object-storage.service.ts": {
+      "before": "c52b5bd2d472753d813055583b54e501babbd336416bc19335a415828ebebae5",
+      "after": "c52b5bd2d472753d813055583b54e501babbd336416bc19335a415828ebebae5",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/modules/auth/guards/authorization.guard.ts": {
+      "before": "440abef09da9f5ee375cbf64d27212f7cb4600c30ad5b203af14c5a18d00e73b",
+      "after": "440abef09da9f5ee375cbf64d27212f7cb4600c30ad5b203af14c5a18d00e73b",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/schema.prisma": {
+      "before": "7811b4ac7e632f0da66d172b95f66a2746bee04c44cb90563ce7e555c2b9516f",
+      "after": "7811b4ac7e632f0da66d172b95f66a2746bee04c44cb90563ce7e555c2b9516f",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/migrations/202611030001_parts_workspace/migration.sql": {
+      "before": "005a084345f7d188a76d4288c1f015770257e94b4bd78b44b1add8f425877452",
+      "after": "005a084345f7d188a76d4288c1f015770257e94b4bd78b44b1add8f425877452",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/migrations/202611030002_capture_thumbnails/migration.sql": {
+      "before": "21deb4f95cce31c381e40940bdf734a9d6af21160140da36580636ce620e0806",
+      "after": "21deb4f95cce31c381e40940bdf734a9d6af21160140da36580636ce620e0806",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/migrations/202611030003_part_proposals/migration.sql": {
+      "before": "7a1cf0b3efbfccd0bf58f91326b1e4a0ee516012da5d76c7911d3ed770609f01",
+      "after": "7a1cf0b3efbfccd0bf58f91326b1e4a0ee516012da5d76c7911d3ed770609f01",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/migrations/202611030004_monitor_followup/migration.sql": {
+      "before": "a87ed69a975434e7df54124f3d43e912cd52443e63dd3bb155c77445e7d297d5",
+      "after": "a87ed69a975434e7df54124f3d43e912cd52443e63dd3bb155c77445e7d297d5",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/src/database/prisma/migrations/202611030005_parts_escalation/migration.sql": {
+      "before": "76be03bcf168cc13d3177b7d93a58a018a8ab43825b10a9ad545b64393ee1da7",
+      "after": "76be03bcf168cc13d3177b7d93a58a018a8ab43825b10a9ad545b64393ee1da7",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/parts-completion.e2e-spec.ts": {
+      "before": "b69888f228463ca3ac85fe0f42f356f86cee23ea888a866fe56d690cf0f7c04c",
+      "after": "b69888f228463ca3ac85fe0f42f356f86cee23ea888a866fe56d690cf0f7c04c",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/records-import.e2e-spec.ts": {
+      "before": "fa46e148cfd95ac722a5f48bb720b8b8d7a752515114b1d086b3fc777918cef2",
+      "after": "fa46e148cfd95ac722a5f48bb720b8b8d7a752515114b1d086b3fc777918cef2",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/records-volume.e2e-spec.ts": {
+      "before": "fb8784979be454e8966e30855997057f2359a2e2724cba0fce1da6e85375f773",
+      "after": "fb8784979be454e8966e30855997057f2359a2e2724cba0fce1da6e85375f773",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/import-parts-dump.mjs": {
+      "before": "47f974928253881ef7ecaf8f988983b1cd444d2e53e95665399d3fe8b1366df2",
+      "after": "47f974928253881ef7ecaf8f988983b1cd444d2e53e95665399d3fe8b1366df2",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/helpers/official-parts-fixture.ts": {
+      "before": "b4b1fe2575a17a0da0816e811c126391b2617aaa8c1d55b27c71dac822ea139f",
+      "after": "b4b1fe2575a17a0da0816e811c126391b2617aaa8c1d55b27c71dac822ea139f",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "backend/test/helpers/part-test-clock.ts": {
+      "before": "fd7c9beb36d0019db847f29c2d644da50728802be88e4ff7dddfbe6782f66a8e",
+      "after": "fd7c9beb36d0019db847f29c2d644da50728802be88e4ff7dddfbe6782f66a8e",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/OfficialPartsSheet.tsx": {
+      "before": "064d3bfabb3d412311de3ebd8bcca6a8f6cc58d5cec1299bcdb89d0e804b8515",
+      "after": "064d3bfabb3d412311de3ebd8bcca6a8f6cc58d5cec1299bcdb89d0e804b8515",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/official-parts.css": {
+      "before": "797479a1311d342419e3004573658e30bafbf63178d685e736014adf8f82c559",
+      "after": "f76bce033f25dad9478cdf5ce9966d3a04846336557c0b03d657812ba88df556",
+      "changed": true,
+      "requirement": "HDR-01/02,P-03"
+    },
+    "frontend/src/features/partes/PartsView.tsx": {
+      "before": "6f760b49a5aedf407e1070d1bc073102dcec4f24102415ff185c58e95f47309c",
+      "after": "6f760b49a5aedf407e1070d1bc073102dcec4f24102415ff185c58e95f47309c",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/PartsPage.tsx": {
+      "before": "0c1ee58002613aa3f6637d4a7e4522625ab662c44c3d61cdd4840ae54ac6bf38",
+      "after": "0c1ee58002613aa3f6637d4a7e4522625ab662c44c3d61cdd4840ae54ac6bf38",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/useParts.ts": {
+      "before": "6c23f2e6e4a07e981d1401af63c5741ac1798db01000204129f0a3194a26ea5a",
+      "after": "6c23f2e6e4a07e981d1401af63c5741ac1798db01000204129f0a3194a26ea5a",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/usePartsSessionProtection.ts": {
+      "before": "cc8805e649ea3624554fbd0e087163b95ebea88bde420b5ac7a0bfb2d1092f34",
+      "after": "cc8805e649ea3624554fbd0e087163b95ebea88bde420b5ac7a0bfb2d1092f34",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/model.ts": {
+      "before": "abdc16a6440c87332ca06a8a59703037004f51ac91e62d775b8d10339240d0f6",
+      "after": "abdc16a6440c87332ca06a8a59703037004f51ac91e62d775b8d10339240d0f6",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/service.ts": {
+      "before": "cce33353886cb5a982104d7a6de7348717e9ede791cd3d9e8b93def2aec66601",
+      "after": "cce33353886cb5a982104d7a6de7348717e9ede791cd3d9e8b93def2aec66601",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/types.ts": {
+      "before": "28a995e52eaedabdb5ba6b4cea2eacb9524e17dddd9c46eb0e5540a48566c062",
+      "after": "28a995e52eaedabdb5ba6b4cea2eacb9524e17dddd9c46eb0e5540a48566c062",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/partes/ObservationsEditor.tsx": {
+      "before": "a75e2e544f11fb35b9e30f798bb5cd35d22d04030f3191ac5b73227e3bbc440a",
+      "after": "a75e2e544f11fb35b9e30f798bb5cd35d22d04030f3191ac5b73227e3bbc440a",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/operations/useNotifications.ts": {
+      "before": "408cd588c1ec10b49039ced6e1de45edcd9ec768725bbb866855530bbe33f64d",
+      "after": "408cd588c1ec10b49039ced6e1de45edcd9ec768725bbb866855530bbe33f64d",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/operations/NotificationBell.tsx": {
+      "before": "757763699cc1445cacfd1ff5946dd1611978cd46029e626bc33de01634735f3c",
+      "after": "757763699cc1445cacfd1ff5946dd1611978cd46029e626bc33de01634735f3c",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/features/operations/useOperations.ts": {
+      "before": "6a54f5b84ec1af3f377a5175b6a6ef49c05eeb3897af9241b66ad1bb65df1ee7",
+      "after": "6a54f5b84ec1af3f377a5175b6a6ef49c05eeb3897af9241b66ad1bb65df1ee7",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/src/components/layout/AppHeader.tsx": {
+      "before": "860dd31a667c5a53543ec93eaa680ed03cab07b98728be49e38e15f381d95770",
+      "after": "ec81281d1af10313557d3f27aabb8197ea563112e912fb4f500bc4111022cd69",
+      "changed": true,
+      "requirement": "HDR-01/02,P-03"
+    },
+    "frontend/src/components/layout/ModuleLayout.tsx": {
+      "before": "a325afbbe304c47d44c95a7f7ff002179e150573af6399a28aabedff8634479d",
+      "after": "4c251d7afdc94e13290ed50d109bdc764bdec25ef7080692be6f03beef970983",
+      "changed": true,
+      "requirement": "HDR-01/02,P-03"
+    },
+    "frontend/src/components/ui/Overlay.tsx": {
+      "before": "46b8994e452d1c9839cbb5ea0c814a7f8ea2fa2994ece68fa815bc450eff1f0b",
+      "after": "46b8994e452d1c9839cbb5ea0c814a7f8ea2fa2994ece68fa815bc450eff1f0b",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-browser.cjs": {
+      "before": "41608fb9132db2df994a4d2f7ee1411f595ab08cd72da6d3f62f428fb2aa1f75",
+      "after": "41608fb9132db2df994a4d2f7ee1411f595ab08cd72da6d3f62f428fb2aa1f75",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-browser-helpers.cjs": {
+      "before": "5b77d266aa242f1762c9f93500818aac4c21b741ed572497da2d44c56c9d85a8",
+      "after": "5b77d266aa242f1762c9f93500818aac4c21b741ed572497da2d44c56c9d85a8",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-admin-browser.cjs": {
+      "before": "32ce5d4ad88fc01d271e2f3c8a02efce18672daef457594a291ed25d645c1c83",
+      "after": "32ce5d4ad88fc01d271e2f3c8a02efce18672daef457594a291ed25d645c1c83",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-proposal-browser.cjs": {
+      "before": "94913747d36bb5d1f8fce8014d4f46c4b821827a6e63ee3fafa7eb359175935a",
+      "after": "94913747d36bb5d1f8fce8014d4f46c4b821827a6e63ee3fafa7eb359175935a",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-isolation-browser.cjs": {
+      "before": "ae0d0d67976f7037d96bd1d96fc2f682d8309241ad25e227f72f33e6e26f179b",
+      "after": "ae0d0d67976f7037d96bd1d96fc2f682d8309241ad25e227f72f33e6e26f179b",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-races-browser.cjs": {
+      "before": "992c130b6c57333c187df5b0667564d3b273185de7bf0a9bfb4d276c762f1af4",
+      "after": "992c130b6c57333c187df5b0667564d3b273185de7bf0a9bfb4d276c762f1af4",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-access-browser.cjs": {
+      "before": "a7a341b3735c5b3c30b0e3f197593d7ca0697d1f57967bb6dd04ba34ff29cff0",
+      "after": "a7a341b3735c5b3c30b0e3f197593d7ca0697d1f57967bb6dd04ba34ff29cff0",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-budget-browser.cjs": {
+      "before": "0d5864908ae56cea1337036295f8f76f95a6868d384bb2cf49fc943129fc4a31",
+      "after": "0d5864908ae56cea1337036295f8f76f95a6868d384bb2cf49fc943129fc4a31",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-budget-node.cjs": {
+      "before": "40ec9c2816fe0d50766e19f017b3053029b8314a49a916656249c45c77287282",
+      "after": "40ec9c2816fe0d50766e19f017b3053029b8314a49a916656249c45c77287282",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-budget-fallback-node.cjs": {
+      "before": "67a3ae0bc161f8091567b8b0214b2008378c7e77f9708dab41a7bc92dcdce46b",
+      "after": "67a3ae0bc161f8091567b8b0214b2008378c7e77f9708dab41a7bc92dcdce46b",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-cold-node.cjs": {
+      "before": "d6bf612ddc1e79b8aa224ff04e0c8adfb36d7ec67e163543188562f2d6c5aba6",
+      "after": "d6bf612ddc1e79b8aa224ff04e0c8adfb36d7ec67e163543188562f2d6c5aba6",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/partes-visual-browser.cjs": {
+      "before": "e84434d5d5e64a725d6e7f8d1e682f3545bcb1e87de8fa22e5e0f462d6d76ec9",
+      "after": "e84434d5d5e64a725d6e7f8d1e682f3545bcb1e87de8fa22e5e0f462d6d76ec9",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/run-partes-browser.mjs": {
+      "before": "d2d82f6e9202bc3b4ea34d9d3dc6ed011359d183b40958afa2cecf534a299739",
+      "after": "d2d82f6e9202bc3b4ea34d9d3dc6ed011359d183b40958afa2cecf534a299739",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/run-partes-budget.mjs": {
+      "before": "3dd9230c35bbca94f2a0a7c71202b62d47af66fe3296d12d3274fbfbbd30e589",
+      "after": "3dd9230c35bbca94f2a0a7c71202b62d47af66fe3296d12d3274fbfbbd30e589",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    },
+    "frontend/tests/run-partes-visual.mjs": {
+      "before": "87a54adb0beab3a9c41051c806b8ce2100012bfe7faabb12c05da5d9da12fdb9",
+      "after": "87a54adb0beab3a9c41051c806b8ce2100012bfe7faabb12c05da5d9da12fdb9",
+      "changed": false,
+      "requirement": "P-02 igualdad byte a byte"
+    }
+  },
+  "evidence": [
+    "header-before-chromium.json",
+    "header-after-chromium.json",
+    "header-body-comparison.json"
+  ],
+  "hunkPolicy": {
+    "AppHeader": "Aspecto común64px, navegación/cuenta accesibles; mismo hook de avisos y logout",
+    "ModuleLayout": "Solo navegación móvil y composición elegible, no remountPartes",
+    "css": "Solo selectores de barra global y descuentos64px; resto exacto"
+  },
+  "verification": "Los hashes detectan cambios, no aprueban automáticamente hunks ni regresión funcional."
+}

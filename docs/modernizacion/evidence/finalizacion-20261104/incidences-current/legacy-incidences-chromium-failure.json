@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "legacy-incidences: R-I01: DNI del efectivo, edición auditada y texto original inmutable: locator.click: Timeout 30000ms exceeded.\n",
+  "stack": "Error: R-I01: DNI del efectivo, edición auditada y texto original inmutable: locator.click: Timeout 30000ms exceeded.\n",
+  "date": "2026-11-04T21:48:57.267Z"
+}

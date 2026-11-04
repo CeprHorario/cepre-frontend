@@ -13,6 +13,28 @@ export interface Paginated<T> {
   limit: number;
 }
 
+/** Candidatos compatibles: el servidor no devuelve un total. */
+export interface CandidatePage<T> {
+  data: T[];
+  page: number;
+  limit: number;
+}
+
+export interface ReplaceTeacherPayload {
+  classId: string;
+  courseId: number;
+  expectedTeacherId: string;
+  teacherId: string;
+}
+
+export interface ReplaceTeacherResult {
+  classId: string;
+  courseId: number;
+  previousTeacherId: string;
+  teacherId: string;
+  updatedSchedules: number;
+}
+
 export interface CurrentUser {
   id: string;
   email: string;

@@ -1,0 +1,32 @@
+{
+  "id": "UI-18",
+  "fixture": "sr_7b203f31a38841989b43091d863b5268_a",
+  "email": "e3-ui-18-1793819069052@test.invalid",
+  "name": "Curso sintético 1793819069052",
+  "phase": "success-confirmed",
+  "payload": {
+    "area_id": 2,
+    "shift_id": 2,
+    "quantity": 1
+  },
+  "status": 201,
+  "response": {
+    "created": 1,
+    "monitorsCreated": 1,
+    "scheduleBlocks": 36,
+    "classes": [
+      {
+        "id": "01a1a7f2-ce14-79d4-9987-20ba51bc0218",
+        "name": "E-202 Extraordinario",
+        "idSede": 1,
+        "areaId": 2,
+        "shiftId": 2,
+        "monitorId": "01a1a7f2-ce14-79c7-a336-8e557d359145",
+        "capacity": 100,
+        "urlMeet": null,
+        "urlClassroom": null,
+        "status": "FALTAN_DOCENTES"
+      }
+    ]
+  }
+}

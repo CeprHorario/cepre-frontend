@@ -18,6 +18,17 @@ export function DayPicker({ value, onChange, counts }: { value: Weekday; onChang
             type="button"
             role="radio"
             aria-checked={active}
+            tabIndex={active ? 0 : -1}
+            onKeyDown={event => {
+              const direction = event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 0;
+              if (!direction && event.key !== 'Home' && event.key !== 'End') return;
+              event.preventDefault();
+              const dates = currentWeekDates();
+              const index = dates.findIndex(date => date.weekday === day);
+              const next = event.key === 'Home' ? 0 : event.key === 'End' ? dates.length - 1 : (index + direction + dates.length) % dates.length;
+              onChange(dates[next].weekday);
+              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role=radio]')[next]?.focus();
+            }}
             title={date.label}
             aria-label={`${date.label}${date.isToday ? ", hoy" : ""}; ${count} ${count === 1 ? "clase" : "clases"}`}
             onClick={() => onChange(day)}
@@ -37,6 +48,7 @@ export function DayPicker({ value, onChange, counts }: { value: Weekday; onChang
 }
 
 interface AgendaProps {
+  readable?: boolean;
   entries: MergedEntry[];
   day: Weekday;
   renderActions?: (entry: MergedEntry) => ReactNode;
@@ -44,7 +56,7 @@ interface AgendaProps {
 }
 
 /** Lista vertical de las clases de un día (vista móvil) */
-export function DayAgenda({ entries, day, renderActions, emptyLabel = "No hay clases este día" }: AgendaProps) {
+export function DayAgenda({ entries, day, renderActions, emptyLabel = "No hay clases este día", readable = false }: AgendaProps) {
   const list = entries.filter((e) => e.day === day).sort((a, b) => minutesOf(a.start) - minutesOf(b.start));
   const now = new Date();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -72,10 +84,10 @@ export function DayAgenda({ entries, day, renderActions, emptyLabel = "No hay cl
             <div className="flex min-w-0 flex-col gap-0.5">
               <span className="flex items-center gap-2 text-sm font-bold">
                 {entry.color && <Dot color={entry.color} />}
-                <span className="truncate">{entry.title}</span>
+                <span className={readable ? 'break-words' : 'truncate'}>{entry.title}</span>
               </span>
               {entry.subtitle && (
-                <span className={cn("truncate text-xs", entry.pending ? "font-semibold text-danger-700" : "text-ink-500")}>
+                <span className={cn(readable ? "break-words text-xs" : "truncate text-xs", entry.pending ? "font-semibold text-danger-700" : "text-ink-500")}>
                   {live ? "Ahora · " : ""}
                   {entry.subtitle}
                 </span>

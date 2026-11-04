@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "UI-10/admin/320: UI-10/admin/320:sin overflow",
+  "stack": "Error: UI-10/admin/320:sin overflow\n    at check (eval at <anonymous> (file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:58:20), <anonymous>:12:62)\n    at eval (eval at <anonymous> (file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:58:20), <anonymous>:35:7)\n    at async file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:80:18",
+  "date": "2026-11-04T20:05:26.243Z"
+}

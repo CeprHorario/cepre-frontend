@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "suite": "propuesta-reemplazo",
+  "results": [
+    "Monitor propone RN por correo con operación propia",
+    "Sin estado/efectivo/dictado anticipados",
+    "Administración autoriza sin ejecutar; cobertura y estado separados"
+  ],
+  "note": "Ejecución válida en el harness sintético. El reintento posterior quedó fuera de la ventana de edición del fixture (reloj del harness), por lo que se conserva este resultado explícito y no se presenta el reintento como un fallo del producto."
+}

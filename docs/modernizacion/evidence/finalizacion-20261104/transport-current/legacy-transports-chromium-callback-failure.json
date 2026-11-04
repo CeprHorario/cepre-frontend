@@ -1,0 +1,53 @@
+{
+  "ok": false,
+  "stage": "R-N01: cuenta cambia en la misma vista, respuesta HTTP y evento SSE tardíos",
+  "error": "No llegó GET del fallback para retención HTTP",
+  "results": [
+    "R-N01: EventSource nativo recibe SSE real; aviso exacto persistido actualiza contador y estado antes del sondeo sin GET redundantes ni decisión de solicitud"
+  ],
+  "errors": [],
+  "alerts": [],
+  "notificationReads": [],
+  "streams": [
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    },
+    {
+      "messages": 0,
+      "closed": true,
+      "errors": 1
+    }
+  ]
+}

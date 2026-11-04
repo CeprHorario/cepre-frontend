@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Dialog } from '@/components/ui/Overlay';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Field';
-export interface PartObservation { id:string; target:'TEACHER'|'STUDENT'|'CLASSROOM'; firstName?:string; lastName?:string; description:string }
+export interface PartObservation { id:string; target:'TEACHER'|'STUDENT'|'CLASSROOM'; firstName?:string; lastName?:string; description:string; createdAt?:string|null; updatedAt?:string|null; author?:{id:string;email:string;role:string}|null }
 const labels={TEACHER:'Docente de este bloque',STUDENT:'Alumno',CLASSROOM:'Aula'};
 export function ObservationsEditor({value,onChange,disabled=false}:{value:PartObservation[];onChange:(value:PartObservation[])=>void;disabled?:boolean}) {
  const [open,setOpen]=useState(false);

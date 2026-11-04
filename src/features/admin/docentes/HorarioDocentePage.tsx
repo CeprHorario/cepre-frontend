@@ -85,6 +85,7 @@ export function HorarioDocentePage({ basePath, readOnly = false }: { basePath: s
         }
       />
       <ScheduleView
+        appearance="operational"
         title="Horario semanal"
         entries={layoutEntries(entries, rows)}
         rows={rows}

@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 import { Checkbox, Select } from "./Field";
 import { Skeleton } from "./Spinner";
 import { EmptyState } from "./EmptyState";
+import './operational.css';
 
 export interface Column<T> {
   key: string;
@@ -25,9 +26,10 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   selection?: { selected: Set<string>; onChange: (next: Set<string>) => void };
   minWidth?: number;
+  appearance?: 'default' | 'operational';
 }
 
-export function DataTable<T>({ columns, rows, rowKey, loading, empty, selectedKey, onRowClick, selection, minWidth = 720 }: DataTableProps<T>) {
+export function DataTable<T>({ columns, rows, rowKey, loading, empty, selectedKey, onRowClick, selection, minWidth = 720, appearance = 'default' }: DataTableProps<T>) {
   const allSelected = selection && rows.length > 0 && rows.every((row) => selection.selected.has(rowKey(row)));
 
   const toggleAll = () => {
@@ -48,7 +50,7 @@ export function DataTable<T>({ columns, rows, rowKey, loading, empty, selectedKe
   const alignClass = (align?: Column<T>["align"]) => (align === "right" ? "text-right" : align === "center" ? "text-center" : "text-left");
 
   return (
-    <div className="relative overflow-x-auto">
+    <div className={cn("relative overflow-x-auto", appearance === 'operational' && 'operational-table')}>
       <table className="w-full border-collapse" style={{ minWidth }}>
         <thead>
           <tr>

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import { apiErrorMessage } from "@/api/client";
 import { useCourseMutations, useCourses } from "@/api/queries";
 import type { Course } from "@/api/types";
-import { Button, IconButton } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import { HelpIconButton } from '@/components/ui/HelpIconButton';
+import { Alert } from '@/components/ui/EmptyState';
 import { Card, PageHeader } from "@/components/ui/Card";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 import { Field, Input } from "@/components/ui/Field";
@@ -16,6 +18,7 @@ export function CursosPage() {
   const { create, update, remove } = useCourseMutations();
   const [editing, setEditing] = useState<Course | "new" | null>(null);
   const [toDelete, setToDelete] = useState<Course | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const columns: Column<Course>[] = [
     {
@@ -46,12 +49,12 @@ export function CursosPage() {
       align: "right",
       cell: (c) => (
         <div className="inline-flex gap-1.5">
-          <IconButton label={`Editar ${c.name}`} size="sm" onClick={() => setEditing(c)}>
+          <HelpIconButton label={`Editar ${c.name}`} size="sm" onClick={() => { setError(null); setEditing(c); }}>
             <FiEdit2 />
-          </IconButton>
-          <IconButton label={`Eliminar ${c.name}`} size="sm" onClick={() => setToDelete(c)}>
+          </HelpIconButton>
+          <HelpIconButton label={`Eliminar ${c.name}`} size="sm" onClick={() => { setError(null); setToDelete(c); }}>
             <FiTrash2 />
-          </IconButton>
+          </HelpIconButton>
         </div>
       ),
     },
@@ -63,28 +66,31 @@ export function CursosPage() {
         title="Cursos"
         description={courses.data ? `${courses.data.length} cursos` : "Cargando…"}
         actions={
-          <Button icon={<FiPlus />} onClick={() => setEditing("new")}>
+          <Button icon={<FiPlus />} onClick={() => { setError(null); setEditing("new"); }}>
             Agregar curso
           </Button>
         }
       />
+      {error && !editing && <Alert tone="danger">{error}</Alert>}
       <Card>
-        <DataTable columns={columns} rows={courses.data ?? []} rowKey={(c) => String(c.id)} loading={courses.isLoading} minWidth={520} />
+        {courses.isError ? <Alert tone="danger">No se pudieron cargar los cursos. <Button variant="secondary" onClick={() => { void courses.refetch(); }}>Reintentar cursos</Button></Alert> : <DataTable appearance="operational" columns={columns} rows={courses.data ?? []} rowKey={(c) => String(c.id)} loading={courses.isLoading} minWidth={520} />}
       </Card>
 
       {editing && (
         <CourseDialog
           course={editing === "new" ? null : editing}
           saving={create.isPending || update.isPending}
+          error={error}
           onClose={() => setEditing(null)}
           onSave={async (data) => {
+            setError(null);
             try {
               if (editing === "new") await create.mutateAsync(data);
               else await update.mutateAsync({ id: editing.id, ...data });
               toast.success(editing === "new" ? "Curso creado" : "Curso actualizado");
               setEditing(null);
             } catch (error) {
-              toast.error(apiErrorMessage(error, "No se pudo guardar el curso"));
+              setError(apiErrorMessage(error, "No se pudo guardar el curso"));
             }
           }}
         />
@@ -102,7 +108,7 @@ export function CursosPage() {
             await remove.mutateAsync(toDelete!.id);
             toast.success("Curso eliminado");
           } catch (error) {
-            toast.error(apiErrorMessage(error, "No se pudo eliminar el curso"));
+            setError(apiErrorMessage(error, "No se pudo eliminar el curso"));
           } finally {
             setToDelete(null);
           }
@@ -112,14 +118,20 @@ export function CursosPage() {
   );
 }
 
-function CourseDialog({ course, saving, onClose, onSave }: {
+function CourseDialog({ course, saving, error, onClose, onSave }: {
   course: Course | null;
   saving: boolean;
+  error: string | null;
   onClose: () => void;
   onSave: (data: { name: string; color: string }) => void;
 }) {
   const [name, setName] = useState(course?.name ?? "");
   const [color, setColor] = useState(course?.color ?? "#3F51B5");
+  const nameInput = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => nameInput.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, []);
   const tint = courseTint(color);
   return (
     <Dialog
@@ -139,8 +151,9 @@ function CourseDialog({ course, saving, onClose, onSave }: {
       }
     >
       <div className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
         <Field label="Nombre del curso" required>
-          {(p) => <Input {...p} value={name} onChange={(e) => setName(e.target.value)} />}
+          {(p) => <Input {...p} ref={nameInput} value={name} onChange={(e) => setName(e.target.value)} />}
         </Field>
         <Field label="Color">
           {(p) => (

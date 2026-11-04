@@ -1,6 +1,4 @@
 import { FiLock } from "react-icons/fi";
-import background from "@/assets/cepr-background.jpg";
-import logoWhite from "@/assets/logo-dark.png";
 import logo from "@/assets/logo-light.png";
 import unsaLogo from "@/assets/LOGO_UNSA.png";
 import { useAuth } from "@/auth/AuthProvider";
@@ -52,31 +50,10 @@ export function LoginPage({ unknownRole = false, embedded = false }: { unknownRo
   if (embedded) return card;
 
   return (
-    <div className="relative min-h-screen bg-marino-900 bg-cover bg-center" style={{ backgroundImage: `url(${background})` }}>
-      <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(115deg,rgba(28,33,64,0.92) 0%,rgba(28,33,64,0.78) 45%,rgba(102,17,36,0.82) 100%)" }}
-      />
-      <div className="relative mx-auto flex min-h-screen max-w-[1360px] flex-wrap items-center justify-center gap-10 px-5 py-10 sm:px-10 lg:justify-between">
-        <section className="hidden max-w-xl flex-col gap-7 text-white lg:flex">
-          <img src={logoWhite} alt="CEPRUNSA, calidad en la preparación académica" className="h-auto w-[340px]" />
-          <span className="h-1 w-[72px] rounded bg-oro-500" aria-hidden="true" />
-          <h1 className="font-display text-[46px] font-extrabold leading-[1.12]">Sistema de horarios académicos</h1>
-          <p className="max-w-[520px] text-[17px] leading-7 text-white/85">
-            Horarios, salones, docentes y monitores de cada proceso de admisión, con tu cuenta institucional.
-          </p>
-          {status?.maintenance === false && (
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-[13px] font-semibold">
-              <span className="size-2 rounded-full bg-[#7BD3A4]" aria-hidden="true" />
-              Sistema disponible
-            </span>
-          )}
-        </section>
-        <div className="flex w-full max-w-[440px] flex-col items-center gap-6">
-          <img src={logoWhite} alt="CEPRUNSA" className="h-auto w-56 lg:hidden" />
-          {card}
-        </div>
-      </div>
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-app px-3 py-8 sm:px-6">
+      <h1 className="font-display text-lg font-bold text-marino-900">Sistema de horarios académicos</h1>
+      {card}
+      {status?.maintenance === false && <span className="flex items-center gap-2 text-xs text-ink-500"><span className="size-2 rounded-full bg-[#24614b]" aria-hidden="true" />Sistema disponible</span>}
+    </main>
   );
 }

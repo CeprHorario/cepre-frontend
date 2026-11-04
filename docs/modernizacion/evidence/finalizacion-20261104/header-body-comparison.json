@@ -1,0 +1,446 @@
+{
+  "comparisons": [
+    {
+      "role": "monitor",
+      "width": 1920,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 1920,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 1920,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "monitor",
+      "width": 1440,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 1440,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 1440,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "monitor",
+      "width": 1366,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 1366,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 1366,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "monitor",
+      "width": 1024,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 1024,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 1024,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "monitor",
+      "width": 768,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 768,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 768,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "monitor",
+      "width": 390,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 390,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 390,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 320,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "monitor",
+      "width": 320,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "monitor",
+      "width": 320,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 1920,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 1920,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 1920,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "supervisor",
+      "width": 1440,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 1440,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 1440,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "supervisor",
+      "width": 1366,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 1366,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 1366,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "supervisor",
+      "width": 1024,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 1024,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 1024,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "supervisor",
+      "width": 768,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 768,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 768,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "supervisor",
+      "width": 390,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 390,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 390,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 320,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "supervisor",
+      "width": 320,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "supervisor",
+      "width": 320,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 1920,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 1920,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 1920,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "admin",
+      "width": 1440,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 1440,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 1440,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "admin",
+      "width": 1366,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 1366,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 1366,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "admin",
+      "width": 1024,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 1024,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 1024,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "admin",
+      "width": 768,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 768,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 768,
+      "height": 768,
+      "expectedDelta": 18,
+      "measuredDelta": 18
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 390,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 320,
+      "height": 1080,
+      "expectedDelta": 6,
+      "measuredDelta": 6
+    },
+    {
+      "role": "admin",
+      "width": 320,
+      "height": 844,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    },
+    {
+      "role": "admin",
+      "width": 320,
+      "height": 768,
+      "expectedDelta": 14,
+      "measuredDelta": 14
+    }
+  ],
+  "date": "2026-11-04T19:46:03.287Z"
+}

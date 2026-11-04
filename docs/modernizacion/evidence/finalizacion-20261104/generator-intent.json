@@ -1,0 +1,18 @@
+{
+  "year": 2027,
+  "created": {
+    "success": true,
+    "message": "Schema created and data migrated successfully in Extraordinario 2027",
+    "data": {
+      "name": "extraordinario_2027",
+      "year": 2027,
+      "started": "2027-01-01T00:00:00.000Z",
+      "finished": "2027-03-01T00:00:00.000Z",
+      "description": "Extraordinario 2027",
+      "sessionMinutes": 40,
+      "breakMinutes": 5
+    }
+  },
+  "status": 201,
+  "phase": "created"
+}

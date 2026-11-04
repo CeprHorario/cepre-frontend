@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "backend: apiRequestContext.get: socket hang up (ECONNRESET)\n",
+  "date": "2026-11-04T18:18:50.753Z"
+}

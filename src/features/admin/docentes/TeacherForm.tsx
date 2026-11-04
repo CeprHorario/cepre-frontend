@@ -43,6 +43,7 @@ export function TeacherForm({ open, onClose, teacher }: Props) {
       required={editing ? ["email", "firstName", "lastName", "phone"] : ["email", "dni", "firstName", "lastName", "phone"]}
       submitLabel={editing ? "Guardar cambios" : "Crear docente"}
       saving={create.isPending || update.isPending}
+      error={create.error || update.error ? apiErrorMessage(create.error ?? update.error, 'No se pudo guardar el docente') : null}
       extraValid={!courseError && !maxHoursError}
       extra={(_, submitted) =>
         editing ? (

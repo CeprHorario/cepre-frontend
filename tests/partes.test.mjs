@@ -26,6 +26,13 @@ test("actualización envía solo cambios y conserva expectedVersion original", (
   const modified = record({ actualStart: "2026-10-29T12:03:00Z", effectiveTeacherId: "uuid" });
   assert.deepEqual(updatePayload(modified, { ...toDraft(modified), actualStart: "", effectiveTeacherId: "" }, false), { expectedVersion: 3, actualStart: null });
 });
+test("observaciones no reenvían autor ni fechas controlados por servidor", () => {
+  const base = record({ structuredObservations: [{ id: 'note', target: 'CLASSROOM', description: 'Nota original', createdAt: '2026-11-03T15:00:00Z', author: { id: 'server-author' } }] });
+  const draft = toDraft(base);
+  draft.structuredObservations = draft.structuredObservations.map(note => ({ ...note, description: 'Nota corregida', author: { id: 'not-authoritative' } }));
+  assert.deepEqual(updatePayload(base, draft, false), { expectedVersion: 3, structuredObservations: [{ id: 'note', target: 'CLASSROOM', description: 'Nota corregida' }] });
+  assert.equal(base.structuredObservations[0].author.id, 'server-author');
+});
 test("corrección administrativa exige motivo sin reabrir el cierre", () => {
   const base = record(); assert.throws(() => updatePayload(base, toDraft(base), true));
   assert.equal(updatePayload(base, { ...toDraft(base), reason: " Motivo válido " }, true).reason, "Motivo válido");
@@ -76,4 +83,21 @@ test("primer bloque abre exactamente cinco minutos antes; los siguientes no se a
   assert.equal(ordinaryWritable(record({period:2}), "account", start-1), false);
   assert.equal(ordinaryWritable(record({period:2}), "account", start), true);
   assert.equal(ordinaryWritable(record({period:1}), "account", Date.parse(record().editDeadline)), false);
+});
+
+test("propuesta RN/RE usa correo, estado y clave idempotente; no arrastra horas ni notas", () => {
+  const base = record();
+  const draft = { ...toDraft(base), classState: "RE", replacementEmail: " Docente@Colegio.PE " };
+  assert.deepEqual(updatePayload(base, draft, false, false, "op-1"), {
+    expectedVersion: 3, classState: "RE", replacementEmail: "docente@colegio.pe", operationId: "op-1",
+  });
+  assert.throws(() => updatePayload(base, { ...draft, actualStart: "07:03" }, false, false, "op-1"));
+  assert.throws(() => updatePayload(base, { ...toDraft(base), replacementEmail: "sin-arroba" }, false, false, "op-1"));
+  assert.throws(() => updatePayload(base, { ...toDraft(base), replacementEmail: "d@test.invalid", classState: "N" }, false, false, "op-1"));
+});
+test("habilitación excepcional exige un motivo propio por guardado, sin ruta administrativa", () => {
+  const base = record();
+  const draft = { ...toDraft(base), actualStart: "07:03" };
+  assert.throws(() => updatePayload(base, draft, false, true));
+  assert.equal(updatePayload(base, { ...draft, reason: " Cambio concreto " }, false, true).reason, "Cambio concreto");
 });

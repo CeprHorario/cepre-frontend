@@ -24,6 +24,7 @@ interface WeekGridProps {
   highlightDay?: Weekday;
   compact?: boolean;
   emptyLabel?: ReactNode;
+  readable?: boolean;
 }
 
 /** Grilla semanal: días en columnas, sesiones de 40 min en filas */
@@ -40,6 +41,7 @@ export function WeekGrid({
   highlightDay,
   compact,
   emptyLabel,
+  readable = false,
 }: WeekGridProps) {
   if (!rows.length) {
     return <div className="rounded-xl bg-surface-2 p-8 text-center text-sm text-ink-500">{emptyLabel ?? "Sin sesiones configuradas"}</div>;
@@ -62,9 +64,9 @@ export function WeekGrid({
       <div
         className="grid gap-1.5"
         style={{
-          gridTemplateColumns: `${compact ? 58 : 88}px repeat(${days.length}, minmax(${compact ? 40 : 64}px, 1fr))`,
+          gridTemplateColumns: `${compact ? 58 : 88}px repeat(${days.length}, minmax(${compact ? 40 : readable ? 96 : 64}px, 1fr))`,
           gridAutoRows: `minmax(${rowHeight}px, auto)`,
-          minWidth: compact ? 360 : 500,
+          minWidth: compact ? 360 : readable ? 680 : 500,
         }}
       >
         <div style={{ gridColumn: 1, gridRow: 1, minHeight: 34 }} />
@@ -77,7 +79,7 @@ export function WeekGrid({
               {label}
             </button>
           ) : (
-            <div key={day} className={cn(headerClass, ring, "flex items-center justify-center")} style={style}>
+            <div key={day} className={cn(headerClass, ring, "flex items-center justify-center", readable && 'sticky top-0 z-10')} style={style}>
               {label}
             </div>
           );
@@ -141,6 +143,7 @@ export function WeekGrid({
             entry={entry}
             column={days.indexOf(entry.day) + 2}
             compact={compact}
+            readable={readable}
             onClick={onEntryClick ? () => onEntryClick(entry) : undefined}
           />
         ))}
@@ -149,11 +152,12 @@ export function WeekGrid({
   );
 }
 
-function GridBlock({ entry, column, compact, onClick }: {
+function GridBlock({ entry, column, compact, onClick, readable }: {
   entry: MergedEntry & { variant?: EntryVariant };
   column: number;
   compact?: boolean;
   onClick?: () => void;
+  readable?: boolean;
 }) {
   if (column < 2) return null;
   const variant: EntryVariant = entry.variant ?? (entry.pending ? "pending" : "course");
@@ -174,9 +178,9 @@ function GridBlock({ entry, column, compact, onClick }: {
 
   const content = (
     <>
-      <strong className={cn("truncate", compact ? "text-[11px]" : "text-[13px]")}>{entry.title}</strong>
+      <strong className={cn(readable ? "break-words" : "truncate", compact ? "text-[11px]" : "text-[13px]")}>{entry.title}</strong>
       {!compact && entry.subtitle && (
-        <span className={cn("truncate text-[11px]", variant === "pending" && "font-bold text-danger-700")}>{entry.subtitle}</span>
+        <span className={cn(readable ? "break-words text-xs" : "truncate text-[11px]", variant === "pending" && "font-bold text-danger-700")}>{entry.subtitle}</span>
       )}
       {!compact && entry.rowSpan > 1 && <span className="tabular mt-auto text-[11px] opacity-80">{entry.start} – {entry.end}</span>}
     </>

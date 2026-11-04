@@ -10,7 +10,8 @@ import { AreaBadge, Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, PageHeader } from "@/components/ui/Card";
 import { DataTable, type Column } from "@/components/ui/DataTable";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { Alert, EmptyState } from "@/components/ui/EmptyState";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
 import { Field, Input, SearchInput, Select } from "@/components/ui/Field";
 import { Dialog } from "@/components/ui/Overlay";
 import { Segmented } from "@/components/ui/Segmented";
@@ -147,7 +148,9 @@ export function SalonesPage({ basePath, readOnly = false, allowDetail = true, ti
         </Select>
       </Card>
 
-      {classes.isLoading ? (
+      <QueryFeedback query={classes} label="salones" />
+      <QueryFeedback query={shifts} label="turnos" />
+      {classes.isError && classes.data === undefined ? null : classes.isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <Skeleton key={i} className="h-36 rounded-2xl" />
@@ -159,7 +162,7 @@ export function SalonesPage({ basePath, readOnly = false, allowDetail = true, ti
         </Card>
       ) : view === "tabla" ? (
         <Card>
-          <DataTable columns={columns} rows={filtered} rowKey={(c) => c.id} />
+          <DataTable appearance="operational" columns={columns} rows={filtered} rowKey={(c) => c.id} />
         </Card>
       ) : (
         byShift.map(({ shift, items }) => {
@@ -283,6 +286,7 @@ function CreateClassDialog({ onClose }: { onClose: () => void }) {
       }
     >
       <div className="flex flex-col gap-4">
+        {createMany.error && <Alert tone="danger">{apiErrorMessage(createMany.error, 'No se creó ningún salón')}</Alert>}
         <Field label="Área" required>
           {(p) => (
             <Select {...p} value={areaId} disabled={createMany.isPending} onChange={(e) => setAreaId(e.target.value)}>

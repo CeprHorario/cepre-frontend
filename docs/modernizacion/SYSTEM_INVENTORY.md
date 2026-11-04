@@ -1,8 +1,19 @@
 # Inventario del sistema
 
+> [Enmienda2026-11-04](FINALIZACION_20261104.md): Partes recibido, no pendiente de
+> implementar; UI-04/24/27 conservadas salvo header. Matriz actual por35IDs y
+> variantes en el plan externo; fichas nuevas E3 en ejecución, no cierre histórico.
+
 Fuente inicial: `src/app/router.tsx`, manifiestos y contratos especializados.
 **No es todavía la línea base H2**: faltan recorridos, campos exhaustivos y
 capturas actuales de cada variante. No usar capturas históricas como sustituto.
+
+**Alcance rectificado el 2026-11-03:** el inventario conserva todas las rutas, pero
+UI-04/24/27 y sus dependencias son **superficies protegidas, no pantallas a migrar**.
+El usuario implementará Partes antes por separado; este refactor solo recibe y
+congela esa versión. `propuestas/**` es referencia inmutable. Aplicar CF-13/14 y
+el [cerrojo de Partes](MASTER_PLAN.md#cerrojo-de-partes-obligatorio). No cambiar
+funcionalidad en el resto de rutas; no convertir inventario en permiso para editar.
 
 ## Rutas y variantes
 
@@ -15,7 +26,7 @@ Rutas relativas de la propuesta se expanden aquí para evitar ambigüedad.
 | UI-01 | Público `/` y estados de sesión | SessionGate, login, acceso, mantenimiento, rol desconocido | Pendiente de confirmar |
 | UI-02 | Todos: error de ruta / no encontrada | RouteError / NotFoundPage | Pendiente de confirmar |
 | UI-03 | A `/admin` | AdminHub: accesos, conteos y filtros enlazados | Pendiente de confirmar |
-| UI-04 | A `/admin/partes` | PartsPage: filtros/hoja/selección/revisión/operaciones/historial | Pendiente de confirmar |
+| UI-04 | A `/admin/partes` | PartsPage: filtros/hoja/selección/revisión/operaciones/historial | **Protegida**; recibir línea base, no migrar |
 | UI-05 | A `/admin/solicitudes` | RequestsPage: consultar/decidir/PDF | Pendiente de confirmar |
 | UI-06 | A `/admin/incidencias` | IncidencesPage: DNI/historial/resolver/reabrir | Pendiente de confirmar |
 | UI-07 | A `/admin/reportes` | ReportsPage: cuatro tipos/filtros/paginación/Excel | Pendiente de confirmar |
@@ -35,10 +46,10 @@ Rutas relativas de la propuesta se expanden aquí para evitar ambigüedad.
 | UI-21 | D `/docente` | DocentePanel: horario/salones/enlaces/Excel | Pendiente de confirmar |
 | UI-22 | D `/docente/solicitudes` | RequestsPage: propias/candidatos/evidencias/cancelar | Pendiente de confirmar |
 | UI-23 | M `/monitor` | MonitorPanel: salón/horario/directorio/editar enlaces | Pendiente de confirmar |
-| UI-24 | M `/monitor/partes` | PartsPage: jornadas/hoja/observaciones/evidencias/borradores | Pendiente de confirmar |
+| UI-24 | M `/monitor/partes` | PartsPage: jornadas/hoja/observaciones/evidencias/borradores | **Protegida**; recibir línea base, no migrar |
 | UI-25 | M `/monitor/solicitudes` | RequestsPage: propias/emergencia de salón | Pendiente de confirmar |
 | UI-26 | S `/supervisor` | SupervisorPanel: solo sus salones/monitores/búsqueda/horario | Pendiente de confirmar |
-| UI-27 | S `/supervisor/partes` | PartsPage: recursos autorizados/revisión explícita | Pendiente de confirmar |
+| UI-27 | S `/supervisor/partes` | PartsPage: recursos autorizados/revisión explícita | **Protegida**; recibir línea base, no migrar |
 | UI-28 | S `/supervisor/solicitudes` | RequestsPage: propias/decisiones autorizadas | Pendiente de confirmar |
 | UI-29 | S `/supervisor/incidencias` | IncidencesPage: sus monitores, hechos hoy Lima | Pendiente de confirmar |
 | UI-30 | C general `/coordinador/docentes` | DocentesPage readOnly, filtro de curso | Pendiente de confirmar |
@@ -98,12 +109,28 @@ formularios. Catorce rutas desbordan a 390 px; es deuda de reflow H4–H9.
 | Importación | ImportarPage + API imports | Tres tipos generales, disponibilidad Excel en flujo propio docente |
 | Identidad | assets, estilos globales | Logos/imaginería/fuentes/colores, no reemplazar por demos |
 
+### Frontera de cambios compartidos
+
+Antes de modificar una superficie, trazar sus consumidores incluyendo Partes y
+los elementos montados fuera de su árbol (portales, toasts, cabecera, sesión).
+Los patrones nuevos se adoptan explícitamente en pantallas elegibles; default,
+tokens heredados, foco, scroll, z-index y montaje de las protegidas no cambian.
+No basta que `src/features/partes/**` tenga diff vacío. Si una dependencia común
+no puede evolucionar sin alterar Partes, aislar composición fuera de él o bloquear
+el lote. La nueva dependencia de ayudas no reemplaza la infraestructura de Partes.
+
 ## Ficha obligatoria por pantalla (completar en H0/H2)
 
 Ruta/rol/variante; fixture sintético e identidad/proceso; campos, obligatoriedad y
 límites; alta vs edición; acciones/enlaces/columnas/filtros; payloads representativos;
 dependencias/cachés; estados aplicables; teclado; resolución; captura; resultado
 persistido; problema previo; referencia de prueba/evidencia; estado/pendiente.
+
+Para las pantallas a migrar, añadir: tarea principal, decisión tomada de la
+referencia oficial, textos redundantes retirados, destino accesible de cada dato
+trasladado, significado de color/icono, ayudas por foco/táctil, comportamiento del
+modal, costes antes/después y prueba de no alteración de Partes. En UI-04/24/27
+solo se documenta su línea base/conservación; no se propone rediseño ni nuevos pasos.
 
 Estados: inicial/carga/actualización, datos/vacío/sin coincidencias, error, lectura/
 deshabilitado/ocupado, formulario inicial/inválido/válido/guardando/fallido,

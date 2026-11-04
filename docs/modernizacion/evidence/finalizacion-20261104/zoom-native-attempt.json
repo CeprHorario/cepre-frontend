@@ -1,0 +1,19 @@
+{
+  "before": {
+    "width": 1920,
+    "ratio": 1,
+    "visualScale": 1
+  },
+  "afterKeys": {
+    "width": 1920,
+    "ratio": 1,
+    "visualScale": 1
+  },
+  "after": {
+    "width": 1920,
+    "ratio": 1,
+    "visualScale": 1
+  },
+  "method": "Ctrl+Equal seis veces; alternativa Ctrl+rueda. Sin CSS zoom ni reflow simulado",
+  "date": "2026-11-04T18:37:41.210Z"
+}

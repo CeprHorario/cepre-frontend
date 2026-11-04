@@ -1,8 +1,9 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/EmptyState";
 import { Field, Input } from "@/components/ui/Field";
 import { Drawer } from "@/components/ui/Overlay";
+import { useEligibleDrawer } from '@/components/ui/useEligibleDrawer';
 import { isDni, isEmail, isLoginEmail, isPeruMobile, LOGIN_EMAIL_HINT, LOGIN_EMAIL_LABEL, onlyDigits, onlyLetters, splitPhones } from "@/lib/validators";
 
 export interface PersonValues {
@@ -36,6 +37,7 @@ interface Props {
   fields: FieldName[];
   required: FieldName[];
   saving?: boolean;
+  error?: string | null;
   submitLabel: string;
   /** Campos propios de cada rol; `submitted` permite mostrar sus errores igual que los comunes */
   extra?: (values: PersonValues, submitted: boolean) => ReactNode;
@@ -46,7 +48,9 @@ interface Props {
 }
 
 /** Formulario de datos personales compartido por supervisores, coordinadores y monitores */
-export function PersonForm({ open, title, description, initial, fields, required, saving, submitLabel, extra, extraValid = true, dniNotice, onClose, onSubmit }: Props) {
+export function PersonForm({ open, title, description, initial, fields, required, saving, error, submitLabel, extra, extraValid = true, dniNotice, onClose, onSubmit }: Props) {
+  const formRef = useRef<HTMLFormElement>(null);
+  useEligibleDrawer(open, formRef);
   const [values, setValues] = useState(initial);
   const [submitted, setSubmitted] = useState(false);
   const set = (key: FieldName, value: string) => setValues((prev) => ({ ...prev, [key]: value }));
@@ -88,7 +92,8 @@ export function PersonForm({ open, title, description, initial, fields, required
         </>
       }
     >
-      <form id="person-form" onSubmit={submit} noValidate className="flex flex-col gap-4">
+      <form ref={formRef} id="person-form" onSubmit={submit} noValidate className="flex flex-col gap-4">
+        {error && <Alert tone="danger">{error}</Alert>}
         {submitted && invalid && <Alert tone="danger">Revisa los campos marcados.</Alert>}
         {has("email") && (
           <Field

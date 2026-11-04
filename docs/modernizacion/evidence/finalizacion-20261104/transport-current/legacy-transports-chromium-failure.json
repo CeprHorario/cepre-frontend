@@ -1,0 +1,6 @@
+{
+  "ok": false,
+  "error": "legacy-transports: R-N01: cuenta cambia en la misma vista, respuesta HTTP y evento SSE tardíos: No llegó GET del fallback para retención HTTP",
+  "stack": "Error: R-N01: cuenta cambia en la misma vista, respuesta HTTP y evento SSE tardíos: No llegó GET del fallback para retención HTTP\n    at file:///home/joel/git/cepr/frontend/tests/run-finalization.mjs:83:11",
+  "date": "2026-11-04T20:29:04.860Z"
+}

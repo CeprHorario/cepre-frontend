@@ -1,0 +1,31 @@
+{
+  "payload": {
+    "operationId": "b5b09c66-1c7f-4a28-856d-3f21e3d764aa",
+    "subjectAccountId": "893ecefb-9aea-40ca-9e51-371a766a2959",
+    "subjectRole": "monitor",
+    "title": "E3 incidencia supervisor 1793819235992",
+    "description": "Hecho íntegramente sintético para caracterización del formulario",
+    "occurredAt": "2026-11-04T19:07:00.000Z"
+  },
+  "incidence": {
+    "id": "b5b09c66-1c7f-4a28-856d-3f21e3d764aa",
+    "subject_dni": "92000001",
+    "subject_role": "monitor",
+    "subject_account_id": "893ecefb-9aea-40ca-9e51-371a766a2959",
+    "subject_name": "monitor Prueba A",
+    "process_schema": "sr_7b203f31a38841989b43091d863b5268_a",
+    "record_id": null,
+    "class_id": null,
+    "title": "E3 incidencia supervisor 1793819235992",
+    "description": "Hecho íntegramente sintético para caracterización del formulario",
+    "occurred_at": "2026-11-04T19:07:00.000Z",
+    "actor_id": "1904c2fc-b388-44e6-9055-747eaf02d395",
+    "actor_origin": "sr_7b203f31a38841989b43091d863b5268_a",
+    "status": "OPEN",
+    "version": 1,
+    "seen_at": null,
+    "created_at": "2026-11-04T19:07:22.640Z"
+  },
+  "fixture": "sr_7b203f31a38841989b43091d863b5268_a",
+  "phase": "success-confirmed"
+}

@@ -3,7 +3,7 @@
   "suite": "roles-carrera-mantenimiento",
   "results": [
     "Docente/coordinador: rutas no consultan partes; backend rechaza acceso directo (401/403 del guard)",
-    "Respuesta de subida GCS retenida durante mantenimiento:metadata recuperada sin falsa asociación ni subida repetida"
+    "Retraso de red en la subida: metadata recuperada sin falsa asociación ni subida repetida"
   ],
   "errors": []
 }

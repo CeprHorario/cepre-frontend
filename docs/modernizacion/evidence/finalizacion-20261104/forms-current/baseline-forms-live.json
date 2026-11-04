@@ -1,0 +1,268 @@
+{
+  "forms": [
+    {
+      "id": "UI-11",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-11-1793828701173@test.invalid",
+      "name": "Curso sintético 1793828701173",
+      "phase": "success-confirmed",
+      "payload": {
+        "dni": "98701654",
+        "firstName": "Persona",
+        "lastName": "Sintetica",
+        "email": "e3-ui-11-1793828701173@test.invalid",
+        "personalEmail": "personal-e3-ui-11-1793828701173@test.invalid",
+        "phone": "999999991",
+        "phonesAdditional": [],
+        "courseId": 1,
+        "jobStatus": "PartTime",
+        "isCoordinator": false,
+        "scheduledHours": 0,
+        "maxHours": 20
+      },
+      "status": 201,
+      "response": {
+        "id": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+        "email": "e3-ui-11-1793828701173@test.invalid",
+        "password": null,
+        "isActive": true,
+        "createdAt": "2026-11-04T21:45:02.845Z",
+        "updatedAt": "2026-11-04T21:45:02.845Z",
+        "lastLogin": null,
+        "googleId": null,
+        "role": "profesor",
+        "userProfile": {
+          "id": "01a1a885-ca81-7466-b853-9657014bce16",
+          "userId": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+          "dni": "98701654",
+          "firstName": "Persona",
+          "lastName": "Sintetica",
+          "phone": "999999991",
+          "phonesAdditional": [],
+          "personalEmail": "personal-e3-ui-11-1793828701173@test.invalid",
+          "isActive": true,
+          "createdAt": "2026-11-04T21:45:02.845Z",
+          "updatedAt": "2026-11-04T21:45:02.845Z"
+        },
+        "teacher": {
+          "id": "01a1a885-ca84-71f0-99c4-ce4657b70ebb",
+          "userId": "01a1a885-ca7e-7a92-98dc-55d3c8afd51a",
+          "courseId": 1,
+          "maxHours": 20,
+          "scheduledHours": 0,
+          "createdAt": "2026-11-04T21:45:02.845Z",
+          "updatedAt": "2026-11-04T21:45:02.845Z",
+          "isCoordinator": false,
+          "jobStatus": "PartTime",
+          "courses": {
+            "id": 1,
+            "name": "Course",
+            "color": null,
+            "description": null
+          }
+        }
+      }
+    },
+    {
+      "id": "UI-14",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-14-1793828703954@test.invalid",
+      "name": "Curso sintético 1793828703954",
+      "phase": "success-confirmed",
+      "payload": {
+        "area_id": 2,
+        "shift_id": 2,
+        "monitor": {
+          "email": "e3-ui-14-1793828703954@test.invalid",
+          "dni": "98704366",
+          "firstName": "Persona",
+          "lastName": "Sintetica",
+          "phone": "999999991",
+          "phonesAdditional": [],
+          "personalEmail": "personal-e3-ui-14-1793828703954@test.invalid"
+        }
+      },
+      "status": 201,
+      "response": {
+        "id": "01a1a885-d418-7979-9c38-ea36f008be4f",
+        "name": "E-201 Extraordinario",
+        "idSede": 1,
+        "areaId": 2,
+        "shiftId": 2,
+        "monitorId": "01a1a885-d418-7967-98f9-ecde447e4b0f",
+        "capacity": 100,
+        "urlMeet": null,
+        "urlClassroom": null,
+        "status": "FALTAN_DOCENTES"
+      }
+    },
+    {
+      "id": "UI-15",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-15-1793828706098@test.invalid",
+      "name": "Curso sintético 1793828706098",
+      "phase": "success-confirmed",
+      "payload": {
+        "email": "e3-ui-15-1793828706098@test.invalid",
+        "firstName": "Persona",
+        "lastName": "Sintetica",
+        "personalEmail": "personal-e3-ui-15-1793828706098@test.invalid",
+        "phone": "999999991",
+        "shift_id": 1,
+        "dni": "98706405",
+        "phonesAdditional": []
+      },
+      "status": 201,
+      "response": {
+        "id": "01a1a885-db8e-7cf0-bac6-0e88818616cf",
+        "email": "e3-ui-15-1793828706098@test.invalid",
+        "password": null,
+        "isActive": true,
+        "createdAt": "2026-11-04T21:45:07.214Z",
+        "updatedAt": "2026-11-04T21:45:07.214Z",
+        "lastLogin": null,
+        "googleId": null,
+        "role": "supervisor",
+        "userProfile": {
+          "id": "01a1a885-db8f-7cff-a727-a96e95826eae",
+          "userId": "01a1a885-db8e-7cf0-bac6-0e88818616cf",
+          "dni": "98706405",
+          "firstName": "Persona",
+          "lastName": "Sintetica",
+          "phone": "999999991",
+          "phonesAdditional": [],
+          "personalEmail": "personal-e3-ui-15-1793828706098@test.invalid",
+          "isActive": true,
+          "createdAt": "2026-11-04T21:45:07.214Z",
+          "updatedAt": "2026-11-04T21:45:07.214Z"
+        }
+      }
+    },
+    {
+      "id": "UI-17",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-17-1793828707930@test.invalid",
+      "name": "Curso sintético 1793828707930",
+      "phase": "success-confirmed",
+      "payload": {
+        "email": "e3-ui-17-1793828707930@test.invalid",
+        "dni": "98708256",
+        "firstName": "Persona",
+        "lastName": "Sintetica",
+        "phone": "999999991",
+        "phonesAdditional": [],
+        "personalEmail": "personal-e3-ui-17-1793828707930@test.invalid"
+      },
+      "status": 201,
+      "response": {
+        "id": "01a1a885-e2a6-7896-b599-75ba829ab8e0",
+        "email": "e3-ui-17-1793828707930@test.invalid",
+        "role": "coordinador",
+        "courseId": null,
+        "courseName": null,
+        "dni": "98708256",
+        "firstName": "Persona",
+        "lastName": "Sintetica",
+        "phone": "999999991",
+        "phonesAdditional": [],
+        "personalEmail": "personal-e3-ui-17-1793828707930@test.invalid",
+        "isActive": true
+      }
+    },
+    {
+      "id": "UI-18",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-18-1793828709703@test.invalid",
+      "name": "Curso sintético 1793828709703",
+      "phase": "success-confirmed",
+      "payload": {
+        "area_id": 2,
+        "shift_id": 2,
+        "quantity": 1
+      },
+      "status": 201,
+      "response": {
+        "created": 1,
+        "monitorsCreated": 1,
+        "scheduleBlocks": 36,
+        "classes": [
+          {
+            "id": "01a1a885-e91e-7317-9045-2fc395734712",
+            "name": "E-202 Extraordinario",
+            "idSede": 1,
+            "areaId": 2,
+            "shiftId": 2,
+            "monitorId": "01a1a885-e91e-7309-80d2-b63f3cbec6ad",
+            "capacity": 100,
+            "urlMeet": null,
+            "urlClassroom": null,
+            "status": "FALTAN_DOCENTES"
+          }
+        ]
+      }
+    },
+    {
+      "id": "UI-20",
+      "fixture": "sr_d2f927cf83ba40ca9f2f52272bc3ee08_a",
+      "email": "e3-ui-20-1793828711366@test.invalid",
+      "name": "Curso sintético 1793828711366",
+      "phase": "success-confirmed",
+      "payload": {
+        "description": "Sin descripción",
+        "name": "Curso sintético 1793828711366",
+        "color": "#661124"
+      },
+      "status": 201,
+      "response": {
+        "id": 103,
+        "name": "Curso sintético 1793828711366",
+        "color": "#661124",
+        "description": "Sin descripción"
+      }
+    }
+  ],
+  "results": [
+    "UI-11: inválido no escribe",
+    "UI-11: válido conserva habilitación",
+    "UI-11: guardando excluye doble envío",
+    "UI-11: breakpoint conserva valores sin remount",
+    "UI-11: fallo conserva formulario",
+    "UI-11: guardado real 201",
+    "UI-11: persona persistida por correo sintético",
+    "UI-14: inválido no escribe",
+    "UI-14: válido conserva habilitación",
+    "UI-14: guardando excluye doble envío",
+    "UI-14: breakpoint conserva valores sin remount",
+    "UI-14: fallo conserva formulario",
+    "UI-14: guardado real 201",
+    "UI-14: persona persistida por correo sintético",
+    "UI-15: inválido no escribe",
+    "UI-15: válido conserva habilitación",
+    "UI-15: guardando excluye doble envío",
+    "UI-15: breakpoint conserva valores sin remount",
+    "UI-15: fallo conserva formulario",
+    "UI-15: guardado real 201",
+    "UI-15: persona persistida por correo sintético",
+    "UI-17: inválido no escribe",
+    "UI-17: válido conserva habilitación",
+    "UI-17: guardando excluye doble envío",
+    "UI-17: breakpoint conserva valores sin remount",
+    "UI-17: fallo conserva formulario",
+    "UI-17: guardado real 201",
+    "UI-17: persona persistida por correo sintético",
+    "UI-18: inválido no escribe",
+    "UI-18: válido conserva habilitación",
+    "UI-18: guardando excluye doble envío",
+    "UI-18: breakpoint conserva valores sin remount",
+    "UI-18: fallo conserva formulario",
+    "UI-18: guardado real 201",
+    "UI-18: salón creado persistido",
+    "UI-20: inválido no escribe",
+    "UI-20: válido conserva habilitación",
+    "UI-20: guardando excluye doble envío",
+    "UI-20: breakpoint conserva valores sin remount",
+    "UI-20: fallo conserva formulario",
+    "UI-20: guardado real 201",
+    "UI-20: nombre/color persistidos"
+  ]
+}

@@ -18,6 +18,7 @@ import { formatPhone, fullName } from "@/lib/format";
 import { splitPhones } from "@/lib/validators";
 import { emptyPerson, PersonForm } from "./PersonForm";
 import { useRemoval } from "./useRemoval";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
 
 export function CoordinadoresPage() {
   const [params, setParams] = useSearchParams();
@@ -75,6 +76,7 @@ export function CoordinadoresPage() {
       align: "right",
       cell: (c) => (
         <RowActions
+          help
           label={`Acciones para ${fullName(c)}`}
           items={[
             { label: "Editar datos", icon: <FiEdit2 />, onSelect: () => openForm(c) },
@@ -96,9 +98,10 @@ export function CoordinadoresPage() {
           </Button>
         }
       />
-      <Alert tone="info">
+      <details className="rounded-xl border border-line bg-white p-3 text-sm"><summary className="cursor-pointer font-semibold text-marino-900">Alcance de coordinación</summary><div className="pt-3"><Alert tone="info">
         Un coordinador <strong>general</strong> consulta todos los docentes y salones. Uno <strong>de curso</strong> solo ve los docentes de ese curso. Ambos acceden en modo lectura.
-      </Alert>
+      </Alert></div></details>
+      <QueryFeedback query={coordinators} label="coordinadores" />
       <Card>
         <div className="flex justify-end p-4">
           <SelectionToggle active={selection.active} onStart={selection.start} onStop={selection.stop} />
@@ -110,7 +113,8 @@ export function CoordinadoresPage() {
             </Button>
           </SelectionBar>
         )}
-        <DataTable
+        {(!coordinators.isError || coordinators.data !== undefined) && <DataTable
+          appearance="operational"
           columns={columns}
           rows={rows}
           selection={selection.tableSelection}
@@ -127,7 +131,7 @@ export function CoordinadoresPage() {
               }
             />
           }
-        />
+        />}
         {coordinators.data && coordinators.data.total > 0 && (
           <Pagination page={page} limit={limit} total={coordinators.data.total} noun="coordinadores" onPage={(p) => setParams({ pagina: String(p) })} />
         )}
@@ -155,6 +159,7 @@ export function CoordinadoresPage() {
           required={["email", "dni", "firstName", "lastName"]}
           submitLabel={editing ? "Guardar cambios" : "Crear coordinador"}
           saving={create.isPending || update.isPending}
+          error={create.error || update.error ? apiErrorMessage(create.error ?? update.error) : null}
           extra={() => (
             <Field label="Alcance" hint="Deja «Coordinador general» para que vea todos los cursos.">
               {(p) => (

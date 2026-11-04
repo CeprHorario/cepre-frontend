@@ -1,0 +1,52 @@
+{
+  "role": "monitor",
+  "date": "2026-11-09",
+  "reason": "Solicitud sintética E3 monitor 1793820611030",
+  "request": {
+    "id": "e677b375-3311-48bd-b912-b8957e384550",
+    "requester_user_id": "f6944eeb-251e-4ff1-961d-2f794a1718de",
+    "requester_role": "monitor",
+    "subject_user_id": "daeb7d6b-92a8-4665-8ccf-a2f29f8576e1",
+    "subject_role": "profesor",
+    "kind": "EMERGENCY",
+    "replacement_user_id": "01a1a80a-4810-76ac-ad19-28f71dca4327",
+    "class_id": "16a17c79-ec60-4616-b922-b997b2439dce",
+    "course_id": 1,
+    "date": "2026-11-09T00:00:00.000Z",
+    "starts_at": "2026-11-09T13:00:00.000Z",
+    "ends_at": "2026-11-09T13:40:00.000Z",
+    "blocks": [
+      {
+        "end": "2026-11-09T13:40:00.000Z",
+        "start": "2026-11-09T13:00:00.000Z",
+        "course": "Course",
+        "period": 1,
+        "classId": "16a17c79-ec60-4616-b922-b997b2439dce",
+        "shiftId": 1,
+        "courseId": 1,
+        "className": "Aula ficticia A",
+        "endMinute": 520,
+        "startMinute": 480,
+        "hourSessionId": 1
+      }
+    ],
+    "reason": "Solicitud sintética E3 monitor 1793820611030",
+    "status": "PENDING",
+    "version": 1,
+    "approver_supervisor_id": "475d636a-9404-4780-b66f-43eeb4c23b37",
+    "pdf_object": "operations/sr_20c4dc25a7f940e1bc852a7ebce12c87_a/e677b375-3311-48bd-b912-b8957e384550.pdf",
+    "pdf_generation": "1793820611706495",
+    "pdf_sha256": "2d0b50eea5a08e0b04195bb55da58a21fe40a1b87775d7bd6acdb7b0a2994de2",
+    "pdf_size": 6302,
+    "evidence_count": 1,
+    "decided_by": null,
+    "decision_reason": null,
+    "decided_at": null,
+    "created_at": "2026-11-04T19:30:11.714Z",
+    "operation_id": "a90a3db2-0b84-40d7-aa07-449844d0909d",
+    "payload_sha256": "1c9e401dc25218bb1b4e93119b0e5b4943381d7bbb89e86ce2ac8dff7ea46bdc"
+  },
+  "status": 201,
+  "fixture": "sr_20c4dc25a7f940e1bc852a7ebce12c87_a",
+  "phase": "success-confirmed"
+}

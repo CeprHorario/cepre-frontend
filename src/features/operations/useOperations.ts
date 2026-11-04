@@ -6,7 +6,7 @@ import { useAuth } from '@/auth/AuthProvider';
 export interface OperationsContext { accountId:string;process:string;role:string;name:string }
 export interface WorkBlock {hourSessionId:number;period:number;className:string;course:string;start:string;end:string}
 export interface RequestRow {id:string;requester_user_id:string;replacement_user_id:string;subject_role:string;kind:string;status:string;version:number;reason:string;blocks:WorkBlock[];requester_email?:string;replacement_email?:string;date:string}
-export interface Notification {id:string;title:string;message:string;resolved_at:string|null;request_id:string;created_at:string}
+export interface Notification {id:string;kind?:string;title:string;message:string;resolved_at:string|null;request_id:string|null;created_at:string;obsolete?:boolean}
 export interface Page<T>{data:T[];total:number;pending?:number}
 export function useOperations(){
  const {user,status}=useAuth();const cache=useQueryClient();

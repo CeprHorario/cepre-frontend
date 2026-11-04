@@ -258,11 +258,11 @@ export function useClearTeacherAvailability() {
   });
 }
 
-export function useAvailableTeachers(courseId: number | undefined, slots: Slot[]) {
-  const params = { courseId, slots };
+export function useAvailableTeachers(courseId: number | undefined, slots: Slot[], page = 1, limit = 20, classId?: string) {
+  const params = { courseId, slots, page, limit, classId };
   return useQuery({
     queryKey: keys.availableTeachers(params),
-    queryFn: () => TeachersApi.available({ courseId: courseId!, hourSessions: slots }, 1, 50),
+    queryFn: ({ signal }) => TeachersApi.available({ courseId: courseId!, hourSessions: slots }, page, limit, signal),
     enabled: Boolean(courseId) && slots.length > 0,
   });
 }
@@ -312,6 +312,13 @@ export function useAssignmentMutations() {
       client.invalidateQueries({ queryKey: ["classes"] }),
     ]);
   return {
+    replace: useMutation({
+      mutationFn: SchedulesApi.replaceTeacher,
+      onSuccess: refresh,
+      // Una respuesta perdida no se reenvía: recuperar la asignación real y candidatos.
+      onError: refresh,
+      retry: false,
+    }),
     assignMany: useMutation({
       mutationFn: ({ teacherId, classroomIds }: { teacherId: string; classroomIds: string[] }) => SchedulesApi.assignTeacherMany(teacherId, classroomIds),
       onSuccess: refresh,

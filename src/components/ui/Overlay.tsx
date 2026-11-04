@@ -39,9 +39,10 @@ interface DialogProps {
   children?: ReactNode;
   footer?: ReactNode;
   size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
-export function Dialog({ open, onClose, title, description, children, footer, size = "md" }: DialogProps) {
+export function Dialog({ open, onClose, title, description, children, footer, size = "md", className }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -73,6 +74,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
       className={cn(
         "fixed inset-0 m-auto max-h-[92dvh] w-[calc(100%-1rem)] max-w-none overflow-hidden rounded-2xl border-0 bg-white p-0 text-ink-900 shadow-pop outline-none backdrop:bg-marino-900/45",
         size === "sm" ? "sm:max-w-md" : size === "lg" ? "sm:max-w-3xl" : "sm:max-w-xl",
+        className,
       )}
     >
       <div className="flex max-h-[92dvh] min-w-0 flex-col">

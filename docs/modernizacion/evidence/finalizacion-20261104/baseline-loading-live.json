@@ -1,0 +1,792 @@
+{
+  "routes": [
+    {
+      "id": "UI-03",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-03-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "⚠ Incidencias pendientes · 0\n\n0 de docentes · 0 de monitores · 0 de supervisores · Todos los procesos\n\nVer incidencias e historial\nPartes diarios\nRegistro, seguimiento, reemplazos y reportes del proceso.\nAdministrar partes\nGenerar proceso\nCrea un proceso de admisión con turnos, salones y horarios automáticos.\nNuevo proceso\nGestionar datos\nUsuarios, salones y cursos del proceso actual.\nDocentes\n3\nMonitores\n2\nSalones\n…\nCursos\n2\nSupervisores\n2\nCoordinadores\n2\nImportar archivos\nCarga docentes, monitores o supervisores desde CSV o JSON.\nSubir archivo\nConfigurar sistema\nModo mantenimiento y proceso visible para cada rol.\nMantenimiento inactivo\nReportes de seguimiento\nConsulta y exporta el seguimiento del personal y las observaciones del proceso.\nConsultar reportes\nSolicitudes y reemplazos\nRevisa solicitudes, decide reemplazos y consulta sus documentos de respaldo.\nAdministrar solicitudes\nIncidencias e historial\nRegistra incidencias y consulta los antecedentes del personal entre procesos.\nAdministrar incidencias\nPendientes del proceso\nSalones por turno"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-03-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "⚠ Incidencias pendientes · 0\n\n0 de docentes · 0 de monitores · 0 de supervisores · Todos los procesos\n\nVer incidencias e historial\nPartes diarios\nRegistro, seguimiento, reemplazos y reportes del proceso.\nAdministrar partes\nGenerar proceso\nCrea un proceso de admisión con turnos, salones y horarios automáticos.\nNuevo proceso\nGestionar datos\nUsuarios, salones y cursos del proceso actual.\nDocentes\n3\nMonitores\n2\nSalones\n…\nCursos\n2\nSupervisores\n2\nCoordinadores\n2\nImportar archivos\nCarga docentes, monitores o supervisores desde CSV o JSON.\nSubir archivo\nConfigurar sistema\nModo mantenimiento y proceso visible para cada rol.\nMantenimiento inactivo\nReportes de seguimiento\nConsulta y exporta el seguimiento del personal y las observaciones del proceso.\nConsultar reportes\nSolicitudes y reemplazos\nRevisa solicitudes, decide reemplazos y consulta sus documentos de respaldo.\nAdministrar solicitudes\nIncidencias e historial\nRegistra incidencias y consulta los antecedentes del personal entre procesos.\nAdministrar incidencias\nPendientes del proceso\nSalones por turno"
+        }
+      ]
+    },
+    {
+      "id": "UI-05",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-05-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nIncidencias e historial\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-05-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nIncidencias e historial\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-06",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-06-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Volver al panel\nIncidencias e historial\nIncidencias e historial por persona\n\nAvisos de todos los procesos. Filtra por DNI para consultar el historial.\n\nRegistrar incidencia\nBuscar historial\nPersona / DNI\tProceso y fecha\tIncidencia\tEstado\t\nCargando…\nAnterior\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-06-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Volver al panel\nIncidencias e historial\nIncidencias e historial por persona\n\nAvisos de todos los procesos. Filtra por DNI para consultar el historial.\n\nRegistrar incidencia\nBuscar historial\nPersona / DNI\tProceso y fecha\tIncidencia\tEstado\t\nCargando…\nAnterior\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-09",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-09-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cabeceras…"
+          ],
+          "alerts": [],
+          "text": "Importar archivos\n\nPrepara tus datos, revisa el resultado y confirma la importación.\n\nDocentes\nMonitores\nSupervisores\n1\nPreparar archivo\n2\nRevisar datos\n3\nConfirmar lote\nRegistrar docentes\n\nRegistra docentes nuevos con su curso, datos personales y horas máximas.\n\nCabeceras y formato del archivo\nDescargar plantilla Excel\nSeleccionar archivo\nArrastra tu archivo aquí\no haz clic para seleccionarlo · Excel, CSV o JSON\nSe revisará antes de guardar. Todavía no se importará ningún registro.\n\nExcel (.xlsx), CSV o JSON · Máximo 10000 filas y 8 MB. La plantilla incluye cabeceras, formatos, guía, horarios, salones y cursos del proceso."
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-09-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cabeceras…"
+          ],
+          "alerts": [],
+          "text": "Importar archivos\n\nPrepara tus datos, revisa el resultado y confirma la importación.\n\nDocentes\nMonitores\nSupervisores\n1\nPreparar archivo\n2\nRevisar datos\n3\nConfirmar lote\nRegistrar docentes\n\nRegistra docentes nuevos con su curso, datos personales y horas máximas.\n\nCabeceras y formato del archivo\nDescargar plantilla Excel\nSeleccionar archivo\nArrastra tu archivo aquí\no haz clic para seleccionarlo · Excel, CSV o JSON\nSe revisará antes de guardar. Todavía no se importará ningún registro.\n\nExcel (.xlsx), CSV o JSON · Máximo 10000 filas y 8 MB. La plantilla incluye cabeceras, formatos, guía, horarios, salones y cursos del proceso."
+        }
+      ]
+    },
+    {
+      "id": "UI-11",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-11-admin-1920-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nCargando…\n\nExportar Excel\nAgregar docente\nTodos los cursos\nCourse\nCurso fuera de alcance\nSeleccionar\nIncidencia\tDocente\tCurso\tDedicación\tHoras\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-11-admin-390-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nCargando…\n\nExportar Excel\nAgregar docente\nTodos los cursos\nCourse\nCurso fuera de alcance\nSeleccionar\nIncidencia\tDocente\t\nAcciones\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-12",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-12-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "TP\nPrueba A, teacher\nCourse\nMedio tiempo\n0 asignadas\n0 de 20 h\nDisponibilidad en Excel\nQuedarían 20 h libres\nDisponibilidad\n\n0 bloques disponibles en este turno. Los bloques verdes ya están asignados.\n\nEditar disponibilidad\nShift · 08:00–13:40\nLunes\nMartes\nMiércoles\nJueves\nViernes\nSábado\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n09:00 – 09:40\n10:00 – 10:40\n11:00 – 11:40\n12:00 – 12:40\n13:00 – 13:40\nDisponible\nYa asignado\nSalón seleccionado\nSalones compatibles\n\nCourse dentro de la disponibilidad marcada.\n\nTodas las áreas\nArea\nMarca la disponibilidad\n\nEdita la disponibilidad para ver los salones donde el docente puede dictar.\n\nSalones asignados\n\n0 salones · 0 horas\n\nSeleccionar"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-12-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "TP\nPrueba A, teacher\nCourse\nMedio tiempo\n0 asignadas\n0 de 20 h\nDisponibilidad en Excel\nQuedarían 20 h libres\nDisponibilidad\n\n0 bloques disponibles en este turno. Los bloques verdes ya están asignados.\n\nEditar disponibilidad\nShift · 08:00–13:40\nLunes\nMartes\nMiércoles\nJueves\nViernes\nSábado\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n08:00 – 08:40\n09:00 – 09:40\n10:00 – 10:40\n11:00 – 11:40\n12:00 – 12:40\n13:00 – 13:40\nDisponible\nYa asignado\nSalón seleccionado\nSalones compatibles\n\nCourse dentro de la disponibilidad marcada.\n\nTodas las áreas\nArea\nMarca la disponibilidad\n\nEdita la disponibilidad para ver los salones donde el docente puede dictar.\n\nSalones asignados\n\n0 salones · 0 horas\n\nSeleccionar"
+        }
+      ]
+    },
+    {
+      "id": "UI-13",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-13-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-13-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        }
+      ]
+    },
+    {
+      "id": "UI-14",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-14-admin-1920-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [
+            "Cada monitor pertenece a un salón. Al agregar uno se crea el siguiente salón del área y turno elegidos, con su horario base. Si no indicas un correo se usa el automático (por ejemplo 101b@cepr.unsa.pe)."
+          ],
+          "alerts": [],
+          "text": "Monitores\n\nCargando…\n\nAgregar monitor\nCada monitor pertenece a un salón. Al agregar uno se crea el siguiente salón del área y turno elegidos, con su horario base. Si no indicas un correo se usa el automático (por ejemplo 101b@cepr.unsa.pe).\nTodas las áreas\nArea\nTodos los turnos\nShift\nSeleccionar\nIncidencia\tDNI\tSalón\tMonitor\tCorreo de acceso\tCelular\tTurno\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-14-admin-390-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [
+            "Cada monitor pertenece a un salón. Al agregar uno se crea el siguiente salón del área y turno elegidos, con su horario base. Si no indicas un correo se usa el automático (por ejemplo 101b@cepr.unsa.pe)."
+          ],
+          "alerts": [],
+          "text": "Monitores\n\nCargando…\n\nAgregar monitor\nCada monitor pertenece a un salón. Al agregar uno se crea el siguiente salón del área y turno elegidos, con su horario base. Si no indicas un correo se usa el automático (por ejemplo 101b@cepr.unsa.pe).\nTodas las áreas\nArea\nTodos los turnos\nShift\nSeleccionar\nIncidencia\tDNI\tSalón\tMonitor\tTurno\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-15",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-15-admin-1920-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Supervisores\n\nCargando…\n\nAgregar supervisor\nSeleccionar\nIncidencia\tSupervisor\tCelular\tTurno\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-15-admin-390-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Supervisores\n\nCargando…\n\nAgregar supervisor\nSeleccionar\nIncidencia\tSupervisor\tCelular\tTurno\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-16",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-16-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Monitores de Prueba A, supervisor\n\nSin turno asignado: edita al supervisor para elegir su turno.\n\nAsignados\n\n0 monitores\n\nDisponibles\nTodas las áreas\nArea\nElige un turno\n\nEl supervisor necesita un turno para listar monitores disponibles."
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-16-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Monitores de Prueba A, supervisor\n\nSin turno asignado: edita al supervisor para elegir su turno.\n\nAsignados\n\n0 monitores\n\nDisponibles\nTodas las áreas\nArea\nElige un turno\n\nEl supervisor necesita un turno para listar monitores disponibles."
+        }
+      ]
+    },
+    {
+      "id": "UI-17",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-17-admin-1920-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [
+            "Un coordinador general consulta todos los docentes y salones. Uno de curso solo ve los docentes de ese curso. Ambos acceden en modo lectura."
+          ],
+          "alerts": [],
+          "text": "Coordinadores\n\nCargando…\n\nAgregar coordinador\nUn coordinador general consulta todos los docentes y salones. Uno de curso solo ve los docentes de ese curso. Ambos acceden en modo lectura.\nSeleccionar\nIncidencia\tCoordinador\tAlcance\tDNI\tCelular\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-17-admin-390-loading.png",
+          "intercepted": 2,
+          "overflow": false,
+          "status": [
+            "Un coordinador general consulta todos los docentes y salones. Uno de curso solo ve los docentes de ese curso. Ambos acceden en modo lectura."
+          ],
+          "alerts": [],
+          "text": "Coordinadores\n\nCargando…\n\nAgregar coordinador\nUn coordinador general consulta todos los docentes y salones. Uno de curso solo ve los docentes de ese curso. Ambos acceden en modo lectura.\nSeleccionar\nIncidencia\tCoordinador\tAlcance\t\nAcciones\n\n\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\n\n\t\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-18",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-18-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nAgregar salones\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-18-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nAgregar salones\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        }
+      ]
+    },
+    {
+      "id": "UI-19",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-19-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nEliminar\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-19-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nEliminar\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        }
+      ]
+    },
+    {
+      "id": "UI-20",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-20-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Cursos\n\nCargando…\n\nAgregar curso\nCurso\tAsí se ve en el horario\t\nAcciones\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-20-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Cursos\n\nCargando…\n\nAgregar curso\nCurso\tAsí se ve en el horario\t\nAcciones\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-22",
+      "role": "teacher",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-22-teacher-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-22-teacher-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-23",
+      "role": "monitor",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-23-monitor-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Faltan enlaces del salónRegistra el enlace de Meet y de Classroom para que docentes y supervisores puedan entrar.Agregar"
+          ],
+          "alerts": [],
+          "text": "Solicitar reemplazo\nRegistrar parte diario\nFaltan enlaces del salón\nRegistra el enlace de Meet y de Classroom para que docentes y supervisores puedan entrar.\nAgregar\nSemana\nPor día\nDocentes del salón\n\n1 docente\n\nCourse\nPrueba A, teacher\nteacher@test.invalid · N/A"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-23-monitor-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Faltan enlaces del salónRegistra el enlace de Meet y de Classroom para que docentes y supervisores puedan entrar.Agregar"
+          ],
+          "alerts": [],
+          "text": "Solicitar reemplazo\nRegistrar parte diario\nFaltan enlaces del salón\nRegistra el enlace de Meet y de Classroom para que docentes y supervisores puedan entrar.\nAgregar\nSemana\nPor día\nDocentes del salón\n\n1 docente\n\nCourse\nPrueba A, teacher\nteacher@test.invalid · N/A"
+        }
+      ]
+    },
+    {
+      "id": "UI-25",
+      "role": "monitor",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-25-monitor-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-25-monitor-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-26",
+      "role": "supervisor",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-26-supervisor-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitar reemplazo\nRevisar partes\nIncidencias de monitores\nMis salones\n0 monitores\nTodos\nSin enlaces · 0"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-26-supervisor-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitar reemplazo\nRevisar partes\nIncidencias de monitores\nMis salones\n0 monitores\nTodos\nSin enlaces · 0"
+        }
+      ]
+    },
+    {
+      "id": "UI-28",
+      "role": "supervisor",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-28-supervisor-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-28-supervisor-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Solicitudes y reemplazos\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Las aprobaciones cubren únicamente los bloques solicitados.\n\nSolicitar reemplazo\nTodos los estados\nPendiente\nAprobada\nRechazada\nCancelada\nFecha y solicitante\tTrabajo solicitado\tEstado\tDocumento\tAcciones\n\nCargando solicitudes…\n\nAnterior\nPágina 1\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-07",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-07-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Reportes de seguimiento\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Incidencias, solicitudes y control registrado por persona.\n\nAdministrar reemplazos y documentos\nAdministrar incidencias e historial\nDesde\nHasta\nReporte\nIncidencias personales\nObservaciones de bloques y alumnos\nSolicitudes y reemplazos\nSeguimiento de personal\nExportar Excel\n\nCargando…\n\nLas métricas describen registros existentes. No asignan justificaciones, puntajes ni sanciones automáticamente.\n\nAnterior\nPágina 1\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-07-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Reportes de seguimiento\n\nsr_ed1a76a016e6430091b64a1dc8d97169_a · Incidencias, solicitudes y control registrado por persona.\n\nAdministrar reemplazos y documentos\nAdministrar incidencias e historial\nDesde\nHasta\nReporte\nIncidencias personales\nObservaciones de bloques y alumnos\nSolicitudes y reemplazos\nSeguimiento de personal\nExportar Excel\n\nCargando…\n\nLas métricas describen registros existentes. No asignan justificaciones, puntajes ni sanciones automáticamente.\n\nAnterior\nPágina 1\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-10",
+      "role": "admin",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-10-admin-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Menú principal\n/\nConfigurar sistema\nsr_ed1a76a016e6430091b64a1dc8d97169_a\n1\nAF\nCargando…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-10-admin-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "1\nAF\nCargando…"
+        }
+      ]
+    },
+    {
+      "id": "UI-21",
+      "role": "teacher",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-21-teacher-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Disponibilidad en Excel\nSolicitar reemplazo\nSemana\nPor día\nMis salones"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-21-teacher-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Disponibilidad en Excel\nSolicitar reemplazo\nSemana\nPor día\nMis salones"
+        }
+      ]
+    },
+    {
+      "id": "UI-29",
+      "role": "supervisor",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-29-supervisor-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Volver al panel\nIncidencias e historial\nIncidencias de monitores\n\nRegistro de incidencias de tus monitores en el proceso actual.\n\nRegistrar incidencia\nPersona / DNI\tProceso y fecha\tIncidencia\tEstado\t\nCargando…\nAnterior\nSiguiente"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-29-supervisor-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Volver al panel\nIncidencias e historial\nIncidencias de monitores\n\nRegistro de incidencias de tus monitores en el proceso actual.\n\nRegistrar incidencia\nPersona / DNI\tProceso y fecha\tIncidencia\tEstado\t\nCargando…\nAnterior\nSiguiente"
+        }
+      ]
+    },
+    {
+      "id": "UI-30",
+      "role": "coordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-30-coordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nConsulta de todos los docentes y sus horarios\n\nTodos los cursos\nCourse\nCurso fuera de alcance\nIncidencia\tDocente\tCurso\tDedicación\tHoras\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-30-coordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nConsulta de todos los docentes y sus horarios\n\nTodos los cursos\nCourse\nCurso fuera de alcance\nIncidencia\tDocente\t\nAcciones\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-31",
+      "role": "courseCoordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-31-courseCoordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nDocentes de Course\n\nIncidencia\tDocente\tCurso\tDedicación\tHoras\t\nAcciones\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t\n\n\n\t\n\t\n\t\n\t\n\t"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-31-courseCoordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Docentes\n\nDocentes de Course\n\nIncidencia\tDocente\t\nAcciones\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t\n\n\n\t\n\t"
+        }
+      ]
+    },
+    {
+      "id": "UI-32",
+      "role": "coordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-32-coordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-32-coordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        }
+      ]
+    },
+    {
+      "id": "UI-32",
+      "role": "courseCoordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-32-courseCoordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-32-courseCoordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando…"
+          ],
+          "alerts": [],
+          "text": "Cargando…"
+        }
+      ]
+    },
+    {
+      "id": "UI-33",
+      "role": "coordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-33-coordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-33-coordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        }
+      ]
+    },
+    {
+      "id": "UI-34",
+      "role": "courseCoordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-34-courseCoordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-34-courseCoordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [],
+          "alerts": [],
+          "text": "Salones\n\nCargando…\n\nTarjetas\nTabla\nTodas\nArea\nEstado: todos\nFaltan docentes (0)\nCompletos (0)\nSin enlaces (0)"
+        }
+      ]
+    },
+    {
+      "id": "UI-35",
+      "role": "coordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-35-coordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-35-coordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        }
+      ]
+    },
+    {
+      "id": "UI-35",
+      "role": "courseCoordinator",
+      "measurements": [
+        {
+          "width": 1920,
+          "screenshot": "UI-35-courseCoordinator-1920-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        },
+        {
+          "width": 390,
+          "screenshot": "UI-35-courseCoordinator-390-loading.png",
+          "intercepted": 1,
+          "overflow": false,
+          "status": [
+            "Cargando cursos del horario…"
+          ],
+          "alerts": [],
+          "text": "Aula\nArea\n\nShift · 08:00 – 23:59 · Sede · Capacidad 100\n\nGoogle Meet\nSin enlace registrado\nFaltante\nGoogle Classroom\nSin enlace registrado\nFaltante\nHorario semanal\nSemana\nPor día\nBorde punteado: curso sin docente asignado.\nDocentes por curso\nSin confirmar\n\nCargando cursos del horario…"
+        }
+      ]
+    }
+  ]
+}

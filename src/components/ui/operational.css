@@ -1,0 +1,23 @@
+.operational-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: #444a60;
+  background: #f8f9fc;
+}
+.operational-table { border-top: 3px solid #661124; }
+.operational-table td { vertical-align: middle; }
+.operational-table :is(button,a):focus-visible {
+  outline: 3px solid #661124;
+  outline-offset: 3px;
+}
+.operational-table :is(strong,span) { overflow-wrap: anywhere; }
+@media (pointer: coarse) {
+  .operational-table button { min-height: 44px; min-width: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .operational-table :is(button,a) { transition: none; }
+}
+@media (forced-colors: active) {
+  .operational-table :is(button,a):focus-visible { outline-color: Highlight; }
+}

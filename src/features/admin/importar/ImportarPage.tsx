@@ -11,6 +11,7 @@ import { Card, PageHeader } from "@/components/ui/Card";
 import { Alert } from "@/components/ui/EmptyState";
 import { downloadBlob } from "@/lib/format";
 import { DniIncidenceWarning } from "@/features/incidencias/DniIncidenceWarning";
+import '@/components/layout/task-workspace.css';
 
 const OPTIONS: { value: ImportKind; label: string; description: string }[] = [
   { value: "docentes", label: "Registrar docentes", description: "Registra docentes nuevos con su curso, datos personales y horas máximas." },
@@ -85,6 +86,7 @@ export function ImportarPage() {
       await Promise.all(["teachers", "classes", "monitors", "supervisors"].map((key) => client.invalidateQueries({ queryKey: [key] })));
       toast.success("Lote aplicado correctamente");
     } catch (error) {
+      setUploadError(apiErrorMessage(error, "No se aplicó el lote. Revisa la vista previa y vuelve a confirmar."));
       toast.error(apiErrorMessage(error, "No se aplicó el lote"));
       // Refresh errors if another administrator changed records after the preview.
       try { setPreview(await ImportsApi.preview(kind, file)); } catch { setPreview(null); }
@@ -93,10 +95,10 @@ export function ImportarPage() {
 
   return (
     <SimpleLayout crumbs={[{ label: "Menú principal", to: "/admin" }, { label: "Importar archivos" }]}>
-      <main className="mx-auto flex w-full max-w-[1200px] flex-col gap-6 px-4 py-8 sm:px-8">
-        <div className="flex justify-center text-center"><PageHeader title="Importar archivos" description="Prepara tus datos, revisa el resultado y confirma la importación." /></div>
+      <main className="task-workspace mx-auto flex w-full max-w-[1400px] flex-col gap-5 px-4 py-6 sm:px-8">
+        <PageHeader title="Importar archivos" />
         <nav aria-label="Tipo de importación" className="flex justify-center">
-          <div className="inline-flex max-w-full flex-wrap justify-center gap-1 rounded-2xl border border-line bg-white p-1.5 shadow-sm">
+          <div className="inline-flex max-w-full flex-wrap justify-center gap-1 rounded-xl border border-line bg-white p-1">
             {OPTIONS.map((item) => <button key={item.value} type="button" aria-pressed={kind === item.value} disabled={busy} onClick={() => { setKind(item.value); reset(); }} className={`rounded-xl px-4 py-3 text-sm font-semibold transition-colors disabled:opacity-60 ${kind === item.value ? "bg-marino-900 text-white shadow-sm" : "text-ink-500 hover:bg-surface-2 hover:text-marino-900"}`}>
               {{ docentes: "Docentes", monitores: "Monitores", supervisores: "Supervisores", disponibilidad: "Disponibilidad" }[item.value]}
             </button>)}
@@ -108,7 +110,7 @@ export function ImportarPage() {
             return <li key={label} aria-current={current === index ? "step" : undefined} className={`flex items-center gap-2 ${index <= current ? "text-marino-900" : "text-ink-500"}`}><span className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${index <= current ? "bg-marino-900 text-white" : "bg-surface-2"}`}>{index < current ? <FiCheck aria-hidden="true" /> : index + 1}</span><span>{label}</span></li>;
           })}
         </ol>
-        <Card className="mx-auto flex w-full max-w-[960px] flex-col gap-5 p-5 sm:p-8">
+        <Card className="mx-auto flex w-full flex-col gap-4 p-4 sm:p-6">
           {!file && <div className="mx-auto max-w-2xl text-center"><h2 className="text-xl font-bold text-marino-900">{option.label}</h2><p className="mt-2 text-sm leading-relaxed text-ink-500">{option.description}</p></div>}
           {!file && <details className="rounded-xl border border-line p-3">
             <summary className="cursor-pointer text-sm font-semibold text-marino-900">Cabeceras y formato del archivo</summary>

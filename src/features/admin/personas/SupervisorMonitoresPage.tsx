@@ -13,6 +13,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Select } from "@/components/ui/Field";
 import { Skeleton } from "@/components/ui/Spinner";
 import { fullName, shortClassName } from "@/lib/format";
+import { QueryFeedback } from '@/components/ui/QueryFeedback';
+import { Alert } from '@/components/ui/EmptyState';
 
 export function SupervisorMonitoresPage({ basePath }: { basePath: string }) {
   const { id = "" } = useParams();
@@ -28,15 +30,17 @@ export function SupervisorMonitoresPage({ basePath }: { basePath: string }) {
   const available = useMonitorsFiltered({ shiftId: supervisor?.shiftId, page, limit: 12, areaId });
   const { assign, remove } = useSupervisorMutations();
   const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const run = async (monitor: MonitorAssignment, action: "assign" | "remove") => {
     setBusy(monitor.monitorId);
+    setError(null);
     try {
       if (action === "assign") await assign.mutateAsync({ supervisorId: id, monitorId: monitor.monitorId });
       else await remove.mutateAsync(monitor.monitorId);
       toast.success(action === "assign" ? `${shortClassName(monitor.className)} asignado` : `${shortClassName(monitor.className)} quitado`);
     } catch (error) {
-      toast.error(apiErrorMessage(error, "No se pudo actualizar la asignación"));
+      setError(apiErrorMessage(error, "No se pudo actualizar la asignación"));
     } finally {
       setBusy(null);
     }
@@ -56,12 +60,15 @@ export function SupervisorMonitoresPage({ basePath }: { basePath: string }) {
         title={`Monitores de ${fullName(supervisor) || "supervisor"}`}
         description={shiftName ? `Supervisa el ${shiftName}` : "Sin turno asignado: edita al supervisor para elegir su turno."}
       />
+      {error && <Alert tone="danger">{error}</Alert>}
+      <QueryFeedback query={fallback} label="supervisor" />
       <div className="grid items-start gap-4 lg:grid-cols-2">
         <Card className="flex flex-col gap-3 p-5">
           <CardHeader title="Asignados" description={`${list.length} monitores`} />
+          <QueryFeedback query={assigned} label="monitores asignados" />
           {assigned.isLoading ? (
             <Skeleton className="h-40" />
-          ) : list.length === 0 ? (
+          ) : assigned.isError && assigned.data === undefined ? null : list.length === 0 ? (
             <EmptyState title="Sin monitores" description="Agrega monitores desde la lista de disponibles." />
           ) : (
             <ul className="flex flex-col gap-2">
@@ -90,11 +97,12 @@ export function SupervisorMonitoresPage({ basePath }: { basePath: string }) {
               </Select>
             }
           />
+          <QueryFeedback query={available} label="monitores disponibles" />
           {!supervisor?.shiftId ? (
             <EmptyState title="Elige un turno" description="El supervisor necesita un turno para listar monitores disponibles." />
           ) : available.isLoading ? (
             <Skeleton className="h-40" />
-          ) : (available.data?.data.length ?? 0) === 0 ? (
+          ) : available.isError && available.data === undefined ? null : (available.data?.data.length ?? 0) === 0 ? (
             <EmptyState title="No hay monitores libres" description="Todos los monitores de este turno ya tienen supervisor." />
           ) : (
             <>

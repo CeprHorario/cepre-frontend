@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { FiChevronDown, FiChevronRight, FiChevronsLeft, FiChevronsRight, FiX } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight, FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
 import { cn } from "@/lib/cn";
 import { AppHeader, type Crumb } from "./AppHeader";
+import { Dialog } from '@/components/ui/Overlay';
 import { OperationsNotice } from '@/features/operations/OperationsNotice';
 
 export interface NavItem {
@@ -151,27 +152,9 @@ export function ModuleLayout({ title, groups, baseCrumbs = [] }: ModuleLayoutPro
           </button>
         </aside>
 
-        {mobileOpen && (
-          <div className="fixed inset-0 z-50 bg-marino-900/50 lg:hidden" onMouseDown={() => setMobileOpen(false)}>
-            <aside
-              className="flex h-full w-[284px] flex-col gap-2 overflow-y-auto bg-marino-900 px-3 py-4"
-              onMouseDown={(event) => event.stopPropagation()}
-            >
-              <div className="flex items-center justify-between px-2.5 pb-2">
-                <span className="font-display text-sm font-bold text-white">{title}</span>
-                <button
-                  type="button"
-                  onClick={() => setMobileOpen(false)}
-                  aria-label="Cerrar menú"
-                  className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-white hover:bg-white/10"
-                >
-                  <FiX />
-                </button>
-              </div>
-              {renderNav(false)}
-            </aside>
-          </div>
-        )}
+        <Dialog open={mobileOpen} onClose={() => setMobileOpen(false)} title={title} size="sm" className="lg:hidden">
+          <div className="rounded-xl bg-marino-900 p-3">{renderNav(false)}</div>
+        </Dialog>
 
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto flex w-full min-w-0 max-w-[1320px] flex-col gap-5 [&>*]:min-w-0 [&>main]:w-full">
@@ -184,7 +167,8 @@ export function ModuleLayout({ title, groups, baseCrumbs = [] }: ModuleLayoutPro
 }
 
 /** Header guinda con ruta, sin menú lateral (módulos de una sola pantalla) */
-export function SimpleLayout({ crumbs, greeting, subtitle, children }: {
+export function SimpleLayout({ crumbs, greeting, subtitle, children, appearance }: {
+  appearance?: 'default' | 'parts';
   crumbs?: Crumb[];
   greeting?: boolean;
   subtitle?: string;
@@ -192,7 +176,7 @@ export function SimpleLayout({ crumbs, greeting, subtitle, children }: {
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <AppHeader crumbs={crumbs} greeting={greeting} subtitle={subtitle} />
+      <AppHeader crumbs={crumbs} greeting={greeting} subtitle={subtitle} appearance={appearance} />
       {greeting && <OperationsNotice />}
       <div className="flex min-w-0 flex-1 flex-col [&>*]:min-w-0 [&>main]:w-full">{children ?? <Outlet />}</div>
     </div>

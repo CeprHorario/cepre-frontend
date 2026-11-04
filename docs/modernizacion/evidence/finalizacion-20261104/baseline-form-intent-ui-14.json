@@ -1,0 +1,33 @@
+{
+  "id": "UI-14",
+  "fixture": "sr_7b203f31a38841989b43091d863b5268_a",
+  "email": "e3-ui-14-1793819045356@test.invalid",
+  "name": "Curso sintético 1793819045356",
+  "phase": "success-confirmed",
+  "payload": {
+    "area_id": 2,
+    "shift_id": 2,
+    "monitor": {
+      "email": "e3-ui-14-1793819045356@test.invalid",
+      "dni": "98045679",
+      "firstName": "Persona",
+      "lastName": "Sintetica",
+      "phone": "999999991",
+      "phonesAdditional": [],
+      "personalEmail": "personal-e3-ui-14-1793819045356@test.invalid"
+    }
+  },
+  "status": 201,
+  "response": {
+    "id": "01a1a7f2-8a9e-76bc-80e3-4499e6366936",
+    "name": "E-201 Extraordinario",
+    "idSede": 1,
+    "areaId": 2,
+    "shiftId": 2,
+    "monitorId": "01a1a7f2-8a9e-76ae-a0db-b3983f486b64",
+    "capacity": 100,
+    "urlMeet": null,
+    "urlClassroom": null,
+    "status": "FALTAN_DOCENTES"
+  }
+}
