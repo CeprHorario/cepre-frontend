@@ -15,6 +15,10 @@ node_modules
 dist
 dist-ssr
 .playwright-cli/
+# Capturas locales de pruebas: archivo histórico en ../evidencias/frontend/docs/.
+/docs/modernizacion/baseline/**/*.png
+/docs/modernizacion/evidence/**/*.png
+/docs/partes-evidence/**/*.png
 *.local
 
 # Editor directories and files
