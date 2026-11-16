@@ -42,5 +42,5 @@ export function useOperations(){
      throw error;
    }
  }
- return {context:current,scope,headers,read,loading:enabled&&context.isPending,error:context.error,allowed};
+ return {context:current,scope,headers,read,loading:enabled&&context.isPending,error:context.error,allowed,retryContext:()=>void context.refetch()};
 }

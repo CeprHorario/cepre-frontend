@@ -1,21 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api/client';
-import { useAuth } from '@/auth/AuthProvider';
+import { useNotificationInbox } from './useNotificationInbox';
 import type { PartWorkspace } from '@/features/partes/types';
 import type { Notification, OperationsContext, Page } from './useOperations';
 
 /** One stream in the application header; the bell and Partes consume its cache. */
 export function useNotifications() {
-  const { user, status } = useAuth();
-  const cache = useQueryClient();
-  const [context, setContext] = useState<OperationsContext>();
-  const current = useRef<OperationsContext | undefined>(undefined);
-  const allowed = !!user && ['administrador', 'profesor', 'docente', 'monitor', 'supervisor', 'coordinador'].includes(user.role);
-  const enabled = allowed && (!status?.maintenance || user?.role === 'administrador');
-  const account = user?.id, role = user?.role;
-  const key = ['notifications', account, role, context?.process];
-  const notices = useQuery<Page<Notification>>({ queryKey: key, queryFn: async () => { throw new Error('La bandeja se sincroniza por el stream'); }, enabled: false });
+  const inbox=useNotificationInbox();
+  const {enabled,account,role}=inbox;
+  const cache=useQueryClient();
+  const current=useRef<OperationsContext | undefined>(undefined);
   useEffect(() => {
     if (!enabled || !account || !role) return;
     let active = true, healthy = false, attempt = 0, pending = false, synchronized = false;
@@ -32,7 +27,7 @@ export function useNotifications() {
         void cache.invalidateQueries({ queryKey: ['parts-context'] });
         void cache.invalidateQueries({ queryKey: ['operations-context'] });
       }
-      current.current = ctx; setContext(ctx);
+      current.current = ctx; cache.setQueryData(['notification-context',account,role],ctx);
       cache.setQueryData(['notifications', account, role, ctx.process], data);
     };
     const refreshParts = (process: string, records: { id: number; version: number; force?: boolean }[], resync: boolean) => {
@@ -105,5 +100,5 @@ export function useNotifications() {
     window.addEventListener('online', visible);
     return () => { active = false; controller.abort(); stream?.close(); clearTimeout(reconnect); clearTimeout(polling); document.removeEventListener('visibilitychange', visible); window.removeEventListener('online', visible); current.current = undefined; };
   }, [account, role, enabled, cache]);
-  return { context, notices, allowed, key, headers: { 'X-Class-Session-Context': context?.process, 'X-Class-Session-Account': account } };
+  return inbox;
 }

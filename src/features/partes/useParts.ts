@@ -392,7 +392,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
       catch (cause) { setError((cause as Error).message); }
     },
     onRefresh: () => { void sheet.refetch(); },
-    onSelect: (id, withDetail = false) => { if (id === state.id && state.detail === withDetail) return; if (id !== state.id && !canLeave()) return; setState(s => ({ ...s, id, base: id === s.id ? s.base : null, draft: id === s.id ? s.draft : null, detail: withDetail, conflict: id === s.id ? s.conflict : false, review: blankReview(), reviewDirty: false })); setShowHistory(false); setHistoryPage(1); },
+    onSelect: (id, withDetail = false) => { const needsDetail = withDetail || !sheetMode; if (id === state.id && state.detail === needsDetail) return; if (id !== state.id && !canLeave()) return; setState(s => ({ ...s, id, base: id === s.id ? s.base : null, draft: id === s.id ? s.draft : null, detail: needsDetail, conflict: id === s.id ? s.conflict : false, review: blankReview(), reviewDirty: false })); setShowHistory(false); setHistoryPage(1); },
     onDraft: patch => { if (!busy && writable && !state.operation) setState(s => ({ ...s, draft: s.draft ? { ...s.draft, ...patch, ...(patch.classState && patch.classState !== "RN" && patch.classState !== "RE" ? { replacementEmail: "" } : {}), ...(patch.classState === "SD" ? {actualStart:"",actualEnd:""} : {}) } : null })); },
     onSave: editor => run(async () => {
       const base = requireRecord(); if (!state.draft || !writable || state.operation) throw new Error("El registro no admite edición o tiene una operación pendiente.");

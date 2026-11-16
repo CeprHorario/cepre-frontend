@@ -42,7 +42,7 @@ export function NotificationBell() {
                 <strong className="text-sm">{n.title}</strong>
                  <p className="mt-1 text-xs leading-relaxed">{n.message}</p>
                  {n.obsolete && <p className="mt-1 text-xs">Obsoleto: el dato ya se completó o dejó de ser exigible. Se conserva el aviso.</p>}
-                {(!isPart || canOpenParts) && <Link to={target} onClick={() => setOpen(false)} className="text-xs underline">{isPart ? 'Abrir Partes' : 'Ver solicitud'}</Link>}
+                {(isPart ? canOpenParts : user.role !== 'coordinador') && <Link to={target} onClick={() => setOpen(false)} className="text-xs underline">{isPart ? 'Abrir Partes' : 'Ver solicitud'}</Link>}
               </div>
               <button title="Marcar como resuelta" aria-label="Resolver notificación" disabled={!!n.resolved_at} onClick={() => void resolve(n.id)}><FiCheck /></button>
             </div>

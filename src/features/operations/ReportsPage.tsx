@@ -32,14 +32,14 @@ export function ReportsPage() {
         <label>Desde<Input type="date" value={from} onChange={event => { setFrom(event.target.value); setPage(1); }} /></label>
         <label>Hasta<Input type="date" value={to} onChange={event => { setTo(event.target.value); setPage(1); }} /></label>
         <label>Reporte<Select value={type} onChange={event => { setType(event.target.value); setPage(1); }}><option value="incidences">Incidencias personales</option><option value="observations">Observaciones de bloques y alumnos</option><option value="requests">Solicitudes y reemplazos</option><option value="performance">Seguimiento de personal</option></Select></label>
-        <Button variant="secondary" icon={<FiDownload aria-hidden="true" />} onClick={() => void download()}>Exportar Excel</Button>
+        <Button variant="secondary" disabled={!op.context} icon={<FiDownload aria-hidden="true" />} onClick={() => void download()}>Exportar Excel</Button>
       </div>
-      {(error || result.error) && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 bg-red-50 p-4 text-red-800"><span>{error || apiErrorMessage(result.error)}</span>{result.error && <Button variant="secondary" onClick={() => { void result.refetch(); }}>Reintentar reporte</Button>}</div>}
+      {(error || op.error || result.error) && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 bg-red-50 p-4 text-red-800"><span>{error || apiErrorMessage(op.error || result.error)}</span>{op.error ? <Button variant="secondary" onClick={op.retryContext}>Reintentar acceso</Button> : result.error && <Button variant="secondary" onClick={() => { void result.refetch(); }}>Reintentar reporte</Button>}</div>}
       <div className="overflow-auto rounded-xl border border-line bg-white">
         <table className="w-full text-left text-sm"><thead><tr>{Object.keys(result.data?.data[0] ?? {}).map(key => <th key={key} className="border-r">{reportColumns[key] ?? key.replaceAll('_', ' ')}</th>)}</tr></thead>
           <tbody>{result.data?.data.map((row, index) => <tr key={index} className="border-b">{Object.entries(row).map(([key, value]) => <td key={key} className="max-w-sm border-r align-top">{typeof value === 'object' ? JSON.stringify(value) : String(value ?? '—')}</td>)}</tr>)}</tbody>
         </table>
-        {!result.data?.data.length && !result.isError && <p className="p-6">{result.isPending ? 'Cargando…' : 'Sin registros en este rango.'}</p>}
+        {!result.data?.data.length && !result.isError && !op.error && <p className="p-6">{!op.context ? 'Verificando cuenta y proceso autorizado…' : result.isPending ? 'Cargando…' : 'Sin registros en este rango.'}</p>}
       </div>
       <details className="text-xs text-ink-500"><summary>Qué describe el reporte</summary><p className="mt-2">Incidencias, solicitudes y control registrado por persona. Las métricas describen registros existentes. No asignan justificaciones, puntajes ni sanciones automáticamente.</p></details>
       <div className="flex justify-end gap-3"><Button variant="secondary" disabled={page === 1} onClick={() => setPage(page - 1)}>Anterior</Button><span>Página {page}</span><Button variant="secondary" disabled={!result.data?.hasNext} onClick={() => setPage(page + 1)}>Siguiente</Button></div>
