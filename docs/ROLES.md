@@ -1,5 +1,7 @@
 # Contrato vigente de operaciones
 
+Administración entra por `features/partes/PartsClassrooms.tsx`: salones filtrables por área → todos los partes del salón con filtro opcional de fechas → hoja de la jornada. Supervisión entra por el listado compartido `features/partes/MonitorJournals.tsx`. El monitor abre directamente la jornada actual; los domingos, su jornada registrada más reciente hasta ese día. El acceso se llama «Ver partes»; la edición sigue limitada por la política temporal del proceso. `/class-session-records/journals` agrupa por fecha/salón/turno, pagina en servidor y acepta `classId` y fechas opcionales; conserva el alcance por cuenta del monitor y por supervisor del parte. Volver conserva los filtros de área/fechas y la página. `completeBlocks` cuenta los bloques completos según los mismos requisitos del servicio de partes.
+
 Para partes, observaciones, disponibilidad, incidencias, solicitudes, notificaciones y reportes, consultar [OPERACIONES.md](OPERACIONES.md). Sustituye las descripciones anteriores de registro libre de incidencias por monitores y coberturas directas desde supervisión. Los propietarios son `features/partes` para la jornada, `features/operations` para solicitudes/avisos/Excel/reportes y `features/incidencias` para antecedentes por DNI.
 
 # Mapa de lógica compartida entre roles

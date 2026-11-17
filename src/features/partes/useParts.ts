@@ -25,10 +25,11 @@ export interface Workspace {
   noteComposer?: PartObservation | null;
   followupDraft?: PartsViewProps['followupDraft'];
 }
-function freshWorkspace(): Workspace {
+function freshWorkspace(role: PartRole): Workspace {
   const date = limaDate();
   const from = new Date(`${date}T12:00:00Z`); from.setUTCDate(from.getUTCDate() - 30);
-  return { journal: null, journalFilters: { from: from.toISOString().slice(0, 10), to: date, page: 1, limit: 25 }, inFlight: false, filters: { from: date, to: date, page: 1, limit: 25 }, sheetFilters: null, id: null, base: null, draft: null, detail: false, review: blankReview(), reviewDirty: false, pendingFiles: {}, conflict: false, operation: null, operationBase: null, configVersion: null, targets: [], operationTargets: [], followupOpen: false, showJournals: false };
+  const to = new Date(`${date}T12:00:00Z`); to.setUTCDate(to.getUTCDate() + 6);
+  return { journal: null, journalFilters: { from: role === 'administrador' ? '' : from.toISOString().slice(0, 10), to: role === 'administrador' ? '' : to.toISOString().slice(0, 10), page: 1, limit: 25 }, inFlight: false, filters: { from: date, to: date, page: 1, limit: 25 }, sheetFilters: null, id: null, base: null, draft: null, detail: false, review: blankReview(), reviewDirty: false, pendingFiles: {}, conflict: false, operation: null, operationBase: null, configVersion: null, targets: [], operationTargets: [], followupOpen: false, showJournals: role !== 'monitor' };
 }
 
 /** Estado de trabajo separado de la caché del servidor. Solo memoria, nunca Web Storage. */
@@ -38,7 +39,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   const scope = useMemo(() => ["parts", context.accountId, context.process] as const, [context.accountId, context.process]);
   const workspaceKey = useMemo(() => [...scope, "workspace"], [scope]);
   const service = useMemo(() => createPartsApi(context.process, context.accountId), [context.process, context.accountId]);
-  const initialWorkspace = useRef(client.getQueryData<Workspace>(workspaceKey) ?? freshWorkspace());
+  const initialWorkspace = useRef(client.getQueryData<Workspace>(workspaceKey) ?? freshWorkspace(role));
   const subscribe = useCallback((notify: () => void) => client.getQueryCache().subscribe(event => {
     if (event.query.queryKey.length === workspaceKey.length && event.query.queryKey.every((value: unknown, index: number) => value === workspaceKey[index])) notify();
   }), [client, workspaceKey]);
@@ -52,8 +53,8 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     // Incluso si mantenimiento desmontó la vista, conservar el resultado confirmado en SU contexto.
     // Un logout confirmado elimina la entrada: una respuesta tardía no debe recrearla.
     if (!client.getQueryState(workspaceKey)) return;
-    client.setQueryData<Workspace>(workspaceKey, previous => update(previous ?? freshWorkspace()));
-  }, [client, workspaceKey]);
+    client.setQueryData<Workspace>(workspaceKey, previous => update(previous ?? freshWorkspace(role)));
+  }, [client, workspaceKey, role]);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [operationOpen, setOperationOpen] = useState(false);
@@ -114,8 +115,8 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     document.addEventListener('visibilitychange',visible);
     return () => document.removeEventListener('visibilitychange',visible);
   }, [client,scope,enabled]);
-  const journals = useQuery({ ...queryOptions, queryKey: [...scope, "journals", state.journalFilters], enabled: enabled && role === 'monitor' && state.showJournals, queryFn: ({ signal }) => service.journals(state.journalFilters, signal) });
-  const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], enabled: enabled && !sheetMode && role !== 'monitor', queryFn: ({ signal }) => service.list(state.filters, signal) });
+  const journals = useQuery({ ...queryOptions, queryKey: [...scope, "journals", state.journalFilters], enabled: enabled && state.showJournals && (role !== 'administrador' || !!state.journalFilters.classId), queryFn: ({ signal }) => service.journals(state.journalFilters, signal) });
+  const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], enabled: enabled && !state.showJournals && !sheetMode && role !== 'monitor', queryFn: ({ signal }) => service.list(state.filters, signal) });
   // El detalle extenso solo se trae al abrir historial/operaciones; la fila del workspace ya abre los editores.
   const detail = useQuery({ ...queryOptions, queryKey: [...scope, "detail", state.id], queryFn: ({ signal }) => service.detail(state.id!, signal), enabled: enabled && state.detail && state.id !== null });
   const config = useQuery({ ...queryOptions, queryKey: [...scope, "config"], queryFn: ({ signal }) => service.configuration(signal), enabled: enabled && role === "administrador" && (state.operation?.action === "configuration" || reportOpen) });
@@ -123,7 +124,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   const people = useQuery({ ...queryOptions, queryKey: [...scope, "people", state.id, peopleParams], queryFn: ({ signal }) => service.people(state.id!, peopleParams.kind, peopleParams.search, peopleParams.page, signal), enabled: enabled && state.id !== null && (peopleOpen || state.operation?.action === 'replacement') });
   const history = useQuery({ ...queryOptions, queryKey: [...scope, "history", state.id, historyPage], queryFn: ({ signal }) => service.history(state.id!, historyPage, signal), enabled: enabled && role === "administrador" && state.id !== null && showHistory });
   const alerts = useQuery({ ...queryOptions, queryKey: [...scope, "alerts", alertsPage], queryFn: ({ signal }) => service.alerts(alertsPage, signal), enabled: enabled && role !== "monitor" && showAlerts });
-  const classrooms = useQuery({ ...queryOptions, queryKey: [...scope, "classes"], queryFn: ClassesApi.list, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
+  const classrooms = useQuery({ ...queryOptions, queryKey: [...scope, "classes"], queryFn: ClassesApi.list, enabled: enabled && role === "administrador" && (state.showJournals || state.operation?.action === "recovery") });
   const periods = useQuery({ ...queryOptions, queryKey: [...scope, "periods"], queryFn: CatalogApi.hourSessions, enabled: enabled && role === "administrador" && state.operation?.action === "recovery" });
   const report = useQuery({ ...queryOptions, queryKey: [...scope, "report", state.filters, reportPage], queryFn: ({ signal }) => service.report({ ...state.filters, page: reportPage }, signal), enabled: enabled && role === "administrador" && reportOpen });
   const summary = useQuery({ ...queryOptions, queryKey: [...scope, "summary", state.filters], queryFn: ({ signal }) => service.summary(state.filters, signal), enabled: enabled && role === "administrador" && reportOpen });
@@ -304,10 +305,11 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
   };
 
   return {
+    journalClasses: [...new Map([...(bootstrap?.options.classes ?? []).map(c => [c.id, {id:c.id,name:c.name}] as const), ...(journals.data?.data ?? []).map(j => [j.classId, {id:j.classId,name:j.className ?? 'Salón'}] as const)]).values()].sort((a,b) => a.name.localeCompare(b.name)),
     journal: state.journal, journals: journals.data ?? null, journalFilters: state.journalFilters, journalsLoading: journals.isFetching,
     onJournalFilters: filters => {
       if (!canLeave()) return;
-      try { validateRange(filters.from, filters.to); setState(s => ({ ...s, journalFilters: filters })); }
+      try { if (filters.from && filters.to) validateRange(filters.from, filters.to); setState(s => ({ ...s, journalFilters: filters })); }
       catch (cause) { setError((cause as Error).message); }
     },
     onOpenJournal: journal => {
@@ -315,7 +317,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
       setState(s => ({ ...s, journal, showJournals: false, sheetFilters: { date: journal.date, classId: journal.classId, shiftId: journal.shiftId }, filters: { from: journal.date, to: journal.date, classId: journal.classId, shiftId: journal.shiftId, page: 1, limit: 100 }, id: null, base: null, draft: null, detail: false }));
     },
     onCloseJournal: () => {
-      if (canLeave()) setState(s => ({ ...s, showJournals: false, id: null, base: null, draft: null, detail: false }));
+      if (canLeave()) setState(s => ({ ...s, showJournals: true, id: null, base: null, draft: null, detail: false }));
     },
     onShowJournals: show => {
       if (!canLeave()) return;
@@ -385,13 +387,13 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     operation: state.operation, operationOpen, selectedIds: (state.operation ? state.operationTargets : state.targets).map(r => r.id),
     people: people.data?.data ?? [], peopleTotal: people.data?.total ?? 0, peopleLoading: people.isFetching,
     peoplePage: peopleParams.page, peopleSearch: peopleParams.search, peopleKind: peopleParams.kind,
-    classrooms: classrooms.data ?? [], periods: periods.data ?? [], report: report.data ?? null, summary: summary.data ?? null, reportOpen,
+    classrooms: classrooms.data ?? [], classroomsLoading: classrooms.isFetching, onRefreshClassrooms: () => { void classrooms.refetch(); }, periods: periods.data ?? [], report: report.data ?? null, summary: summary.data ?? null, reportOpen,
     onFilters: filters => {
       if (!canLeave()) return;
       try { validateRange(filters.from, filters.to); setState(s => ({ ...s, filters, sheetFilters: null, id: null, base: null, draft: null, detail: false })); setReportOpen(false); }
       catch (cause) { setError((cause as Error).message); }
     },
-    onRefresh: () => { void sheet.refetch(); },
+    onRefresh: () => { if (state.showJournals) void journals.refetch(); else void sheet.refetch(); },
     onSelect: (id, withDetail = false) => { const needsDetail = withDetail || !sheetMode; if (id === state.id && state.detail === needsDetail) return; if (id !== state.id && !canLeave()) return; setState(s => ({ ...s, id, base: id === s.id ? s.base : null, draft: id === s.id ? s.draft : null, detail: needsDetail, conflict: id === s.id ? s.conflict : false, review: blankReview(), reviewDirty: false })); setShowHistory(false); setHistoryPage(1); },
     onDraft: patch => { if (!busy && writable && !state.operation) setState(s => ({ ...s, draft: s.draft ? { ...s.draft, ...patch, ...(patch.classState && patch.classState !== "RN" && patch.classState !== "RE" ? { replacementEmail: "" } : {}), ...(patch.classState === "SD" ? {actualStart:"",actualEnd:""} : {}) } : null })); },
     onSave: editor => run(async () => {

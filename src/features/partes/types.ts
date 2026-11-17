@@ -87,14 +87,15 @@ export interface ThumbnailResult {
   contentType?: string; width?: number; height?: number; content?: string;
 }
 export interface PartFilters { from: string; to: string; page: number; limit: number; classId?: string; teacherId?: string; monitorId?: string; courseId?: number; shiftId?: number; pendingReview?: boolean; includeDeleted?: boolean }
-export type JournalFilters = Pick<PartFilters, 'from' | 'to' | 'page' | 'limit'>;
+export type JournalFilters = Pick<PartFilters, 'from' | 'to' | 'page' | 'limit' | 'classId'>;
 export interface PartJournal {
   date: string; classId: string; shiftId: number; className: string | null; shift: string | null;
-  scheduledStart: string; scheduledEnd: string; blocks: number;
+  scheduledStart: string; scheduledEnd: string; blocks: number; completeBlocks?: number;
 }
 export interface MonitorJournalsProps {
   journal: PartJournal | null; journals: Paginated<PartJournal> | null; journalFilters: JournalFilters;
   journalsLoading: boolean; onJournalFilters: (filters: JournalFilters) => void;
+  journalClasses: { id: string; name: string }[];
   onOpenJournal: (journal: PartJournal) => void; onCloseJournal: () => void;
 }
 export interface RecordDraft {
@@ -149,7 +150,7 @@ export interface PartsViewProps {
   alerts: PartAlert[]; alertsPage: number; config: OperationalConfig | null;
   operation: OperationDraft | null; operationOpen: boolean; selectedIds: number[];
   people: Person[]; peopleTotal: number; peoplePage: number; peopleSearch: string; peopleKind: PersonKind; peopleLoading: boolean;
-  classrooms: Classroom[]; periods: HourSession[];
+  classrooms: Classroom[]; classroomsLoading: boolean; onRefreshClassrooms: () => void; periods: HourSession[];
   report: Paginated<ReportRow> | null; summary: ReportSummary | null; reportOpen: boolean;
   onFilters: (filters: PartFilters) => void; onRefresh: () => void; onSelect: (id: number | null, detail?: boolean) => void;
   onSheet: (selection: { date: string; classId?: string; shiftId?: number }) => void;

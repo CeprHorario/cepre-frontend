@@ -8,12 +8,15 @@ import { readPartWorkspace } from "./service";
 import { useParts } from "./useParts";
 import { PartsView } from "./PartsView";
 import { MonitorJournals } from './MonitorJournals';
+import { PartsClassrooms } from './PartsClassrooms';
 import type { PartWorkspace, PartRole } from "./types";
 
 function Workspace({ bootstrap, role, onContextChanged }: { bootstrap: PartWorkspace; role: PartRole; onContextChanged: () => void }) {
   const props = useParts(bootstrap.context, role, onContextChanged, bootstrap);
-  if (role === 'monitor' && props.showJournals) return <MonitorJournals {...props} />;
-  return <PartsView {...props} />;
+  const [area, setArea] = useState('');
+  if (props.showJournals && role === 'administrador' && !props.journalFilters.classId) return <PartsClassrooms classes={props.classrooms} loading={props.classroomsLoading} error={props.error} area={area} onArea={setArea} onSelect={id => props.onJournalFilters({...props.journalFilters,classId:id,page:1})} onRefresh={props.onRefreshClassrooms} />;
+  if (props.showJournals) return <>{role === 'administrador' && <div className="mx-auto max-w-[1280px] px-4 pt-4 sm:px-6"><Button variant="secondary" onClick={() => props.onJournalFilters({...props.journalFilters,classId:undefined,page:1})}>Volver a salones</Button></div>}<MonitorJournals {...props} fixedClass={role === 'administrador'} /></>;
+  return <><div className="px-4 pt-3"><Button variant="secondary" disabled={props.busy} onClick={() => props.onShowJournals(true)}>Volver a la lista</Button></div><PartsView {...props} /></>;
 }
 
 export function PartsPage() {

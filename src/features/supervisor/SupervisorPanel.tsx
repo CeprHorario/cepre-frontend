@@ -43,7 +43,7 @@ export function SupervisorPanel() {
     return (
       <SimpleLayout greeting subtitle="Supervisor">
         <main className="mx-auto w-full max-w-[640px] px-4 py-10 sm:px-8">
-          <div className="flex flex-wrap gap-3"><ButtonLink variant="secondary" to="/supervisor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/supervisor/partes">Revisar partes</ButtonLink><ButtonLink variant="secondary" to="/supervisor/incidencias">Incidencias de monitores</ButtonLink></div>
+          <div className="flex flex-wrap gap-3"><ButtonLink variant="secondary" to="/supervisor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/supervisor/partes">Ver partes</ButtonLink><ButtonLink variant="secondary" to="/supervisor/incidencias">Incidencias de monitores</ButtonLink></div>
           <Card>
             {monitors.isError ? <Alert tone="danger" title="No se pudieron cargar tus salones" action={<Button variant="secondary" disabled={monitors.isFetching} onClick={() => void monitors.refetch()}>Reintentar</Button>}>{apiErrorMessage(monitors.error)}</Alert> : <EmptyState
               title="Aún no tienes salones a cargo"
@@ -58,7 +58,7 @@ export function SupervisorPanel() {
   return (
     <SimpleLayout greeting subtitle="Supervisor">
       <main className="mx-auto flex w-full max-w-[1400px] flex-wrap items-start gap-5 px-4 py-6 sm:px-8">
-        <div className="flex w-full flex-wrap gap-3"><ButtonLink variant="secondary" to="/supervisor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/supervisor/partes">Revisar partes</ButtonLink><ButtonLink variant="secondary" to="/supervisor/incidencias">Incidencias de monitores</ButtonLink></div>
+        <div className="flex w-full flex-wrap gap-3"><ButtonLink variant="secondary" to="/supervisor/solicitudes">Solicitar reemplazo</ButtonLink><ButtonLink to="/supervisor/partes">Ver partes</ButtonLink><ButtonLink variant="secondary" to="/supervisor/incidencias">Incidencias de monitores</ButtonLink></div>
         <Card className="flex w-full flex-col gap-3 p-4 lg:w-[340px] lg:shrink-0">
           <div className="flex items-center justify-between">
             <h1 className="font-display text-lg font-extrabold text-marino-900">Mis salones</h1>
