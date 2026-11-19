@@ -111,6 +111,12 @@ En la edición, pulsar el encabezado de un día marca o desmarca sus bloques de 
 
 ## Checklist al agregar o cambiar algo de un rol
 
+Solicitudes compartidas: `features/operations/RequestsPage.tsx` administra formulario, Word/PDF y estados para docentes, monitores, supervisores, coordinadores de curso y administración. `GET /operations/requests` devuelve `is_reviewer`, `cancellation_stage`, `decision_reason`, `docx_object` y estado. `PATCH /operations/requests/:id` acepta APPROVED, REJECTED, CHANGES, REQUEST_CANCEL, APPROVE_CANCEL y REJECT_CANCEL con motivo y versión existente. Solo el administrador aplica/revoca finalmente. La corrección usa `POST /operations/requests` multipart con `revisesId`; conserva el documento anterior. `GET /operations/requests/:id/docx` comparte autorización con el PDF. Coordinación solo ve/revisa solicitudes de su curso y las propias. `TeachingReplacements` consulta `GET /operations/teaching-replacements?from&to&page&limit` exclusivamente para el docente autenticado; no expone antecedentes ni permite escrituras. El encabezado del parte usa `monitorDisplayName` para reflejar sustitución completa o parcial, conservando la cuenta original del salón.
+
+Partes del administrador: el filtro de turno se muestra únicamente en la lista de salones junto al área. Dentro de un salón se filtra por fechas y paginación, sin selector ni filtro oculto de turno. Al volver a salones se conserva la selección de área y turno. Los turnos se obtienen del proceso, sin deducirlos por horas.
+
+Planificación semanal: `features/partes/WeeklyPartsPlanner.tsx` es exclusivo de administración, antes del listado de salones. Consulta `GET /class-session-records/weeks/planning`, confirma `PATCH /class-session-records/weeks/advance` con `{ weekStart, weekday: 1..6 | null, expectedVersion }` y permite generar la semana actual con `POST /class-session-records/weeks/generate`. Los tres endpoints exigen administrador también en backend. `academicDate` identifica la fecha académica original de una jornada adelantada; `date` sigue siendo la ejecución real para edición y filtros. `PartsView` comparte el aviso de ambas fechas entre roles sin ampliar sus permisos.
+
 1. ¿Otro rol muestra lo mismo? Revisa la tabla de arriba. Si ya hay dueño, extiende el dueño (una prop nueva) en vez de escribir la lógica en la pantalla.
 2. ¿No hay dueño pero dos roles lo van a usar? Créalo en `components/` (UI) o `features/shared/` (datos) y agrégalo a esta tabla.
 3. Busca restos de la regla vieja antes de cerrar:
@@ -120,3 +126,7 @@ En la edición, pulsar el encabezado de un día marca o desmarca sus bloques de 
    grep -rn "starts.has" src                         # deducir turno por hora: no debe aparecer
    ```
 4. Prueba la pantalla con **cada rol que la usa** (`docker/dev-token.js <correo>` genera el token de cualquier usuario del proceso actual).
+
+Coordinación general (`coordinador` sin curso): consulta todas las solicitudes del proceso, descarga Word/PDF y lee incidencias e historial del proceso por DNI. No registra, aprueba, cancela ni resuelve. La lista e historial de incidencias usan `GET /incidences/context` sin conceder acceso a partes. La coordinación de curso conserva su revisión de solicitudes docentes y no obtiene acceso general a incidencias. Los permisos se verifican también en el backend, incluso si existen concesiones históricas amplias.
+
+En la cuenta docente, Disponibilidad en Excel se presenta como **Mi disponibilidad** y descarga la plantilla con nombres y curso informativos del docente autenticado. El archivo se guarda únicamente en la cuenta autorizada del panel; nunca se usa el nombre escrito en el Excel como identificador. La descarga administrativa conserva la plantilla compartida por proceso.
