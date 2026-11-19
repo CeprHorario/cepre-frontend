@@ -32,6 +32,7 @@ interface Draft {
   sessionMinutes: number;
   breakMinutes: number;
   earlyEditMinutes: number;
+  latenessToleranceMinutes: number;
   editGraceMinutes: number;
   shifts: { start: string; classes: Record<string, number> }[];
 }
@@ -47,6 +48,7 @@ const initialDraft: Draft = {
   sessionMinutes: 40,
   breakMinutes: 5,
   earlyEditMinutes: 5,
+  latenessToleranceMinutes: 5,
   editGraceMinutes: 90,
   shifts: [{ start: "07:00", classes: {} }],
 };
@@ -141,6 +143,7 @@ export function GenerarProcesoPage() {
         sessionMinutes: draft.sessionMinutes,
         breakMinutes: draft.breakMinutes,
         earlyEditMinutes: draft.earlyEditMinutes,
+        latenessToleranceMinutes: draft.latenessToleranceMinutes,
         editGraceMinutes: draft.editGraceMinutes,
         shifts: shifts.map((s) => ({
           name: s.name,
@@ -272,6 +275,7 @@ export function GenerarProcesoPage() {
               <Card className="grid gap-4 p-5 sm:grid-cols-2">
                 <Field label="Hora pedagógica (minutos)" hint="Duración de cada bloque de clase.">{(p) => <Input {...p} type="number" min={1} max={180} step={1} value={draft.sessionMinutes} onChange={(e) => set("sessionMinutes", Number(e.target.value))} />}</Field>
                 <Field label="Descanso entre bloques (minutos)" hint="No se agrega descanso después del último bloque.">{(p) => <Input {...p} type="number" min={0} max={120} step={1} value={draft.breakMinutes} onChange={(e) => set("breakMinutes", Number(e.target.value))} />}</Field>
+                <Field label="Tiempo de tolerancia de ingreso docente (minutos)" hint="Superado el plazo se marca T; en RN se observa al reemplazante sin cambiar RN.">{p=><Input {...p} type="number" min={0} max={60} step={1} value={draft.latenessToleranceMinutes} onChange={e=>set("latenessToleranceMinutes",Number(e.target.value))}/>}</Field>
                 <Field label="Apertura anticipada del primer bloque (minutos)" hint="Los bloques posteriores se abren al comenzar su horario.">{p=><Input {...p} type="number" min={0} max={60} step={1} value={draft.earlyEditMinutes} onChange={e=>set("earlyEditMinutes",Number(e.target.value))}/>}</Field>
                 <Field label="Plazo de edición al terminar el turno (minutos)" hint="Se conserva como límite original de cada parte.">{p=><Input {...p} type="number" min={0} max={720} step={1} value={draft.editGraceMinutes} onChange={e=>set("editGraceMinutes",Number(e.target.value))}/>}</Field>
 

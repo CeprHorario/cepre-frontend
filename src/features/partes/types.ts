@@ -25,6 +25,8 @@ export interface WorkspacePolicy {
 }
 export interface CaptureReference { fileId: string; generation: string | null; status: string }
 export interface PartRecord {
+  timingPolicy?: {breakMinutes?:number;latenessToleranceMinutes?:number;automaticLateness?:boolean};
+  academicDate?: string|null;
   eligibleGrantAccounts?: { id: string; email: string; role: string }[];
   editOpensAt?: string | null;
   classState?: ClassState | null;
@@ -87,8 +89,9 @@ export interface ThumbnailResult {
   contentType?: string; width?: number; height?: number; content?: string;
 }
 export interface PartFilters { from: string; to: string; page: number; limit: number; classId?: string; teacherId?: string; monitorId?: string; courseId?: number; shiftId?: number; pendingReview?: boolean; includeDeleted?: boolean }
-export type JournalFilters = Pick<PartFilters, 'from' | 'to' | 'page' | 'limit' | 'classId'>;
+export type JournalFilters = Pick<PartFilters, 'from' | 'to' | 'page' | 'limit' | 'classId' | 'shiftId'>;
 export interface PartJournal {
+  academicDate?: string|null;
   date: string; classId: string; shiftId: number; className: string | null; shift: string | null;
   scheduledStart: string; scheduledEnd: string; blocks: number; completeBlocks?: number;
 }
@@ -109,6 +112,7 @@ export interface ReviewDraft { result: "CONFORMING" | "OBSERVED"; comments: stri
 export interface UploadedCapture { id: string; originalName: string; uploadedAt: string; status: "AVAILABLE" }
 export type Operation = "replacement" | "resolve" | "grant" | "revoke" | "cancel" | "restore" | "recovery" | "configuration";
 export interface OperationDraft {
+  scope?: "BLOCK" | "CONSECUTIVE";
   operationId?: string;
   action: Operation; reason: string; kind: PersonKind; personId: string; mode: "PLANNED" | "EMERGENCY";
   coverageId: string; status: "AUTHORIZED" | "REJECTED" | "REVOKED"; grantId: string; accountId: string; expiresAt: string;

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FiCalendar, FiDownload, FiEdit2, FiEye, FiPlus, FiTrash2 } from "react-icons/fi";
-import { apiErrorMessage } from "@/api/client";
+import { api, apiErrorMessage } from "@/api/client";
 import { TeachersApi } from "@/api/services";
 import { useClearTeacherAvailability, useCourses, useTeacherMutations, useTeachers, useTeacherSearch } from "@/api/queries";
 import { ConfirmDialog } from "@/components/ui/Overlay";
@@ -190,6 +190,7 @@ export function DocentesPage({ basePath, readOnly = false, showCourseFilter = tr
         actions={
           !readOnly && (
             <>
+              <Button variant="secondary" icon={<FiDownload />} onClick={async()=>{try{const {data}=await api.get<Blob>('/operations/availability/general/template',{responseType:'blob'});downloadBlob(data,'Plantilla_general_disponibilidad.xlsx');}catch(e){toast.error(apiErrorMessage(e));}}}>Plantilla de disponibilidad</Button>
               <Button variant="secondary" icon={<FiDownload />} onClick={handleExport} loading={exporting}>
                 Exportar Excel
               </Button>

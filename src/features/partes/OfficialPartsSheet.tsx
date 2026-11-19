@@ -1,8 +1,9 @@
+import {PartEmergencyDialog} from './PartEmergencyDialog';
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { FiAlertTriangle, FiArrowUp, FiCalendar, FiCheck, FiClock, FiEdit2, FiGrid, FiImage, FiInfo, FiMaximize, FiMoreHorizontal, FiPlus, FiRepeat, FiTrash2, FiUser, FiUsers, FiUserX, FiX } from 'react-icons/fi';
 import { Dialog } from '@/components/ui/Overlay';
 import { Button } from '@/components/ui/Button';
-import { editorDraft, limaTime, toDraft } from './model';
+import { editorDraft, limaTime, toDraft, monitorDisplayName } from './model';
 import type { ClassState, PartEditor, PartRecord, PartsViewProps, Slot } from './types';
 import type { PartObservation } from './ObservationsEditor';
 import './official-parts.css';
@@ -102,6 +103,7 @@ function CaptureEditor({ p, slot, onZoom }: { p: PartsViewProps; slot: Slot; onZ
 }
 
 export function OfficialPartsSheet({ p, onMore, onFollowup, onTools }: { p: PartsViewProps; onMore: (id: number) => void; onFollowup: () => void; onTools: () => void }) {
+  const [emergency,setEmergency]=useState<PartRecord|null>(null);
   const [editor, setEditor] = useState<PartEditor | Slot | null>(null);
   const [zoom, setZoom] = useState<string | null>(null);
   const [fullSize, setFullSize] = useState(false);
@@ -117,7 +119,7 @@ export function OfficialPartsSheet({ p, onMore, onFollowup, onTools }: { p: Part
   const day=sheet?.selection.date??p.filters.from;
   const dateLabel=new Intl.DateTimeFormat('es-PE',{timeZone:'America/Lima',weekday:'long',day:'numeric',month:'short',year:'numeric'}).format(new Date(`${day}T12:00:00Z`)).replaceAll(',','').replaceAll(' de ',' ').replace('.','');
   const { rows, serverNow, onVisibleCaptures } = p;
-  const name = first?.effectiveSnapshot.MONITOR?.name || first?.snapshot.monitor?.name || first?.snapshot.monitor?.email || 'Sin monitor';
+  const name = monitorDisplayName(p.rows);
   const open = (event: React.MouseEvent<HTMLElement>, record: PartRecord, next: PartEditor | Slot) => {
     p.onSelect(record.id, false);
     if (p.selected?.id !== record.id && (p.dirty || p.reviewDirty || Object.keys(p.pendingFiles).length || Object.keys(p.captureDrafts).length)) return;
@@ -188,8 +190,8 @@ export function OfficialPartsSheet({ p, onMore, onFollowup, onTools }: { p: Part
     <Dialog className="parts-editor" open={!!editor && !!row} onClose={close} title={editor === 'hours' ? 'Hora real' : editor === 'state' ? 'Estado' : editor === 'observations' ? 'Observaciones' : `Captura de ${editor === 'initial' ? 'inicio' : 'fin'}`} description={row ? `${row.snapshot.course ?? 'Clase'} · ${row.period}º bloque · ${limaTime(row.scheduledStart)} – ${limaTime(row.scheduledEnd)}` : undefined} footer={<><Button variant="secondary" disabled={p.busy} onClick={() => { if (activeEditor) p.onDiscardEditor(activeEditor); else if (editor) p.onDiscardCapture(editor as Slot); close(); }}>Descartar</Button><Button disabled={p.busy || !p.writable || p.conflict || !(changed || captureChanged) || (p.requiresReason && (draft?.reason.trim().length ?? 0) < 3) || (editor === 'hours' && !validHours)} onClick={async () => { if (document.querySelector('.parts-editor [data-composer-pending="true"]')) return; const ok = activeEditor ? await p.onSave(activeEditor) : await p.onSaveCapture(editor as Slot); if (ok) close(); }}>Guardar</Button></>}>
       {p.error && <p className="part-editor-error" role="alert">{p.error}</p>}
       {row && draft && <fieldset className="part-editor-body" disabled={p.busy || !p.writable}>
-        {editor === 'hours' && <><div className="part-time-grid"><label>Inicio<input type="time" step={60} value={draft.actualStart} onChange={event => p.onDraft({ actualStart: event.target.value })} /></label><label>Fin<input type="time" step={60} value={draft.actualEnd} onChange={event => p.onDraft({ actualEnd: event.target.value })} /></label></div><p className="part-scheduled-line"><FiClock />Programado: {limaTime(row.scheduledStart)} – {limaTime(row.scheduledEnd)}</p>{!validHours && <p role="alert" className="part-editor-error">El fin no puede ser anterior al inicio.</p>}</>}
-        {editor === 'state' && <><div className="part-state-grid">{states.map(state => { const Icon = state.icon; return <label key={state.code} className={`part-state-option ${state.code.toLowerCase() || 'empty'}`}><input type="radio" name="part-class-state" checked={draft.classState === state.code} onChange={() => p.onDraft({ classState: state.code })} /><span><i><Icon /></i><strong>{state.label}</strong><small>{state.code || '—'}</small></span></label>; })}</div>{['RN','RE'].includes(draft.classState) && <div className="part-replace-panel"><label>Correo del docente reemplazante<input type="email" maxLength={254} placeholder="docente@correo.edu" value={draft.replacementEmail || coverage?.personSnapshot.email || ''} onChange={event => p.onDraft({ replacementEmail: event.target.value })} /></label><p>{coverage && !draft.replacementEmail ? coverage.status === 'PENDING' ? 'Propuesta pendiente de autorización administrativa' : 'Cobertura autorizada; la ejecución se registra por separado' : 'Se registrará una propuesta pendiente, sin autorizar ni confirmar el dictado.'}</p></div>}<span className="sr-only">{selectedState?.label}</span></>}
+        {editor === 'hours' && <><div className="part-time-grid">{(['actualStart','actualEnd'] as const).map((field,i)=><label key={field}>{i===0?'Inicio':'Fin'}<select value={draft[field]} onChange={event=>p.onDraft({[field]:event.target.value})}><option value="">Sin registrar</option>{blockTimeOptions(row).map(time=><option key={time} value={time}>{time}</option>)}</select></label>)}</div><p className="part-scheduled-line"><FiClock />Programado: {limaTime(row.scheduledStart)} – {limaTime(row.scheduledEnd)} · descanso permitido: {row.timingPolicy?.breakMinutes??5} min</p>{!validHours && <p role="alert" className="part-editor-error">El fin no puede ser anterior al inicio.</p>}</>}
+        {editor === 'state' && <><div className="part-state-grid">{states.filter(state => state.code).map(state => { const Icon = state.icon; return <label key={state.code} className={`part-state-option ${state.code.toLowerCase() || 'empty'}`}><input type="radio" name="part-class-state" checked={draft.classState === state.code} onChange={() => {if(state.code==='RE'){setEmergency(row);return;}p.onDraft({ classState: state.code });}} /><span><i><Icon /></i><strong>{state.label}</strong><small>{state.code || '—'}</small></span></label>; })}</div>{draft.classState==='RN' && <div className="part-replace-panel"><label>Correo del docente reemplazante<input type="email" maxLength={254} placeholder="docente@correo.edu" value={draft.replacementEmail || coverage?.personSnapshot.email || ''} onChange={event => p.onDraft({ replacementEmail: event.target.value })} /></label><p>{coverage && !draft.replacementEmail ? coverage.status === 'PENDING' ? 'RN provisional: el titular debe presentar el documento para su revisión' : 'Cobertura autorizada; la ejecución se registra por separado' : 'Se registrará RN provisional con este docente. Queda pendiente el documento del titular y su aprobación administrativa.'}</p></div>}<span className="sr-only">{selectedState?.label}</span></>}
         {editor === 'observations' && <NotesComposer key={row.id} value={draft.structuredObservations} entry={p.noteComposer} setEntry={p.onNoteComposer} disabled={p.busy || !p.writable} onChange={structuredObservations => p.onDraft({ structuredObservations })} />}
         {(editor === 'initial' || editor === 'final') && <CaptureEditor p={p} slot={editor} onZoom={onZoom} />}
         {p.requiresReason && <label className="part-reason">Motivo de esta operación<textarea required minLength={3} maxLength={2000} value={draft.reason} onChange={event => p.onDraft({ reason: event.target.value })} /></label>}
@@ -198,5 +200,11 @@ export function OfficialPartsSheet({ p, onMore, onFollowup, onTools }: { p: Part
       {p.conflict && <p role="alert" className="part-editor-error">Hay otra versión en el servidor. Tu borrador se conserva; revisa el conflicto en Más opciones.</p>}
     </Dialog>
     <Dialog className="parts-editor part-preview-dialog" open={!!zoom} title="Captura completa" onClose={() => setZoom(null)} footer={<><Button variant="secondary" onClick={() => setFullSize(!fullSize)}>{fullSize ? 'Ajustar a pantalla' : 'Zoom 100 %'}</Button><Button onClick={() => setZoom(null)}>Cerrar ampliación</Button></>}><div className={`part-preview ${fullSize ? 'full' : ''}`} tabIndex={0} role="region" aria-label="Imagen íntegra con desplazamiento">{zoom && p.images[zoom] ? <img src={p.images[zoom]} alt="Captura completa sin recorte" /> : <p role="status">Cargando imagen…</p>}</div></Dialog>
+    {emergency&&<PartEmergencyDialog record={emergency} rows={p.rows} role={p.role} process={p.process} onClose={()=>setEmergency(null)} onSaved={()=>{setEmergency(null);p.onDiscardEditor('state');close();p.onRefresh();}}/>}
   </div>;
+}
+
+export function blockTimeOptions(record:PartRecord){
+  const from=Date.parse(record.scheduledStart),to=Date.parse(record.scheduledEnd)+(record.timingPolicy?.breakMinutes??5)*60000;
+  return Array.from({length:Math.floor((to-from)/60000)+1},(_,i)=>limaTime(new Date(from+i*60000).toISOString()));
 }

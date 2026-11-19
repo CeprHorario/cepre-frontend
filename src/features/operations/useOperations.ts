@@ -3,14 +3,16 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { api, qs } from '@/api/client';
 import { useAuth } from '@/auth/AuthProvider';
-export interface OperationsContext { accountId:string;process:string;role:string;name:string }
-export interface WorkBlock {hourSessionId:number;period:number;className:string;course:string;start:string;end:string}
-export interface RequestRow {id:string;requester_user_id:string;replacement_user_id:string;subject_role:string;kind:string;status:string;version:number;reason:string;blocks:WorkBlock[];requester_email?:string;replacement_email?:string;date:string}
+export interface RequestPerson {id:string;name:string;email:string;dni:string|null;code:string;role:string;classId:string|null;classroom:string|null;course:string|null;area:string|null;areaId:number|null;shiftId:number|null;shift:string|null;supervisor:string|null}
+export interface OperationsContext { accountId:string;process:string;role:string;name:string;profile?:RequestPerson;shifts?:{id:number;name:string}[] }
+export interface WorkBlock {hourSessionId:number;period:number;shiftId?:number;classId?:string|null;className:string;course:string;start:string;end:string}
+export interface RequestSummary {address?:string;district?:string;cui?:string;applicant:RequestPerson;replacement:RequestPerson;full:boolean;classroom:string;course:string;shift:string;start:string;end:string}
+export interface RequestRow {summary?:RequestSummary|null;coverage_operation_id?:string|null;application_issue?:string|null;is_reviewer?:boolean;cancellation_stage?:string|null;cancellation_reason?:string|null;approver_coordinator_id?:string|null;approver_supervisor_id?:string|null;decision_reason?:string|null;docx_object?:string|null;same_turn_reason?:string;created_at?:string;id:string;requester_user_id:string;replacement_user_id:string;subject_role:string;kind:string;status:string;version:number;reason:string;blocks:WorkBlock[];requester_email?:string;replacement_email?:string;date:string}
 export interface Notification {id:string;kind?:string;title:string;message:string;resolved_at:string|null;request_id:string|null;created_at:string;obsolete?:boolean}
 export interface Page<T>{data:T[];total:number;pending?:number}
 export function useOperations(){
  const {user,status}=useAuth();const cache=useQueryClient();
- const allowed=!!user&&['administrador','profesor','docente','monitor','supervisor'].includes(user.role);
+ const allowed=!!user&&['administrador','profesor','docente','monitor','supervisor','coordinador'].includes(user.role);
  const enabled=allowed&&(!status?.maintenance||user?.role==='administrador');
  const context=useQuery({queryKey:['operations-context',user?.id,user?.role],queryFn:async({signal})=>{
    const {data}=await api.get<OperationsContext>('/operations/context',{signal});

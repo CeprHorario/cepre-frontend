@@ -55,6 +55,7 @@ export interface CreateAdmissionPayload {
     sessionMinutes: number;
     breakMinutes: number;
     earlyEditMinutes: number;
+    latenessToleranceMinutes: number;
     editGraceMinutes: number;
     shifts: {
       name: string;

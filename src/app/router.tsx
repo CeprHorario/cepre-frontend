@@ -52,6 +52,8 @@ function CoordinadorLayout() {
       items: [
         { to: "/coordinador/docentes", label: "Docentes", icon: <FiUsers /> },
         { to: "/coordinador/salones", label: "Salones", icon: <MdOutlineMeetingRoom /> },
+        { to: "/coordinador/solicitudes", label: "Solicitudes y reemplazos", icon: <FiUsers /> },
+        ...(user?.coordinatorCourseId == null ? [{ to: "/coordinador/incidencias", label: "Incidencias e historial", icon: <FiUsers /> }] : []),
       ],
     },
   ];
@@ -131,6 +133,8 @@ export const router = createBrowserRouter([
         path: "coordinador",
         element: <RequireRole roles={["coordinador"]} />,
         children: [
+          { path: "solicitudes", lazy: async()=>({Component:(await import('@/features/operations/RequestsPage')).RequestsPage}) },
+          { path: "incidencias", lazy: async()=>({Component:(await import('@/features/incidencias/IncidencesPage')).IncidencesPage}) },
           {
             element: <CoordinadorLayout />,
             children: [

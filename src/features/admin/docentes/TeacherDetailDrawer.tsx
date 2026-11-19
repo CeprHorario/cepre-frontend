@@ -7,6 +7,7 @@ import { EmailLink, PhoneCopy } from "@/components/ui/Contact";
 import { Skeleton } from "@/components/ui/Spinner";
 import { fullName, initials, JOB_STATUS_LABEL, shortClassName } from "@/lib/format";
 import { toHHMM, WEEKDAY_SHORT } from "@/lib/schedule";
+import { AvailabilityWorkbookPanel } from '@/features/operations/AvailabilityWorkbookPanel';
 
 interface Props {
   teacher: TeacherSummary | null;
@@ -61,6 +62,7 @@ export function TeacherDetailDrawer({ teacher, onClose, readOnly, onAssign, onSc
       }
     >
       <div className="flex flex-col gap-6">
+        {!readOnly&&<AvailabilityWorkbookPanel teacherId={teacher.id} teacherName={fullName(teacher)}/>}
         {teacher.maxHours !== undefined && (
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-[13px]">

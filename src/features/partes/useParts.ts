@@ -115,7 +115,7 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     document.addEventListener('visibilitychange',visible);
     return () => document.removeEventListener('visibilitychange',visible);
   }, [client,scope,enabled]);
-  const journals = useQuery({ ...queryOptions, queryKey: [...scope, "journals", state.journalFilters], enabled: enabled && state.showJournals && (role !== 'administrador' || !!state.journalFilters.classId), queryFn: ({ signal }) => service.journals(state.journalFilters, signal) });
+  const journals = useQuery({ ...queryOptions, queryKey: [...scope, "journals", state.journalFilters], enabled: enabled && state.showJournals && (role !== 'administrador' || !!state.journalFilters.classId), queryFn: ({ signal }) => service.journals({...state.journalFilters,shiftId:state.journalFilters.classId ? undefined : state.journalFilters.shiftId}, signal) });
   const list = useQuery({ ...queryOptions, queryKey: [...scope, "list", state.filters], enabled: enabled && !state.showJournals && !sheetMode && role !== 'monitor', queryFn: ({ signal }) => service.list(state.filters, signal) });
   // El detalle extenso solo se trae al abrir historial/operaciones; la fila del workspace ya abre los editores.
   const detail = useQuery({ ...queryOptions, queryKey: [...scope, "detail", state.id], queryFn: ({ signal }) => service.detail(state.id!, signal), enabled: enabled && state.detail && state.id !== null });
@@ -468,14 +468,12 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
     onToggleTarget: id => { if (busy || state.operation) { setError("Los destinos están fijados en el borrador de la operación. Descártalo para cambiar la selección."); return; } const row = rows.find(r => r.id === id); if (row) setState(s => ({ ...s, targets: s.targets.some(r => r.id === id) ? s.targets.filter(r => r.id !== id) : s.targets.length < 200 ? [...s.targets, row] : s.targets })); },
     onOperation: action => {
       if (busy || state.conflict) return;
-      if (role !== "administrador" && !(role === "supervisor" && (action === "replacement" || action === 'resolve'))) return;
+      if (role !== "administrador" && !(role==="supervisor"&&action==="replacement")) return;
       if (state.operation) { if (state.operation.action === action) setOperationOpen(true); else setError("Continúa o descarta la operación pendiente antes de iniciar otra."); return; }
       if (dirty) { setError("Guarda o descarta los cambios del registro antes de iniciar una operación."); return; }
       if (action !== "configuration" && !state.base && !((action === "cancel" || action === "restore") && state.targets.length)) { setError("Selecciona primero un parte."); return; }
       const record = selected ?? state.base;
       const draft = operationDraft(action, record, config.data ?? null);
-      if (role === "supervisor" && action === "replacement") draft.kind = "MONITOR";
-      if (role === 'supervisor' && action === 'resolve') { draft.kind = 'MONITOR'; draft.status = 'REVOKED'; draft.coverageId = String(record?.coverages.find(coverage => coverage.kind === 'MONITOR' && coverage.status === 'AUTHORIZED')?.id ?? ''); }
       setState(s => ({ ...s, operation: draft, operationBase: record, operationTargets: s.targets.length ? [...s.targets] : record ? [record] : [], configVersion: config.data?.version ?? null }));
       setOperationOpen(true); setError("");
     },
@@ -502,7 +500,15 @@ export function useParts(context: PartContext, role: PartRole, onContextChanged:
         if (!base) throw new Error("Selecciona primero un parte.");
         if (op.action === "replacement") {
           if (!op.personId) throw new Error("Selecciona la persona reemplazante.");
-          await service.operation("replacements", { operationId: op.operationId, targets: state.operationTargets.map(r => ({ recordId: r.id, expectedVersion: r.version })), kind: role === "supervisor" ? "MONITOR" : op.kind, personId: op.personId, mode: op.mode, reason });
+          let coverageTargets=state.operationTargets;
+          if(op.scope==='CONSECUTIVE'){
+            const candidates=rows.filter(r=>r.date===base.date&&r.classId===base.classId&&r.shiftId===base.shiftId&&(op.kind==='MONITOR'||r.courseId===base.courseId)).sort((a,b)=>a.period-b.period);
+            const center=candidates.findIndex(r=>r.id===base.id);let first=center,last=center;
+            while(first>0&&candidates[first-1].period===candidates[first].period-1)first--;
+            while(last+1<candidates.length&&candidates[last+1].period===candidates[last].period+1)last++;
+            coverageTargets=candidates.slice(first,last+1);
+          }
+          await service.operation("replacements", { operationId: op.operationId, targets: coverageTargets.map(r => ({ recordId: r.id, expectedVersion: r.version })), kind: op.kind, personId: op.personId, mode: op.mode, reason });
         } else if (op.action === "resolve") await service.operation(`replacements/${Number(op.coverageId)}/resolve`, { expectedVersion, status: op.status, reason });
         else if (op.action === "grant") {
           if (!op.accountId || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(op.expiresAt)) throw new Error("Define un vencimiento válido en Lima.");

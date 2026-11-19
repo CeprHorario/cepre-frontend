@@ -1,4 +1,7 @@
 import type { Operation, OperationDraft, OperationalConfig, PartEditor, PartRecord, RecordDraft } from "./types.ts";
+export function monitorDisplayName(records: PartRecord[]) {
+  return [...new Set(records.map(record => record.coverages?.find(c=>c.kind==='MONITOR'&&c.status==='AUTHORIZED')?.personSnapshot.name || record.effectiveSnapshot?.MONITOR?.name || record.snapshot?.monitor?.name || record.snapshot?.monitor?.email || 'Sin monitor'))].join(' / ') || 'Sin monitor';
+}
 export const editorFields: Record<PartEditor, (keyof RecordDraft)[]> = { hours: ['actualStart', 'actualEnd'], state: ['classState', 'replacementEmail'], observations: ['structuredObservations'] };
 export function editorDraft(base: PartRecord, draft: RecordDraft, editor: PartEditor) {
   const original = toDraft(base);
@@ -43,7 +46,7 @@ export function updatePayload(base: PartRecord, draft: RecordDraft, admin: boole
     if (key === 'structuredObservations') { body.structuredObservations = draft.structuredObservations.map(({id,target,description,firstName,lastName})=>({id,target,description,...(target==='STUDENT'?{firstName,lastName}:{})})); continue; }
     if (key === 'incidents' && !admin) continue;
     if (key === 'teachingStatus' || key === 'titularOutcome') continue;
-    if (key === 'classState') { body.classState = draft.classState || null; if (draft.classState === 'SD') { body.actualStart = null; body.actualEnd = null; } continue; }
+    if (key === 'classState') { if (!draft.classState) throw new Error('Sin registrar es solo el estado inicial. Selecciona un estado.'); body.classState = draft.classState; if (draft.classState === 'SD') { body.actualStart = null; body.actualEnd = null; } continue; }
     if (!admin && key.startsWith('effective')) continue;
     body[key] = key === "actualStart" || key === "actualEnd" ? limaInstant(base.date, draft[key]) : key.startsWith("effective") ? draft[key] || null : draft[key];
   }

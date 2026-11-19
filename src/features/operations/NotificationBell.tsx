@@ -42,7 +42,7 @@ export function NotificationBell() {
                 <strong className="text-sm">{n.title}</strong>
                  <p className="mt-1 text-xs leading-relaxed">{n.message}</p>
                  {n.obsolete && <p className="mt-1 text-xs">Obsoleto: el dato ya se completó o dejó de ser exigible. Se conserva el aviso.</p>}
-                {(isPart ? canOpenParts : user.role !== 'coordinador') && <Link to={target} onClick={() => setOpen(false)} className="text-xs underline">{isPart ? 'Abrir Partes' : 'Ver solicitud'}</Link>}
+                {(isPart ? canOpenParts : true) && <Link to={target} onClick={() => setOpen(false)} className="text-xs underline">{isPart ? 'Abrir Partes' : 'Ver solicitud'}</Link>}
               </div>
               <button title="Marcar como resuelta" aria-label="Resolver notificación" disabled={!!n.resolved_at} onClick={() => void resolve(n.id)}><FiCheck /></button>
             </div>
@@ -50,7 +50,7 @@ export function NotificationBell() {
         })}
         {!notices.data?.data.length && <p className="p-5 text-sm">No hay notificaciones.</p>}
       </div>
-      {user.role !== 'coordinador' && <Link className="block border-t p-3 text-sm font-semibold text-guinda-700" to={`${ROLE_HOME[user.role]}/solicitudes`} onClick={() => setOpen(false)}>Ver solicitudes y pedir reemplazo</Link>}
+      {<Link className="block border-t p-3 text-sm font-semibold text-guinda-700" to={`${ROLE_HOME[user.role]}/solicitudes`} onClick={() => setOpen(false)}>Ver solicitudes y pedir reemplazo</Link>}
       <p className="p-3 text-xs text-muted">Resolver un aviso no aprueba la solicitud.</p>
     </section>}
   </div>;

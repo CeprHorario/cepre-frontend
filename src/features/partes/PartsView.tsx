@@ -228,7 +228,7 @@ function CoverageList({ p }: { p: PartsViewProps }) {
     </li>)}</ul>}
     <div className="parts-actions">
 
-      {p.role === "administrador" && (["replacement", "resolve", "grant", "revoke"] as const).map(action => <Button key={action} size="sm" variant="secondary" disabled={p.busy || p.conflict} onClick={() => p.onOperation(action)}>{OPERATIONS[action]}</Button>)}
+      {p.role === "supervisor" && <Button size="sm" variant="secondary" disabled={p.busy||p.conflict} onClick={()=>p.onOperation("replacement")}>Registrar reemplazo de emergencia</Button>}{p.role === "administrador" && (["replacement", "resolve", "grant", "revoke"] as const).map(action => <Button key={action} size="sm" variant="secondary" disabled={p.busy || p.conflict} onClick={() => p.onOperation(action)}>{OPERATIONS[action]}</Button>)}
     </div>
   </details>;
 }
@@ -313,7 +313,7 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
     (action !== "grant" || Boolean(record?.monitorAccountId && op.expiresAt)) && (action !== "revoke" || Boolean(op.grantId));
   const input = (key: keyof OperationDraft, label: string, type = "text", required = false, hint?: string) => <Control key={key} label={label} required={required} hint={hint}>{(id, describedBy) =>
     <Input id={id} aria-describedby={describedBy} type={type} required={required} value={String(op[key])} onChange={e => patch({ [key]: e.target.value })} {...(type === "number" ? { min: 0, max: 1440, step: 1 } : {})} />}</Control>;
-  return <Dialog open={p.operationOpen} onClose={() => { if (!p.busy) p.onCloseOperation(); }} title={p.role === "supervisor" && action === "replacement" ? "Registrar sustitución de monitor" : OPERATIONS[action]} size="lg" description={action === "configuration" ? `Versión de configuración ${p.config?.version ?? "no disponible"}` : `Parte seleccionado #${record?.id ?? "—"}`} footer={<>
+  return <Dialog open={p.operationOpen} onClose={() => { if (!p.busy) p.onCloseOperation(); }} title={p.role === "supervisor" && action === "replacement" ? "Registrar reemplazo de emergencia" : OPERATIONS[action]} size="lg" description={action === "configuration" ? `Versión de configuración ${p.config?.version ?? "no disponible"}` : `Parte seleccionado #${record?.id ?? "—"}`} footer={<>
     <Button variant="ghost" disabled={p.busy} onClick={p.onCloseOperation}>Cerrar y conservar borrador</Button>
     <Button variant="secondary" disabled={p.busy} onClick={p.onDiscardOperation}>Descartar operación</Button>
     <Button type="submit" form="parts-operation-form" disabled={!canSubmit}>{action === "replacement" && p.role === "supervisor" ? "Registrar sustitución" : "Confirmar operación"}</Button>
@@ -326,13 +326,14 @@ function OperationDialog({ p }: { p: PartsViewProps }) {
           <strong>{targets.length} parte{targets.length !== 1 ? "s" : ""} de destino</strong><p className="parts-break">{targets.map(id => `#${id}`).join(", ") || "Selecciona al menos un parte."}</p><p>La selección de la tabla admite hasta 200 partes.</p>
         </div>}
         {action === "replacement" && <>
-          <Control label="Tipo de persona" required>{id => <Select id={id} value={p.role === "supervisor" ? "MONITOR" : op.kind} disabled={p.role === "supervisor"} onChange={e => { const kind = e.target.value as PersonKind; patch({ kind, personId: "" }); p.onPeople(kind, "", 1); }}>
-            {p.role !== "supervisor" && <option value="TEACHER">Docente</option>}<option value="MONITOR">Monitor</option>
+          <Control label="Tipo de persona" required>{id => <Select id={id} value={op.kind} onChange={e => { const kind = e.target.value as PersonKind; patch({ kind, personId: "" }); p.onPeople(kind, "", 1); }}>
+            <option value="TEACHER">Docente</option><option value="MONITOR">Monitor</option>
           </Select>}</Control>
-          <PeoplePicker p={p} label={p.role === "supervisor" ? "Monitor sustituto" : "Persona reemplazante"} kind={p.role === "supervisor" ? "MONITOR" : op.kind} value={op.personId} empty="Selecciona una persona" onChange={personId => patch({ personId })} disabled={p.busy || p.conflict} />
-          <Control label="Modalidad" required>{id => <Select id={id} value={op.mode} onChange={e => patch({ mode: e.target.value as "PLANNED" | "EMERGENCY" })}>
+          <PeoplePicker p={p} label={p.role === "supervisor" ? "Monitor sustituto" : "Persona reemplazante"} kind={op.kind} value={op.personId} empty="Selecciona una persona" onChange={personId => patch({ personId })} disabled={p.busy || p.conflict} />
+          <Control label="Modalidad" required>{id => <Select id={id} value={op.mode} disabled={p.role==="supervisor"} onChange={e => patch({ mode: e.target.value as "PLANNED" | "EMERGENCY" })}>
             <option value="PLANNED">RN · Reemplazo normal</option><option value="EMERGENCY">RE · Reemplazo de emergencia</option>
           </Select>}</Control>
+          <Control label="Bloques de emergencia a cubrir">{id=><Select id={id} value={op.scope??'BLOCK'} onChange={e=>patch({scope:e.target.value as 'BLOCK'|'CONSECUTIVE'})}><option value="BLOCK">Solo este bloque</option><option value="CONSECUTIVE">Todos los bloques consecutivos de esta clase</option></Select>}</Control>
           <p className="parts-help">{p.role === "supervisor" ? "Registra quién ejerce como monitor en el bloque. No cambia la cuenta autenticada, el aula, la contraseña ni la asignación semanal." : "El reemplazo no confirma que hubo dictado ni cambia la persona efectiva del parte."}</p>
         </>}
         {action === "resolve" && <>
@@ -463,6 +464,7 @@ export function PartsView(props: PartsViewProps) {
   // Un descarte o una anulación concurrente que retira el recurso no debe dejar un diálogo vacío.
   useEffect(() => { if (panel && !selected && !p.loading) setPanel(null); }, [panel, selected, p.loading]);
   return <main className="parts-view parts-official-view" aria-busy={p.busy || p.loading}>
+    {p.rows.some(row=>row.academicDate)&&<aside aria-label="Jornada adelantada" className="mx-4 mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-marino-900"><strong>Jornada adelantada.</strong> Fecha académica: {[...new Set(p.rows.filter(row=>row.academicDate).map(row=>date(row.academicDate)))].join(', ')}. Ejecución: {date(p.sheet?.selection.date ?? p.filters.from)}. La edición corresponde a la fecha de ejecución.</aside>}
     <OfficialPartsSheet p={p} onMore={id => openPanel(id, 'detail')} onFollowup={() => p.onFollowup(true)} onTools={() => setToolsOpen(true)} />
     <Dialog open={toolsOpen} onClose={() => setToolsOpen(false)} title="Opciones de Partes" footer={<Button onClick={() => setToolsOpen(false)}>Volver a la jornada</Button>}>
       <div className="parts-actions"><Button variant="secondary" disabled={p.busy} onClick={p.onRefresh}>Actualizar jornada</Button><Button variant="secondary" disabled={p.busy} onClick={p.onRetryThumbnails}>Reintentar miniaturas</Button>{p.role === 'monitor' && <Button variant="secondary" onClick={() => { setToolsOpen(false); p.onShowJournals(true); }}>Histórico de jornadas</Button>}{p.role === 'administrador' && <Button variant="secondary" onClick={() => { setToolsOpen(false); p.onReport(1); }}>Ver reporte</Button>}</div>

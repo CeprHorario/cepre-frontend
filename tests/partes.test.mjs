@@ -1,9 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { academicDate, configPayload, limaDate, limaInstant, limaTime, operationDraft, ordinaryWritable, requireReason, toDraft, updatePayload, validateRange } from "../src/features/partes/model.ts";
+import { academicDate, configPayload, limaDate, limaInstant, limaTime, operationDraft, ordinaryWritable, requireReason, toDraft, updatePayload, validateRange, monitorDisplayName } from "../src/features/partes/model.ts";
 
 const record = (patch = {}) => ({ id: 1, version: 3, date: "2026-10-29T00:00:00.000Z", actualStart: null, actualEnd: null, teachingStatus: "UNCONFIRMED", titularOutcome: "UNKNOWN", effectiveTeacherId: null, effectiveMonitorId: null, incidents: null, scheduledStart: "2026-10-29T12:00:00Z", editDeadline: "2026-10-29T19:30:00Z", deletedAt: null, monitorAccountId: "account", classId: "class", hourSessionId: 1, grants: [], ...patch });
+test('encabezado muestra solo al reemplazante completo y ambos monitores si es parcial',()=>{
+ const original=record({snapshot:{monitor:{name:'Monitor titular'}},coverages:[]});
+ const covered={...original,coverages:[{kind:'MONITOR',status:'AUTHORIZED',personSnapshot:{name:'Monitor reemplazante'}}]};
+ assert.equal(monitorDisplayName([covered,covered]),'Monitor reemplazante');
+ assert.equal(monitorDisplayName([original,covered]),'Monitor titular / Monitor reemplazante');
+});
 test("fechas académicas no se desplazan a la víspera y horas son de Lima", () => {
   assert.equal(academicDate(record().date), "2026-10-29");
   assert.equal(limaDate(new Date("2026-10-30T04:59:59Z")), "2026-10-29");
@@ -85,6 +91,13 @@ test("primer bloque abre exactamente cinco minutos antes; los siguientes no se a
   assert.equal(ordinaryWritable(record({period:1}), "account", Date.parse(record().editDeadline)), false);
 });
 
+test("sin registrar solo es inicial; no permite borrar un estado elegido", () => {
+  const base = record({classState:'N'});
+  assert.throws(() => updatePayload(base, {...toDraft(base),classState:''},false), /solo el estado inicial/);
+  assert.equal(updatePayload(base, {...toDraft(base),classState:'T'},false).classState, 'T');
+  assert.equal(updatePayload(record(), {...toDraft(record()),classState:'N'},false).classState, 'N');
+  assert.deepEqual(updatePayload(record(), toDraft(record()),false), {expectedVersion:3});
+});
 test("propuesta RN/RE usa correo, estado y clave idempotente; no arrastra horas ni notas", () => {
   const base = record();
   const draft = { ...toDraft(base), classState: "RE", replacementEmail: " Docente@Colegio.PE " };
