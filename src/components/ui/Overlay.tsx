@@ -77,8 +77,8 @@ export function Dialog({ open, onClose, title, description, children, footer, si
         className,
       )}
     >
-      <div className="flex max-h-[92dvh] min-w-0 flex-col">
-        <div className="flex items-start justify-between gap-4 border-b border-line-soft px-6 py-5">
+      <div className="flex max-h-[92dvh] min-h-0 min-w-0 flex-col">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line-soft px-6 py-5">
           <div className="flex flex-col gap-1">
             <h2 id={titleId} className="font-display text-lg font-bold text-marino-900">
               {title}
@@ -90,7 +90,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
           </IconButton>
         </div>
         {children && <div className="min-h-0 overflow-y-auto px-6 py-5">{children}</div>}
-        {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line-soft bg-surface-2 px-6 py-4">{footer}</div>}
+        {footer && <div className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-line-soft bg-surface-2 px-6 py-4">{footer}</div>}
       </div>
     </dialog>,
     document.body,

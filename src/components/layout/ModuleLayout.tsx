@@ -167,7 +167,8 @@ export function ModuleLayout({ title, groups, baseCrumbs = [] }: ModuleLayoutPro
 }
 
 /** Header guinda con ruta, sin menú lateral (módulos de una sola pantalla) */
-export function SimpleLayout({ crumbs, greeting, subtitle, children, appearance }: {
+export function SimpleLayout({ crumbs, greeting, subtitle, children, appearance, showNotice = true }: {
+  showNotice?: boolean;
   appearance?: 'default' | 'parts';
   crumbs?: Crumb[];
   greeting?: boolean;
@@ -177,7 +178,7 @@ export function SimpleLayout({ crumbs, greeting, subtitle, children, appearance 
   return (
     <div className="flex min-h-screen flex-col">
       <AppHeader crumbs={crumbs} greeting={greeting} subtitle={subtitle} appearance={appearance} />
-      {greeting && <OperationsNotice />}
+      {greeting && showNotice && <OperationsNotice />}
       <div className="flex min-w-0 flex-1 flex-col [&>*]:min-w-0 [&>main]:w-full">{children ?? <Outlet />}</div>
     </div>
   );

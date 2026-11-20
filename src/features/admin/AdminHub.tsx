@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { IncidenceWarnings } from '../incidencias/IncidencesPage';
+import { AdminOverview } from './AdminOverview';
+import './admin-overview.css';
 import { FiArrowRight, FiCalendar, FiDatabase, FiLink, FiShield, FiSliders, FiUpload, FiUserPlus, FiBarChart2, FiRepeat, FiFlag } from "react-icons/fi";
 import type { ReactNode } from "react";
 import background from "@/assets/cepr-background.jpg";
@@ -38,14 +39,13 @@ export function AdminHub() {
   const withoutLinks = list.filter((c) => !c.urlMeet || !c.urlClassroom).length;
   const shifts = [...new Map(list.map((c) => [c.shift.id, c.shift])).values()].sort((a, b) => a.id - b.id);
   const areas = [...new Map(list.map((c) => [c.area.id, c.area])).values()].sort((a, b) => a.id - b.id);
-  const coverage = list.length ? Math.round((complete / list.length) * 100) : 0;
   const startsIn = admission.data ? daysUntil(admission.data.started) : null;
 
   return (
-    <SimpleLayout greeting>
+    <SimpleLayout greeting showNotice={false}>
       <section className="relative overflow-hidden bg-marino-900">
         <div className="absolute inset-0 bg-cover opacity-[0.18]" style={{ backgroundImage: `url(${background})`, backgroundPosition: "center 40%" }} />
-        <div className="relative mx-auto flex max-w-[1280px] flex-wrap items-end justify-between gap-6 px-5 pb-24 pt-9 sm:px-10">
+        <div className="relative mx-auto flex max-w-[1280px] flex-wrap items-end justify-between gap-6 px-5 pb-20 pt-7 sm:px-10">
           <div className="flex flex-col gap-2.5 text-white">
             <SectionLabel className="text-oro-500">Menú principal</SectionLabel>
             {admission.isLoading ? (
@@ -59,81 +59,15 @@ export function AdminHub() {
               </span>
             )}
           </div>
-          <div className="flex w-full max-w-sm flex-col gap-2 text-white">
-            <div className="flex justify-between text-[13px]">
-              <span className="text-white/80">Salones con todos sus docentes</span>
-              <strong className="tabular">
-                {complete} de {list.length}
-              </strong>
-            </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-white/15">
-              <div className="h-full rounded-full bg-oro-500" style={{ width: `${coverage}%` }} />
-            </div>
-            {startsIn !== null && (
-              <span className="text-xs text-white/70">
-                {startsIn > 0 ? `Las clases inician en ${startsIn} días` : startsIn === 0 ? "Las clases inician hoy" : "Proceso en curso"}
-              </span>
-            )}
-          </div>
+          {startsIn !== null && <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs text-white">{startsIn>0?`Inicia en ${startsIn} días`:startsIn===0?'Inicia hoy':'Proceso en curso'}</span>}
         </div>
       </section>
 
-      <main className="relative mx-auto -mt-16 flex w-full max-w-[1280px] flex-col gap-6 px-4 pb-10 sm:px-10">
+      <main className="relative mx-auto -mt-12 flex w-full max-w-[1280px] flex-col gap-6 px-4 pb-10 sm:px-10">
         <QueryFeedback query={admission} label="proceso" />
         <QueryFeedback query={classes} label="salones" />
-        <IncidenceWarnings />
-        <section aria-label="Módulos" className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-          <ModuleTile to="/admin/partes" icon={<FiCalendar />} iconClass="bg-guinda-50 text-guinda-700" title="Partes diarios" description="Registro, seguimiento, reemplazos y reportes del proceso." footer={<TileLink>Administrar partes</TileLink>} />
-          <ModuleTile
-            to="/admin/generar"
-            icon={<FiCalendar />}
-            iconClass="bg-guinda-50 text-guinda-700"
-            title="Generar proceso"
-            description="Crea un proceso de admisión con turnos, salones y horarios automáticos."
-            footer={<TileLink>Nuevo proceso</TileLink>}
-          />
-          <ModuleTile
-            to="/admin/gestionar/docentes"
-            icon={<FiDatabase />}
-            iconClass="bg-marino-50 text-marino-900"
-            title="Gestionar datos"
-            description="Usuarios, salones y cursos del proceso actual."
-            footer={
-              <div className="flex flex-wrap gap-1.5">
-                <Shortcut to="/admin/gestionar/docentes" label="Docentes" value={teachers.data?.total} />
-                <Shortcut to="/admin/gestionar/monitores" label="Monitores" value={monitors.data?.total} />
-                <Shortcut to="/admin/gestionar/salones" label="Salones" value={classes.data?.length} />
-                <Shortcut to="/admin/gestionar/cursos" label="Cursos" value={courses.data?.length} />
-                <Shortcut to="/admin/gestionar/supervisores" label="Supervisores" value={supervisors.data?.total} />
-                <Shortcut to="/admin/gestionar/coordinadores" label="Coordinadores" value={coordinators.data?.total} />
-              </div>
-            }
-          />
-          <ModuleTile
-            to="/admin/importar"
-            icon={<FiUpload />}
-            iconClass="bg-oro-100 text-oro-700"
-            title="Importar archivos"
-            description="Carga docentes, monitores o supervisores desde CSV o JSON."
-            footer={<TileLink>Subir archivo</TileLink>}
-          />
-          <ModuleTile
-            to="/admin/configuracion"
-            icon={<FiSliders />}
-            iconClass="bg-[#F1F2F5] text-ink-700"
-            title="Configurar sistema"
-            description="Modo mantenimiento y proceso visible para cada rol."
-            footer={
-              <span className="flex items-center gap-2 text-xs text-ink-500">
-                <span className={cn("size-2 rounded-full", config.data?.maintenance.enabled ? "bg-danger-600" : "bg-ok-600")} />
-                {config.data ? (config.data.maintenance.enabled ? "Mantenimiento activo" : "Mantenimiento inactivo") : "…"}
-              </span>
-            }
-          />
-          <ModuleTile to="/admin/reportes" icon={<FiBarChart2 />} iconClass="bg-marino-50 text-marino-900" title="Reportes de seguimiento" description="Consulta y exporta el seguimiento del personal y las observaciones del proceso." footer={<TileLink>Consultar reportes</TileLink>} />
-          <ModuleTile to="/admin/solicitudes" icon={<FiRepeat />} iconClass="bg-oro-100 text-oro-700" title="Solicitudes y reemplazos" description="Revisa solicitudes, decide reemplazos y consulta sus documentos de respaldo." footer={<TileLink>Administrar solicitudes</TileLink>} />
-          <ModuleTile to="/admin/incidencias" icon={<FiFlag />} iconClass="bg-guinda-50 text-guinda-700" title="Incidencias e historial" description="Registra incidencias y consulta los antecedentes del personal entre procesos." footer={<TileLink>Administrar incidencias</TileLink>} />
-        </section>
+        <AdminOverview classCount={classes.isError?undefined:classes.data?.length} complete={classes.data&&!classes.isError?complete:undefined} teachers={teachers.isError?undefined:teachers.data?.total}>
+          <details className="admin-process-details"><summary><span>Detalle del proceso</span><span>{classes.data&&!classes.isError?`${withoutLinks} salones sin enlaces · ${shifts.length} turnos`:'Consultar pendientes y distribución'}</span></summary>
 
         <section className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
           <Card className="p-6">
@@ -210,6 +144,62 @@ export function AdminHub() {
             </div>
           </Card>
         </section>
+          </details>
+        </AdminOverview>
+
+        <section aria-label="Módulos" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <ModuleTile to="/admin/partes" icon={<FiCalendar />} iconClass="bg-guinda-50 text-guinda-700" title="Partes diarios" description="Registro, seguimiento, reemplazos y reportes del proceso." footer={<TileLink to="/admin/partes">Administrar partes</TileLink>} />
+          <ModuleTile
+            to="/admin/generar"
+            icon={<FiCalendar />}
+            iconClass="bg-guinda-50 text-guinda-700"
+            title="Generar proceso"
+            description="Crea un proceso de admisión con turnos, salones y horarios automáticos."
+            footer={<TileLink to="/admin/generar">Nuevo proceso</TileLink>}
+          />
+          <ModuleTile
+            to="/admin/gestionar/docentes"
+            icon={<FiDatabase />}
+            iconClass="bg-marino-50 text-marino-900"
+            title="Gestionar datos"
+            description="Usuarios, salones y cursos del proceso actual."
+            footer={
+              <div className="flex flex-wrap gap-1.5">
+                <Shortcut to="/admin/gestionar/docentes" label="Docentes" value={teachers.data?.total} />
+                <Shortcut to="/admin/gestionar/monitores" label="Monitores" value={monitors.data?.total} />
+                <Shortcut to="/admin/gestionar/salones" label="Salones" value={classes.data?.length} />
+                <Shortcut to="/admin/gestionar/cursos" label="Cursos" value={courses.data?.length} />
+                <Shortcut to="/admin/gestionar/supervisores" label="Supervisores" value={supervisors.data?.total} />
+                <Shortcut to="/admin/gestionar/coordinadores" label="Coordinadores" value={coordinators.data?.total} />
+              </div>
+            }
+          />
+          <ModuleTile
+            to="/admin/importar"
+            icon={<FiUpload />}
+            iconClass="bg-oro-100 text-oro-700"
+            title="Importar archivos"
+            description="Carga docentes, monitores o supervisores desde Excel, CSV o JSON."
+            footer={<TileLink to="/admin/importar">Subir archivo</TileLink>}
+          />
+          <ModuleTile
+            to="/admin/configuracion"
+            icon={<FiSliders />}
+            iconClass="bg-[#F1F2F5] text-ink-700"
+            title="Configurar sistema"
+            description="Modo mantenimiento y proceso visible para cada rol."
+            footer={
+              <span className="flex items-center gap-2 text-xs text-ink-500">
+                <span className={cn("size-2 rounded-full", config.data?.maintenance.enabled ? "bg-danger-600" : "bg-ok-600")} />
+                {config.data ? (config.data.maintenance.enabled ? "Mantenimiento activo" : "Mantenimiento inactivo") : "…"}
+              </span>
+            }
+          />
+          <ModuleTile to="/admin/solicitudes" icon={<FiRepeat />} iconClass="bg-oro-100 text-oro-700" title="Solicitudes y reemplazos" description="Revisa solicitudes, decide reemplazos y consulta sus documentos de respaldo." footer={<TileLink to="/admin/solicitudes">Administrar solicitudes</TileLink>} />
+          <ModuleTile to="/admin/reportes" icon={<FiBarChart2 />} iconClass="bg-marino-50 text-marino-900" title="Reportes de seguimiento" description="Consulta y exporta el seguimiento del personal y las observaciones del proceso." footer={<TileLink to="/admin/reportes">Consultar reportes</TileLink>} />
+          <ModuleTile to="/admin/incidencias" icon={<FiFlag />} iconClass="bg-guinda-50 text-guinda-700" title="Incidencias e historial" description="Registra incidencias y consulta los antecedentes del personal entre procesos." footer={<TileLink to="/admin/incidencias">Administrar incidencias</TileLink>} />
+        </section>
+
       </main>
     </SimpleLayout>
   );
@@ -225,13 +215,13 @@ function ModuleTile({ to, icon, iconClass, title, description, footer }: {
 }) {
   return (
     <div
-      className="group flex flex-col gap-3.5 rounded-[20px] border border-line bg-white p-6 text-ink-900 shadow-[0_1px_2px_rgba(26,28,43,0.04)] transition hover:border-guinda-700 hover:shadow-[0_14px_34px_rgba(102,17,36,0.12)] motion-reduce:transition-none"
+      className="admin-module-card group flex flex-col gap-3 rounded-xl border border-line bg-white p-4 text-ink-900 shadow-[0_1px_2px_rgba(26,28,43,0.04)] transition hover:border-guinda-700 hover:shadow-[0_14px_34px_rgba(102,17,36,0.12)] motion-reduce:transition-none"
     >
-      <Link to={to} className="flex flex-col gap-3.5">
-      <span className={cn("flex size-14 items-center justify-center rounded-2xl text-[26px]", iconClass)}>{icon}</span>
+      <Link to={to} className="flex items-start gap-3">
+      <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg text-[18px]", iconClass)}>{icon}</span>
       <span className="flex flex-col gap-1.5">
-        <strong className="font-display text-lg text-marino-900">{title}</strong>
-        <span className="text-sm leading-6 text-ink-500">{description}</span>
+        <strong className="font-display text-sm text-marino-900">{title}</strong>
+        <span className="text-xs leading-5 text-ink-500">{description}</span>
       </span>
       </Link>
       <div className="mt-auto">{footer}</div>
@@ -239,12 +229,12 @@ function ModuleTile({ to, icon, iconClass, title, description, footer }: {
   );
 }
 
-function TileLink({ children }: { children: ReactNode }) {
+function TileLink({ children, to }: { children: ReactNode; to: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-guinda-700">
+    <Link to={to} className="inline-flex items-center gap-1.5 text-xs font-bold text-guinda-700">
       {children}
       <FiArrowRight className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-    </span>
+    </Link>
   );
 }
 
@@ -253,7 +243,7 @@ function Shortcut({ to, label, value }: { to: string; label: string; value?: num
     <Link
       to={to}
       onClick={(event) => event.stopPropagation()}
-      className="inline-flex h-[30px] items-center gap-1.5 rounded-lg bg-app px-2.5 text-xs font-semibold text-marino-900 hover:bg-marino-50"
+      className="inline-flex h-6 items-center gap-1.5 rounded-lg bg-app px-2.5 text-xs font-semibold text-marino-900 hover:bg-marino-50"
     >
       {label} <b className="tabular text-guinda-700">{value ?? "…"}</b>
     </Link>

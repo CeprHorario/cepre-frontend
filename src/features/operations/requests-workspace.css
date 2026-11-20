@@ -1,0 +1,41 @@
+.requests-workspace .requests-heading{padding:8px 0 6px}
+.requests-workspace .requests-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:#861d36;font-size:10px;font-weight:800;letter-spacing:.13em}
+.requests-workspace .requests-eyebrow svg{width:16px;height:16px}
+.requests-workspace .requests-toolbar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 22px;border:1px solid #e2e3ea;border-radius:14px;background:#fff;box-shadow:0 2px 5px #1c214004}
+.requests-workspace .requests-toolbar h2{font-size:15px;font-weight:750;color:#1c2140}
+.requests-workspace .requests-toolbar p{margin-top:4px;color:#666c80;font-size:12px}
+.requests-workspace .requests-toolbar>div:last-child{width:340px;max-width:100%}
+.requests-workspace .requests-table thead{background:#1c2140;color:#fff}
+.requests-workspace .requests-table th{padding:15px 16px;border-color:#ffffff24;color:#fff;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.requests-workspace .requests-table td{padding:20px 16px;vertical-align:top}
+.requests-workspace .requests-table tbody tr{border-left:4px solid #9ba3b8}
+.requests-workspace .requests-table tr[data-state=PENDING]{border-left-color:#c28c26}
+.requests-workspace .requests-table tr[data-state=ADMIN_PENDING]{border-left-color:#5369b4}
+.requests-workspace .requests-table tr[data-state=APPROVED]{border-left-color:#278362}
+.requests-workspace .requests-table tr[data-state=CHANGES]{border-left-color:#b56a1f}
+.requests-workspace .requests-table tr[data-state=REJECTED]{border-left-color:#ad354f}
+.requests-workspace .requests-date{min-width:155px;background:#f8f9fc}
+.requests-workspace .requests-replacement-date{display:block;margin-top:4px;font-size:16px;color:#1c2140;font-variant-numeric:tabular-nums}
+.requests-workspace .requests-person-label{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#72788b}
+.requests-workspace .requests-documents button{gap:8px;white-space:nowrap}
+.requests-workspace .requests-documents svg{color:#72788b}
+.requests-workspace .request-progress{min-width:240px;max-width:320px}
+.requests-workspace .request-status{display:inline-flex;align-items:center;gap:7px;border:1px solid #dce0e8;border-radius:999px;padding:7px 11px;background:#f1f3f7;color:#60697c;font-size:11px;font-weight:750;line-height:1.4}
+.requests-workspace .request-status svg{width:14px;height:14px;flex:none}
+.requests-workspace .request-status[data-state=PENDING]{background:#fff6e1;border-color:#f0dba9;color:#8a5b09}
+.requests-workspace .request-status[data-state=ADMIN_PENDING]{background:#edf1ff;border-color:#d4ddfb;color:#354f9a}
+.requests-workspace .request-status[data-state=APPROVED]{background:#e9f6ef;border-color:#c5e7d5;color:#226e50}
+.requests-workspace .request-status[data-state=CHANGES]{background:#fff0e2;border-color:#f3d3b1;color:#97541b}
+.requests-workspace .request-status[data-state=REJECTED]{background:#fcecef;border-color:#f1cbd5;color:#9a2945}
+.requests-workspace .request-stages{display:flex;gap:6px;margin-top:20px;padding:0;list-style:none}
+.requests-workspace .request-stages li{flex:1;min-width:0}
+.requests-workspace .request-stage-line{display:block;height:4px;border-radius:4px;background:#e7e9ef}
+.requests-workspace [data-step=done] .request-stage-line{background:#278362}
+.requests-workspace [data-step=current] .request-stage-line{background:#c28c26}
+.requests-workspace .request-stage-caption{display:flex;align-items:flex-start;gap:4px;margin-top:8px;font-size:10px;line-height:1.5;color:#656d80}
+.requests-workspace .request-stage-caption svg{flex:none;width:12px;height:12px;margin-top:1px;color:#278362}
+.requests-workspace .request-stage-number{flex:none;font-weight:800}
+.requests-workspace [data-step=current] .request-stage-caption{color:#8a5b09;font-weight:700}
+.requests-workspace .request-closed-note{margin-top:14px;font-size:11px;line-height:1.6;color:#6d7485}
+.requests-workspace .request-approved-note{margin-top:12px;font-size:11px;color:#226e50}
+@media(max-width:640px){.requests-workspace .requests-toolbar{align-items:stretch;flex-direction:column;gap:14px;padding:16px}.requests-workspace .requests-toolbar>div:last-child{width:100%}.requests-workspace .requests-table td{padding:16px 12px}}
